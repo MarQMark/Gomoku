@@ -1,6 +1,14 @@
-#include <iostream>
+#include "presentation/renderer/Window.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    Window* window = Window::create(1280, 720);
+    if(!window)
+        return -1;
+
+    while(!window->shouldClose()){
+
+    }
+
     return 0;
 }
