@@ -7,7 +7,7 @@ int main() {
         return -1;
 
     while(!window->shouldClose()){
-
+        glfwPollEvents();
     }
 
     return 0;
