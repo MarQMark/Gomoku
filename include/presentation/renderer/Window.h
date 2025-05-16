@@ -7,14 +7,14 @@
 
 class Window {
 public:
-    static Window* create(int32_t width, int32_t height);
+    explicit Window(int32_t width, int32_t height);
     ~Window();
 
+
+    GLFWwindow* getGLFWWindow() const;
     bool shouldClose();
 
 private:
-    explicit Window(GLFWwindow* window);
-
     GLFWwindow* _window {};
 };
 

@@ -1,13 +1,11 @@
-#include "presentation/renderer/Window.h"
+#include "presentation/renderer/Renderer.h"
 
 int main() {
 
-    Window* window = Window::create(1280, 720);
-    if(!window)
-        return -1;
+    Renderer renderer;
 
-    while(!window->shouldClose()){
-        glfwPollEvents();
+    while(renderer.shouldRun()){
+        renderer.render();
     }
 
     return 0;

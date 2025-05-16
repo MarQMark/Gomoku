@@ -3,7 +3,10 @@ project(Gomoku)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wno-unused-parameter")
+
+if (UNIX)
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wno-unused-parameter")
+endif (UNIX)
 
 if (WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lmingw32")
@@ -31,6 +34,7 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt")
 endif()
 
 add_subdirectory("external/glfw")
+add_subdirectory("external/glm")
 
 add_subdirectory("include")
 add_subdirectory("src")

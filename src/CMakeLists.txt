@@ -3,12 +3,20 @@ project(Gomoku)
 add_executable(Gomoku
 
         presentation/renderer/Window.cpp
+        presentation/renderer/Renderer.cpp
+        presentation/renderer/VertexBuffer.cpp
+        presentation/renderer/IndexBuffer.cpp
+        presentation/renderer/Texture2D.cpp
+        presentation/renderer/Shader.cpp
+
+        presentation/renderer/glew/glew.c
 
         main.cpp
 )
 
 target_include_directories(Gomoku
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include/presentation/renderer/
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/glfw/include
 )
 
