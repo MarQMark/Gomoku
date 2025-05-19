@@ -8,6 +8,7 @@ add_executable(Gomoku
         presentation/renderer/IndexBuffer.cpp
         presentation/renderer/Texture2D.cpp
         presentation/renderer/Shader.cpp
+        presentation/renderer/Batch.cpp
 
         presentation/renderer/glew/glew.c
 
