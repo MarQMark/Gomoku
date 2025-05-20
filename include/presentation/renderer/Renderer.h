@@ -2,9 +2,9 @@
 #define GOMOKU_RENDERER_H
 
 #include <vector>
+#include "Shader.h"
 #include "glm/glm.hpp"
 #include "Window.h"
-#include "Shader.h"
 #include "Batch.h"
 
 class Renderer {
@@ -15,7 +15,7 @@ public:
     bool shouldRun();
     void render();
 
-    void drawQuad(glm::vec2 pos, glm::vec2 dim, int32_t layer = 0, uint16_t shader = UINT16_MAX);
+    void drawQuad(std::string id, glm::vec2 pos, glm::vec2 dim, int32_t layer = 0, uint16_t shader = UINT16_MAX);
 
     /* uint32_t addShader(Shader*)
      *  returns: shader id

@@ -19,6 +19,7 @@ target_include_directories(Gomoku
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include/presentation/renderer/
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/glfw/include
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../external/glm/
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE external/glfw/src)

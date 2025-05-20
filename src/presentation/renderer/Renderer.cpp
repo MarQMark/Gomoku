@@ -15,16 +15,17 @@ Renderer::~Renderer() {
     delete _window;
 }
 
-void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, int32_t layer, uint16_t shader) {
+void Renderer::drawQuad(std::string id, glm::vec2 pos, glm::vec2 dim, int32_t layer, uint16_t shader) {
     uint64_t batchID = get_batch_id(layer, 0, shader);
-    if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(nullptr, get_shader(shader));
+    //if(!_batches.count(batchID))
+        //_batches[batchID] = new Batch(nullptr, get_shader(shader));
 
     /* TODO:
      *   - Batch add vertices
      *   - Init Vertex
      *   - How to update Vertex Buffer/ Index Buffer
      */
+    std::cout << "id: " << id << "\n";
 }
 
 bool Renderer::shouldRun() {
