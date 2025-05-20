@@ -15,7 +15,16 @@ public:
     bool shouldRun();
     void render();
 
-    void drawQuad(std::string id, glm::vec2 pos, glm::vec2 dim, int32_t layer = 0, uint16_t shader = UINT16_MAX);
+    /* void drawQuad()
+     *  pos:  position of the first vertex (top left corner)
+     *
+     *  draws quad with following vertex order:
+     *      0 -- 1
+     *      |    |
+     *      3 -- 2
+     *
+     */
+    void drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color = glm::vec4(1), int32_t layer = 0, uint16_t shader = UINT16_MAX, bool enforceLayer = false);
 
     /* uint32_t addShader(Shader*)
      *  returns: shader id

@@ -9,19 +9,25 @@
 class Batch {
 public:
     Batch(Texture2D* texture2D = nullptr, Shader* shader = nullptr);
-    ~Batch() = default;
+    ~Batch();
 
     void render();
 
-    void updateBuffer(const std::string& name, void* vb, uint32_t vbLen, uint32_t* ib, uint32_t ibLen);
+    void updateBuffer(uint64_t id, void* vb, uint32_t vbSize, uint32_t* ib, uint32_t ibSize);
 
 private:
 
     struct Buffer {
+        ~Buffer(){
+            free(vb);
+            free(ib);
+        }
+
         void* vb{};
-        uint32_t vb_len = 0;
+        uint32_t vb_size = 0;
         uint32_t* ib{};
         uint32_t ib_len = 0;
+        bool used = true;
     };
 
     Texture2D* _texture2D{};
@@ -30,11 +36,13 @@ private:
     VertexBuffer* _vb{};
     IndexBuffer* _ib{};
 
-    bool _dirty = false;
-    std::map<std::string, Buffer*> _buffers{};
+    std::map<uint64_t, Buffer*> _buffers{};
 
-    void update_vb(Buffer* buffer, void* vb, uint32_t vbLen);
-    void update_ib(Buffer* buffer, uint32_t* ib, uint32_t ibLen);
+    void update_vb(Buffer* buffer, void* vb, uint32_t vbSize);
+    void update_ib(Buffer* buffer, uint32_t* ib, uint32_t ibSize);
+
+    bool _dirty = true;
+    void recreate_buffers();
 };
 
 #endif //GOMOKU_BATCH_H

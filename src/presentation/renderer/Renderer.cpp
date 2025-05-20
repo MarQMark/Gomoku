@@ -1,8 +1,38 @@
 #include <iostream>
+#include <functional>
+#include <cstring>
 #include "presentation/renderer/Renderer.h"
+#include "Vertex.h"
+#include "Shaders.h"
+
+#if defined(__MSC_VER)
+#include <intrin.h>
+#pragma intrinsic(_ReturnAddress)
+
+#define BATCH_FUNC __declspec(noinline)
+#define GET_RED_ADDR __ReturnAddress()
+
+#elif defined(__GNUC__) || defined(__clang__)
+#define BATCH_FUNC __attribute__((noinline))
+#define GET_RED_ADDR (uint64_t)__builtin_return_address(0)
+#endif
+
+#define BATCH_FORCE_STACK [[maybe_unused]] volatile int force_stack = 1;
+
+#if !defined(__clang__) && !defined(__GNUC__) && !defined(__MSC_VER)
+#error "Incompatible Compiler"
+#endif
+
+
 
 Renderer::Renderer() {
     _window = new Window(1280, 720);
+
+    if (glewInit() != GLEW_OK)
+        throw std::runtime_error("Error initializing glew\n");
+
+    Shader* shader = new Shader(StdShaders::sVS, StdShaders::sFS);
+    addShader(shader);
 }
 
 Renderer::~Renderer() {
@@ -15,17 +45,34 @@ Renderer::~Renderer() {
     delete _window;
 }
 
-void Renderer::drawQuad(std::string id, glm::vec2 pos, glm::vec2 dim, int32_t layer, uint16_t shader) {
-    uint64_t batchID = get_batch_id(layer, 0, shader);
-    //if(!_batches.count(batchID))
-        //_batches[batchID] = new Batch(nullptr, get_shader(shader));
+BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, uint16_t shader, bool enforceLayer) {
+    BATCH_FORCE_STACK
+    uint64_t buffId = GET_RED_ADDR;
 
-    /* TODO:
-     *   - Batch add vertices
-     *   - Init Vertex
-     *   - How to update Vertex Buffer/ Index Buffer
-     */
-    std::cout << "id: " << id << "\n";
+    uint64_t batchID = get_batch_id(0, 0, shader);
+    if(enforceLayer)
+        batchID = get_batch_id(layer, 0, shader);
+
+    if(!_batches.count(batchID))
+        _batches[batchID] = new Batch(nullptr, get_shader(shader));
+
+    // Create vertices
+    Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
+    vertices[0].position = glm::vec3(pos,                            layer);
+    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),      layer);
+    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, -dim.y), layer);
+    vertices[3].position = glm::vec3(pos + glm::vec2(0,     -dim.y), layer);
+    for(int i = 0; i < 4; i++){
+        vertices[i].color = color;
+        vertices[i].texCoords = glm::vec2(0);
+    }
+
+    // Create indices
+    uint32_t* indices = (uint32_t*) malloc(sizeof(uint32_t) * 6);
+    uint32_t temp[] = {0, 1, 2, 0, 2, 3};
+    memcpy(indices, temp, sizeof(temp));
+
+    _batches[batchID]->updateBuffer(buffId, vertices, sizeof(Vertex) * 4, indices, 6);
 }
 
 bool Renderer::shouldRun() {

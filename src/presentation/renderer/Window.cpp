@@ -12,6 +12,8 @@ Window::Window(int32_t width, int32_t height){
         glfwTerminate();
         throw std::runtime_error("Could not create window\n");
     }
+
+    glfwMakeContextCurrent(_window);
 }
 
 Window::~Window() {
