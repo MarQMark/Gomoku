@@ -45,12 +45,12 @@ Renderer::~Renderer() {
     delete _window;
 }
 
-BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, uint16_t shader, bool enforceLayer) {
+BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, uint16_t shader) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
     uint64_t batchID = get_batch_id(0, 0, shader);
-    if(enforceLayer)
+    if(_enforce_layer)
         batchID = get_batch_id(layer, 0, shader);
 
     if(!_batches.count(batchID))
@@ -110,4 +110,8 @@ Shader *Renderer::get_shader(uint16_t id) {
         return nullptr;
 
     return _shaders[id];
+}
+
+void Renderer::setEnforceLayer(bool enforceLayer) {
+    _enforce_layer = enforceLayer;
 }

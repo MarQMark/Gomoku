@@ -27,7 +27,6 @@ void Batch::render() {
         if (!it->second->used) {
             delete it->second;
             it = _buffers.erase(it);
-            std::cout << "removed buffer\n";
             _dirty = true;
         } else {
             ++it;
@@ -49,6 +48,9 @@ void Batch::render() {
     _ib->bind();
 
     glDrawElements(GL_TRIANGLES, _ib->getSize(), GL_UNSIGNED_INT, nullptr);
+
+    for(auto pair : _buffers)
+        pair.second->used = false;
 }
 
 void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, uint32_t ibSize) {
@@ -89,7 +91,6 @@ void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, u
 }
 
 void Batch::update_vb(Buffer *buffer, void *vb, uint32_t vbSize) {
-    std::cout << "update vb \n";
     free(buffer->vb);
     buffer->vb = vb;
     buffer->vb_size = vbSize;
@@ -98,7 +99,6 @@ void Batch::update_vb(Buffer *buffer, void *vb, uint32_t vbSize) {
 }
 
 void Batch::update_ib(Buffer *buffer, uint32_t *ib, uint32_t ibSize) {
-    std::cout << "update ib \n";
     free(buffer->ib);
     buffer->ib = ib;
     buffer->ib_len = ibSize;
@@ -132,9 +132,7 @@ void Batch::recreate_buffers() {
             indices[iPos] = iIdx + pair.second->ib[i];
             iPos++;
         }
-        iIdx = highestIdx + 1;
-
-        pair.second->used = false;
+        iIdx += highestIdx + 1;
     }
 
     if(_ib)
