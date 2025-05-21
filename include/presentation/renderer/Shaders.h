@@ -37,10 +37,15 @@ const std::string StdShaders::sFS =
         "in vec2 v_texCoord;\n"
         "in vec3 v_fragPos;\n"
         "\n"
+        "uniform sampler2D u_sampler2d;"
+        "\n"
         "layout(location = 0) out vec4 fragColor;\n"
         "\n"
         "void main() {\n"
-        "   fragColor = v_color;\n"
+        "   if(v_color.a == 0)\n"
+        "       fragColor = texture(u_sampler2d, v_texCoord);\n"
+        "   else\n"
+        "       fragColor = v_color;\n"
         "}";
 
 

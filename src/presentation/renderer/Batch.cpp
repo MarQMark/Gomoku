@@ -41,8 +41,10 @@ void Batch::render() {
 
     _shader->bind();
 
-    if(_texture2D)
+    if(_texture2D){
         _texture2D->bind();
+        _shader->uniform1li("u_sampler2d", 0);
+    }
 
     _vb->bind();
     _ib->bind();

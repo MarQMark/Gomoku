@@ -1,6 +1,7 @@
 project(Gomoku)
 
 add_executable(Gomoku
+        presentation/renderer/glew/glew.c
 
         presentation/renderer/Window.cpp
         presentation/renderer/Renderer.cpp
@@ -10,7 +11,9 @@ add_executable(Gomoku
         presentation/renderer/Shader.cpp
         presentation/renderer/Batch.cpp
 
-        presentation/renderer/glew/glew.c
+        presentation/ui/UI.cpp
+        presentation/ui/Button.cpp
+        presentation/ui/View.cpp
 
         main.cpp
 )

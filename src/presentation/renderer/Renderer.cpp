@@ -52,9 +52,9 @@ BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
-    uint64_t batchID = get_batch_id(0, 0, shader);
+    uint64_t batchID = get_batch_id(0, -1, shader);
     if(_enforce_layer)
-        batchID = get_batch_id(layer, 0, shader);
+        batchID = get_batch_id(layer, -1, shader);
 
     if(!_batches.count(batchID))
         _batches[batchID] = new Batch(nullptr, get_shader(shader));
@@ -68,6 +68,39 @@ BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color
     for(int i = 0; i < 4; i++){
         vertices[i].color = color;
         vertices[i].texCoords = glm::vec2(0);
+    }
+
+    // Create indices
+    uint32_t* indices = (uint32_t*) malloc(sizeof(uint32_t) * 6);
+    uint32_t temp[] = {0, 1, 2, 0, 2, 3};
+    memcpy(indices, temp, sizeof(temp));
+
+    _batches[batchID]->updateBuffer(buffId, vertices, sizeof(Vertex) * 4, indices, 6);
+}
+
+BATCH_FUNC void Renderer::drawTexture(glm::vec2 pos, glm::vec2 dim, uint16_t txtId, int32_t layer, uint16_t shader) {
+    BATCH_FORCE_STACK
+    uint64_t buffId = GET_RED_ADDR;
+
+    uint64_t batchID = get_batch_id(0, txtId, shader);
+    if(_enforce_layer)
+        batchID = get_batch_id(layer, txtId, shader);
+
+    if(!_batches.count(batchID))
+        _batches[batchID] = new Batch(get_texture(txtId), get_shader(shader));
+
+    // Create vertices
+    Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
+    vertices[0].position = glm::vec3(pos,                            map_layer(layer));
+    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),      map_layer(layer));
+    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, -dim.y), map_layer(layer));
+    vertices[3].position = glm::vec3(pos + glm::vec2(0,     -dim.y), map_layer(layer));
+    vertices[0].texCoords = glm::vec2(1, 0);
+    vertices[1].texCoords = glm::vec2(0, 0);
+    vertices[2].texCoords = glm::vec2(0, 1);
+    vertices[3].texCoords = glm::vec2(1, 1);
+    for(int i = 0; i < 4; i++){
+        vertices[i].color = glm::vec4(0);
     }
 
     // Create indices
@@ -121,4 +154,16 @@ void Renderer::setEnforceLayer(bool enforceLayer) {
 
 float Renderer::map_layer(int32_t layer) {
     return 1 / (1 + std::exp((float)layer));
+}
+
+uint16_t Renderer::addTexture(Texture2D *texture) {
+    _textures.push_back(texture);
+    return _textures.size() - 1;
+}
+
+Texture2D *Renderer::get_texture(uint16_t id) {
+    if(id >= _textures.size())
+        return nullptr;
+
+    return _textures[id];
 }

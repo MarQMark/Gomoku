@@ -1,5 +1,8 @@
 #include "presentation/renderer/Renderer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "presentation/renderer/stb_image/stb_image.h"
+
 int main() {
 
     Renderer renderer;
@@ -7,10 +10,17 @@ int main() {
     double time = glfwGetTime();
     float pos = -1;
 
+
+    int w, h, c;
+    unsigned char* buf = stbi_load("path", &w, &h, &c, 4);
+    Texture2D* txt = new Texture2D(w, h, buf);
+    renderer.addTexture(txt);
+
     while(renderer.shouldRun()){
         renderer.drawQuad(glm::vec2(0), glm::vec2(1), glm::vec4(0, .5, (std::sin(glfwGetTime()) + 1) / 2, 1), -2);
 
-        renderer.drawQuad(glm::vec2(-1, .5), glm::vec2(1.5), glm::vec4(0, .5, .9, 1), 1);
+        //renderer.drawQuad(glm::vec2(-1, .5), glm::vec2(1.5), glm::vec4(0, .5, .9, 1), 1);
+        renderer.drawTexture(glm::vec2(-1, .5), glm::vec2(1.5), 0, -1);
 
         if(int(glfwGetTime() - time) % 4 < 2)
             renderer.drawQuad(glm::vec2(pos, 1), glm::vec2(1.5), glm::vec4(0.2, .5, 0, 1), 0);

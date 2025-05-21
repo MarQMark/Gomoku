@@ -26,6 +26,11 @@ public:
      */
     void drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color = glm::vec4(1), int32_t layer = 0, uint16_t shader = 0);
 
+    /* void drawTexture
+     *  draw texture2D
+     */
+    void drawTexture(glm::vec2 pos, glm::vec2 dim, uint16_t txtId, int32_t layer = 0, uint16_t shader = 0);
+
     /* uint32_t addShader(Shader*)
      *  returns: shader id
      *  parameters:
@@ -35,6 +40,7 @@ public:
      *   freed at end of Renderer lifetime
      */
     uint16_t addShader(Shader* shader);
+    uint16_t addTexture(Texture2D* texture);
 
     void setEnforceLayer(bool enforceLayer);
 
@@ -43,10 +49,12 @@ private:
 
     std::map<uint64_t, Batch*> _batches;
     std::vector<Shader*> _shaders{};
+    std::vector<Texture2D*> _textures{};
 
     bool _enforce_layer = false;
 
     Shader* get_shader(uint16_t id);
+    Texture2D* get_texture(uint16_t id);
     float map_layer(int32_t layer);
     uint64_t get_batch_id(int32_t layer, uint16_t texture, uint16_t shader);
 };
