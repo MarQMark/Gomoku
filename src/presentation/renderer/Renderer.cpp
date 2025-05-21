@@ -17,7 +17,7 @@
 #define GET_RED_ADDR (uint64_t)__builtin_return_address(0)
 #endif
 
-#define BATCH_FORCE_STACK [[maybe_unused]] volatile int force_stack = 1;
+#define BATCH_FORCE_STACK volatile int force_stack = 1;
 
 #if !defined(__clang__) && !defined(__GNUC__) && !defined(__MSC_VER)
 #error "Incompatible Compiler"
@@ -33,6 +33,9 @@ Renderer::Renderer() {
 
     Shader* shader = new Shader(StdShaders::sVS, StdShaders::sFS);
     addShader(shader);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 }
 
 Renderer::~Renderer() {
@@ -58,10 +61,10 @@ BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color
 
     // Create vertices
     Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
-    vertices[0].position = glm::vec3(pos,                            layer);
-    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),      layer);
-    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, -dim.y), layer);
-    vertices[3].position = glm::vec3(pos + glm::vec2(0,     -dim.y), layer);
+    vertices[0].position = glm::vec3(pos,                            map_layer(layer));
+    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),      map_layer(layer));
+    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, -dim.y), map_layer(layer));
+    vertices[3].position = glm::vec3(pos + glm::vec2(0,     -dim.y), map_layer(layer));
     for(int i = 0; i < 4; i++){
         vertices[i].color = color;
         vertices[i].texCoords = glm::vec2(0);
@@ -114,4 +117,8 @@ Shader *Renderer::get_shader(uint16_t id) {
 
 void Renderer::setEnforceLayer(bool enforceLayer) {
     _enforce_layer = enforceLayer;
+}
+
+float Renderer::map_layer(int32_t layer) {
+    return 1 / (1 + std::exp((float)layer));
 }

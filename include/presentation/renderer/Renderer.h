@@ -47,6 +47,7 @@ private:
     bool _enforce_layer = false;
 
     Shader* get_shader(uint16_t id);
+    float map_layer(int32_t layer);
     uint64_t get_batch_id(int32_t layer, uint16_t texture, uint16_t shader);
 };
 

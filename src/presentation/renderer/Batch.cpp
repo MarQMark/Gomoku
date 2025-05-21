@@ -55,13 +55,12 @@ void Batch::render() {
 
 void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, uint32_t ibSize) {
     if(!_buffers.count(id)) {
-        _buffers[id] = new Buffer{
-            .vb = vb,
-            .vb_size = vbSize,
-            .ib = ib,
-            .ib_len = ibSize,
-            .used = true
-        };
+        _buffers[id] = new Buffer;
+        _buffers[id]->vb = vb,
+        _buffers[id]->vb_size = vbSize,
+        _buffers[id]->ib = ib,
+        _buffers[id]->ib_len = ibSize,
+        _buffers[id]->used = true;
         _dirty = true;
         return;
     }
