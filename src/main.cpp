@@ -30,6 +30,8 @@ int main() {
         else if(int(glfwGetTime() - time) % 4 == 1)
             pos -= 0.005f;
 
+        renderer.drawQuad(glm::vec2(-.5, .8), glm::vec2(1, 1.78f), glm::vec4(0), 4, 1);
+
         renderer.render();
     }
 

@@ -3,7 +3,10 @@
 #include <sstream>
 #include "presentation/renderer/Shader.h"
 
-Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource) {
+Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
+
+    std::string vertexSource = loadShaderSource(vertexPath);
+    std::string fragmentSource = loadShaderSource(fragmentPath);
 
     int vs = compileShader(GL_VERTEX_SHADER, vertexSource);
     int fs = compileShader(GL_FRAGMENT_SHADER, fragmentSource);

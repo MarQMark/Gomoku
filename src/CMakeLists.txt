@@ -29,6 +29,12 @@ target_link_directories(${PROJECT_NAME} PRIVATE external/glfw/src)
 
 target_link_libraries(Gomoku glfw)
 
+add_custom_target(copy_shaders ALL
+        COMMAND  ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/../shaders
+        ${PROJECT_BINARY_DIR}/shaders        COMMENT "Copying shaders into binary directory")
+add_dependencies(Gomoku copy_shaders)
+
 if (UNIX)
     find_package(OpenGL REQUIRED)
     target_link_libraries(Gomoku glut GL dl X11 pthread)

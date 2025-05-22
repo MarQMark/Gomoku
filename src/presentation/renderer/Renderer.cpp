@@ -31,7 +31,9 @@ Renderer::Renderer() {
     if (glewInit() != GLEW_OK)
         throw std::runtime_error("Error initializing glew\n");
 
-    Shader* shader = new Shader(StdShaders::sVS, StdShaders::sFS);
+    Shader* shader = new Shader("shaders/default.vert", "shaders/default.frag");
+    addShader(shader);
+    shader = new Shader("shaders/default.vert", "shaders/grid.frag");
     addShader(shader);
 
     glEnable(GL_DEPTH_TEST);
