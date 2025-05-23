@@ -2,10 +2,16 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "presentation/renderer/stb_image/stb_image.h"
+#include "presentation/ui/UI.h"
+#include "presentation/ui/Button.h"
 
 int main() {
 
     Renderer renderer;
+    UI ui(&renderer);
+
+    Button btn("testBtn", glm::vec2(0), glm::vec2(.5));
+    ui._view_root->addViewable(&btn);
 
     double time = glfwGetTime();
     float pos = -1;
@@ -15,6 +21,7 @@ int main() {
     unsigned char* buf = stbi_load("path", &w, &h, &c, 4);
     Texture2D* txt = new Texture2D(w, h, buf);
     renderer.addTexture(txt);
+
 
     while(renderer.shouldRun()){
         renderer.drawQuad(glm::vec2(0), glm::vec2(1), glm::vec4(0, .5, (std::sin(glfwGetTime()) + 1) / 2, 1), -2);
@@ -30,8 +37,10 @@ int main() {
         else if(int(glfwGetTime() - time) % 4 == 1)
             pos -= 0.005f;
 
-        renderer.drawQuad(glm::vec2(-.5, .8), glm::vec2(1, 1.78f), glm::vec4(0), 4, 1);
+        //renderer.drawQuad(glm::vec2(-.5, .8), glm::vec2(1, 1.78f), glm::vec4(0), 4, 1);
+        renderer.drawQuad(glm::vec2(-.5, .5), glm::vec2(1), glm::vec4(0), 4, 1);
 
+        ui.update();
         renderer.render();
     }
 

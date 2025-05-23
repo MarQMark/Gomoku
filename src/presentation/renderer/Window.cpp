@@ -27,3 +27,7 @@ bool Window::shouldClose() {
 GLFWwindow *Window::getGLFWWindow() const{
     return _window;
 }
+
+void Window::getSize(int* width, int *height) {
+    glfwGetWindowSize(_window, width, height);
+}

@@ -29,6 +29,8 @@ target_link_directories(${PROJECT_NAME} PRIVATE external/glfw/src)
 
 target_link_libraries(Gomoku glfw)
 
+add_compile_definitions(GLEW_STATIC)
+
 add_custom_target(copy_shaders ALL
         COMMAND  ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/../shaders

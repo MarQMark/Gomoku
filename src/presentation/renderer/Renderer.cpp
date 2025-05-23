@@ -31,10 +31,8 @@ Renderer::Renderer() {
     if (glewInit() != GLEW_OK)
         throw std::runtime_error("Error initializing glew\n");
 
-    Shader* shader = new Shader("shaders/default.vert", "shaders/default.frag");
-    addShader(shader);
-    shader = new Shader("shaders/default.vert", "shaders/grid.frag");
-    addShader(shader);
+    addShader(new Shader("shaders/default.vert", "shaders/default.frag"));
+    addShader(new Shader("shaders/default.vert", "shaders/grid.frag"));
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -168,4 +166,10 @@ Texture2D *Renderer::get_texture(uint16_t id) {
         return nullptr;
 
     return _textures[id];
+}
+
+glm::vec2 Renderer::getViewportSize() {
+    int width, height;
+    _window->getSize(&width, &height);
+    return glm::vec2(width, height);
 }

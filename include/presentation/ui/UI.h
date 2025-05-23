@@ -2,6 +2,7 @@
 #define GOMOKU_UI_H
 
 #include "Renderer.h"
+#include "View.h"
 
 class UI {
 public:
@@ -9,10 +10,10 @@ public:
 
     void update();
 
+    View* _view_root;
 private:
     Renderer* _renderer{};
 
-    //std::vector
 };
 
 

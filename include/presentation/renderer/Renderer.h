@@ -42,6 +42,8 @@ public:
     uint16_t addShader(Shader* shader);
     uint16_t addTexture(Texture2D* texture);
 
+    glm::vec2 getViewportSize();
+
     void setEnforceLayer(bool enforceLayer);
 
 private:

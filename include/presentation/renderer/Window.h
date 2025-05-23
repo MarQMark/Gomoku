@@ -10,9 +10,10 @@ public:
     explicit Window(int32_t width, int32_t height);
     ~Window();
 
-
     GLFWwindow* getGLFWWindow() const;
     bool shouldClose();
+
+    void getSize(int* width, int* height);
 
 private:
     GLFWwindow* _window {};

@@ -6,7 +6,8 @@
 
 class IInteractable : public IViewable {
 public:
-    IInteractable(std::string name) : IViewable(std::move(name)) {}
+    explicit IInteractable(std::string name) : IViewable(std::move(name)) {}
+    IInteractable(std::string name, glm::vec2 pos, glm::vec2 dim) : IViewable(std::move(name), pos, dim) {}
 
     ~IInteractable(){
         for(auto* callback : _callbacks)
