@@ -12,11 +12,30 @@ public:
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
     void addViewable(IViewable* viewable);
-    IViewable* getViewable(const std::string& name);
+
+    template<class T = IViewable>
+    T* getViewable(const std::string& name) {
+        for(auto* viewable : _viewables){
+            if(viewable->getName() == name){
+                if(T* retVal =  dynamic_cast<T*>(viewable))
+                    return retVal;
+            }
+
+            if(View* view = dynamic_cast<View*>(viewable)){
+                T* retVal = view->getViewable<T>(name);
+                if(retVal)
+                    return retVal;
+            }
+        }
+
+        return nullptr;
+    };
+
+    std::vector<IViewable*> getViewables();
+
 
 private:
     std::vector<IViewable*> _viewables{};
-
 };
 
 

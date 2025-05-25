@@ -16,16 +16,16 @@ public:
 
     enum State{
         NONE,
-        HOVERED,
+        HOVERING,
         PRESSED,
-        HELD,
+        HOLDING,
         RELEASED,
 
         ALL, // Only for callbacks
     };
 
     void changeState(State state){
-        if(_prev_state == state)
+        if(_prev_state == state && (state != HOVERING && state != HOLDING))
             return;
 
         _prev_state = _state;
@@ -73,12 +73,16 @@ public:
         _callbacks.erase(std::remove(_callbacks.begin(), _callbacks.end(), _callbacks[id]), _callbacks.end());
     }
 
+    bool isInteractable(){return _interactable;}
+    bool isFocused(){return _focused;}
+    void setFocused(bool focused){_focused = focused;}
+
 protected:
     // Even if not interactable it can still have focus
-    bool interactable = true;
+    bool _interactable = true;
 
     // Do not use only for internal use
-    bool focused = false;
+    bool _focused = false;
 
 private:
     State _state = State::NONE;

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "presentation/renderer/Window.h"
 #include "GLFW/glfw3.h"
+#include "presentation/input/Input.h"
 
 Window::Window(int32_t width, int32_t height){
     if(!glfwInit()){
@@ -14,6 +15,8 @@ Window::Window(int32_t width, int32_t height){
     }
 
     glfwMakeContextCurrent(_window);
+
+    Input::init(_window);
 }
 
 Window::~Window() {
@@ -30,4 +33,8 @@ GLFWwindow *Window::getGLFWWindow() const{
 
 void Window::getSize(int* width, int *height) {
     glfwGetWindowSize(_window, width, height);
+}
+
+void Window::getCursorPos(double *x, double *y) {
+    glfwGetCursorPos(_window, x, y);
 }

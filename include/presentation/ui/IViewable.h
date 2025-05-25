@@ -19,6 +19,9 @@ public:
     glm::vec2 getDim(){return _dim;}
     void setDim(glm::vec2 dim){_dim = dim;}
 
+    glm::vec2 getAbsPos(){return _abs_pos;}
+    glm::vec2 getAbsDim(){return _abs_dim;}
+
     virtual void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) = 0;
 
 protected:
@@ -26,8 +29,11 @@ protected:
     IViewable(std::string name, glm::vec2 pos, glm::vec2 dim) : _pos(pos), _dim(dim), _name(std::move(name)) {}
     ~IViewable() = default;
 
-    glm::vec2 _pos = glm::vec2(1);
+    glm::vec2 _pos = glm::vec2(0);
     glm::vec2 _dim = glm::vec2(1);
+
+    glm::vec2 _abs_pos = glm::vec2(0);
+    glm::vec2 _abs_dim = glm::vec2(0);
 
 private:
     bool _visible = true;

@@ -14,6 +14,7 @@ public:
     bool shouldClose();
 
     void getSize(int* width, int* height);
+    void getCursorPos(double* x, double* y);
 
 private:
     GLFWwindow* _window {};

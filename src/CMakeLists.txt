@@ -10,6 +10,9 @@ add_executable(Gomoku
         presentation/renderer/Texture2D.cpp
         presentation/renderer/Shader.cpp
         presentation/renderer/Batch.cpp
+        presentation/renderer/Font.cpp
+
+        presentation/input/Input.cpp
 
         presentation/ui/UI.cpp
         presentation/ui/Button.cpp

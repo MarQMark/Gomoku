@@ -1,6 +1,7 @@
 #include "presentation/ui/View.h"
 
 #include <utility>
+#include <iostream>
 
 View::View(std::string name) : IViewable(std::move(name)) {
 }
@@ -10,24 +11,14 @@ void View::addViewable(IViewable *viewable) {
 }
 
 void View::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+    _abs_pos = parentPos + _pos / parentDim;
+    _abs_dim = parentDim * _dim;
+
     for (auto* viewable : _viewables){
-        viewable->render(renderer, parentPos + _pos / parentDim, parentDim * _dim);
+        viewable->render(renderer, _abs_pos, _abs_dim);
     }
 }
 
-IViewable *View::getViewable(const std::string& name) {
-    for(auto* viewable : _viewables){
-        if(viewable->getName() == name)
-            return viewable;
-
-        if(View* view = dynamic_cast<View*>(viewable)){
-            IViewable* retVal = view->getViewable(name);
-            if(retVal)
-                return retVal;
-        }
-    }
-
-    return nullptr;
+std::vector<IViewable *> View::getViewables() {
+    return _viewables;
 }
-
-
