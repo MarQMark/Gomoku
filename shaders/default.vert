@@ -16,9 +16,9 @@ void main() {
     v_fragPos = vec3(position);
     //gl_Position = u_mvp * position;
     vec4 pos = position;
-    //pos.xy = pos.xy * 2;
-    //pos.x-=1;
-    //pos.y-=1;
-    //pos.y *= -1;
+    pos.xy = pos.xy * 2;
+    pos.x-=1;
+    pos.y-=1;
+    pos.y *= -1;
     gl_Position = pos;
 }

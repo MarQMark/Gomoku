@@ -43,6 +43,9 @@ Renderer::Renderer() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     query_errors("Renderer::Constructor");
 }
 
@@ -119,10 +122,10 @@ void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, uint16_t
     vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),     map_layer(layer));
     vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, dim.y), map_layer(layer));
     vertices[3].position = glm::vec3(pos + glm::vec2(0,     dim.y), map_layer(layer));
-    vertices[0].texCoords = glm::vec2(1, 0);
-    vertices[1].texCoords = glm::vec2(0, 0);
-    vertices[2].texCoords = glm::vec2(0, 1);
-    vertices[3].texCoords = glm::vec2(1, 1);
+    vertices[0].texCoords = glm::vec2(0, 0);
+    vertices[1].texCoords = glm::vec2(1, 0);
+    vertices[2].texCoords = glm::vec2(1, 1);
+    vertices[3].texCoords = glm::vec2(0, 1);
     for(int i = 0; i < 4; i++){
         vertices[i].color = glm::vec4(0);
     }
@@ -146,12 +149,6 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
 
     if(!_batches.count(batchID))
         _batches[batchID] = new Batch(font->getTexture(), get_shader(shader));
-    /*uint64_t batchID = get_batch_id(0, 2, shader);
-    if(_enforce_layer)
-        batchID = get_batch_id(layer, 2, shader);
-
-    if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(get_texture(0), get_shader(shader));*/
 
     Font::Glyph* g = font->getGlyph('A');
     const float scale = height/g->dim.y;
@@ -188,10 +185,10 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         float offY = g->offset.y * scale;
 
         //Position
-        vertices[nVertex + 0].position = glm::vec3(x + offX,          y - offY,           map_layer(layer));
-        vertices[nVertex + 1].position = glm::vec3(x + offX + cWidth, y - offY,           map_layer(layer));
-        vertices[nVertex + 2].position = glm::vec3(x + offX + cWidth, y - offY - cHeight, map_layer(layer));
-        vertices[nVertex + 3].position = glm::vec3(x + offX,          y - offY - cHeight, map_layer(layer));
+        vertices[nVertex + 0].position = glm::vec3(x + offX,          y + offY,           map_layer(layer));
+        vertices[nVertex + 1].position = glm::vec3(x + offX + cWidth, y + offY,           map_layer(layer));
+        vertices[nVertex + 2].position = glm::vec3(x + offX + cWidth, y + offY + cHeight, map_layer(layer));
+        vertices[nVertex + 3].position = glm::vec3(x + offX,          y + offY + cHeight, map_layer(layer));
 
         // set Texture Coords
         vertices[nVertex + 0].texCoords = glm::vec2(g->pos.x,               1 - (g->pos.y));
@@ -202,15 +199,14 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         for (int i = 0; i < 4; ++i)
             vertices[nVertex + i].color = options.color;
 
-        indices[indexCnt + 0] = nVertex + 0;
-        indices[indexCnt + 1] = nVertex + 1;
-        indices[indexCnt + 2] = nVertex + 2;
-        indices[indexCnt + 3] = nVertex + 0;
-        indices[indexCnt + 4] = nVertex + 2;
-        indices[indexCnt + 5] = nVertex + 3;
+        indices[indexCnt++] = nVertex + 0;
+        indices[indexCnt++] = nVertex + 1;
+        indices[indexCnt++] = nVertex + 2;
+        indices[indexCnt++] = nVertex + 0;
+        indices[indexCnt++] = nVertex + 2;
+        indices[indexCnt++] = nVertex + 3;
 
         nVertex+=4;
-        indexCnt+=6;
 
         x += cWidth + whitespace * options.spacing.x;
     }
@@ -223,6 +219,7 @@ bool Renderer::shouldRun() {
 }
 
 void Renderer::render() {
+    glClearColor(.6, .2, .8, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     query_errors("Renderer::render");

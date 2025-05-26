@@ -25,7 +25,8 @@ int main() {
 
 
     int w, h, c;
-    unsigned char* buf = stbi_load("/home/mark/Documents/Projects/Kikan/Font.png", &w, &h, &c, 4);
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* buf = stbi_load("test", &w, &h, &c, 4);
     Texture2D* txt = new Texture2D(w, h, buf);
     std::cout << renderer.addTexture(txt) << "\n";
 
@@ -34,9 +35,9 @@ int main() {
         //renderer.drawQuad(glm::vec2(0), glm::vec2(1), glm::vec4(0, .5, (std::sin(glfwGetTime()) + 1) / 2, 1), -2);
 
         //renderer.drawQuad(glm::vec2(-1, .5), glm::vec2(1.5), glm::vec4(0, .5, .9, 1), 1);
-        //renderer.drawTexture(glm::vec2(-1, .5), glm::vec2(1.5), 0, -1);
+        renderer.drawTexture(glm::vec2(-1), glm::vec2(1.5), 0, -1);
 
-        renderer.drawText("test", glm::vec2(0), .5, 7, 2);
+        renderer.drawText("Yay this finally works", glm::vec2(0), .05, 7, 2);
 
         //if(int(glfwGetTime() - time) % 4 < 2)
         //    renderer.drawQuad(glm::vec2(pos, 1), glm::vec2(1.5), glm::vec4(0.2, .5, 0, 1), 0);
