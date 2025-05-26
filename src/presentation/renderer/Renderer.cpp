@@ -26,7 +26,9 @@
 #error "Incompatible Compiler"
 #endif
 
-
+void window_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
 
 Renderer::Renderer() {
     _window = new Window(1280, 720);
@@ -45,6 +47,8 @@ Renderer::Renderer() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glfwSetWindowSizeCallback(_window->getGLFWWindow(), window_size_callback);
 
     query_errors("Renderer::Constructor");
 }
@@ -151,8 +155,9 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         _batches[batchID] = new Batch(font->getTexture(), get_shader(shader));
 
     Font::Glyph* g = font->getGlyph('A');
-    const float scale = height/g->dim.y;
-    const float whitespace = scale * g->dim.x;
+    glm::vec2 viewportDim = getViewportSize();
+    const float scale = (height / g->dim.y);
+    const float whitespace = scale * g->dim.x * (viewportDim.y / viewportDim.x);
 
     uint32_t textLen = 0;
     for (char c : text) {
@@ -179,7 +184,7 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         }
 
         g = font->getGlyph(c);
-        float cWidth = g->dim.x * scale;
+        float cWidth = g->dim.x * scale * (viewportDim.y / viewportDim.x);
         float cHeight = g->dim.y * scale;
         float offX = g->offset.x * scale;
         float offY = g->offset.y * scale;

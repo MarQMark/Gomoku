@@ -25,7 +25,7 @@ public:
     };
 
     void changeState(State state){
-        if(_prev_state == state && (state != HOVERING && state != HOLDING))
+        if(_state == state && _prev_state == state && (state != HOVERING && state != HOLDING))
             return;
 
         _prev_state = _state;

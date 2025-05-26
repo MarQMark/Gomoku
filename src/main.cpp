@@ -4,10 +4,19 @@
 #include "presentation/renderer/stb_image/stb_image.h"
 #include "presentation/ui/UI.h"
 #include "presentation/ui/Button.h"
+#include "presentation/ui/Label.h"
+#include "presentation/ui/Sprite.h"
 
 void testBtnClbk(IInteractable* interactable, IInteractable::State state, void* data){
     std::cout << "Btn 1 Pressed" << "\n";
 }
+
+/* TODO:
+ *  - Rework Shader access
+ *  - Rework Texture management
+ *  - Add Font access
+ *  - Add layering stuff to IViewable/ Button...
+ */
 
 int main() {
 
@@ -15,41 +24,33 @@ int main() {
     UI ui(&renderer);
 
     Button btn("testBtn", glm::vec2(0.25), glm::vec2(.25));
+    btn.setKeepWidth(true);
     btn.registerCallback(testBtnClbk, IInteractable::State::PRESSED);
     ui.getViewable<View>("root")->addViewable(&btn);
+
     Button btn2("testBtn2", glm::vec2(0.5), glm::vec2(.25));
+    //btn2.setKeepHeight(true);
+    btn2.setAlignH(IViewable::Align::BOTTOM);
+    btn2.setAlignV(IViewable::Align::RIGHT);
+    btn2.setMargin(glm::vec4(0, 0.01, 0, 0.01));
+    btn2.setTexture(IInteractable::State::NONE, 0);
     ui.getViewable<View>("root")->addViewable(&btn2);
 
-    double time = glfwGetTime();
-    float pos = -1;
+    Label label("label", "This is a label");
+    label.setDim(glm::vec2(0, 0.05));
+    ui.getViewable<View>("root")->addViewable(&label);
 
+    Sprite sprite("sprite", 0, glm::vec2(0, 0.5), glm::vec2(.25));
+    ui.getViewable<View>("root")->addViewable(&sprite);
 
     int w, h, c;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* buf = stbi_load("test", &w, &h, &c, 4);
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* buf = stbi_load("/path", &w, &h, &c, 4);
     Texture2D* txt = new Texture2D(w, h, buf);
     std::cout << renderer.addTexture(txt) << "\n";
 
 
     while(renderer.shouldRun()){
-        //renderer.drawQuad(glm::vec2(0), glm::vec2(1), glm::vec4(0, .5, (std::sin(glfwGetTime()) + 1) / 2, 1), -2);
-
-        //renderer.drawQuad(glm::vec2(-1, .5), glm::vec2(1.5), glm::vec4(0, .5, .9, 1), 1);
-        renderer.drawTexture(glm::vec2(-1), glm::vec2(1.5), 0, -1);
-
-        renderer.drawText("Yay this finally works", glm::vec2(0), .05, 7, 2);
-
-        //if(int(glfwGetTime() - time) % 4 < 2)
-        //    renderer.drawQuad(glm::vec2(pos, 1), glm::vec2(1.5), glm::vec4(0.2, .5, 0, 1), 0);
-
-        if(int(glfwGetTime() - time) % 4 == 0)
-            pos += 0.005f;
-        else if(int(glfwGetTime() - time) % 4 == 1)
-            pos -= 0.005f;
-
-        //renderer.drawQuad(glm::vec2(-.5, .8), glm::vec2(1, 1.78f), glm::vec4(0), 4, 1);
-       // renderer.drawQuad(glm::vec2(-.5, .5), glm::vec2(1), glm::vec4(0), 4, 1);
-
         ui.update();
         renderer.render();
     }

@@ -8,6 +8,15 @@
 class IViewable{
 public:
 
+    enum Align{
+        NONE = 0,
+        CENTER = 1,
+        TOP = 2,
+        BOTTOM = 3,
+        LEFT = 2,
+        RIGHT = 3,
+    };
+
     bool isVisible(){return _visible;}
     void setVisible(bool visible) {_visible = visible;}
 
@@ -22,6 +31,20 @@ public:
     glm::vec2 getAbsPos(){return _abs_pos;}
     glm::vec2 getAbsDim(){return _abs_dim;}
 
+    void setKeepWidth(bool keep){_keep_width = keep;}
+    void setKeepHeight(bool keep){_keep_height = keep;}
+
+    /* void setMargin(glm::vec4)
+     *  The components correspond as follows and are applied in the same order:
+     *      x: top
+     *      y: bottom
+     *      z: left
+     *      w: right
+     */
+    void setMargin(glm::vec4 margin){_margin = margin;}
+    void setAlignV(Align align){_vertical = align;}
+    void setAlignH(Align align){_horizontal = align;}
+
     virtual void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) = 0;
 
 protected:
@@ -34,6 +57,13 @@ protected:
 
     glm::vec2 _abs_pos = glm::vec2(0);
     glm::vec2 _abs_dim = glm::vec2(0);
+
+    bool _keep_width = false;
+    bool _keep_height = false;
+
+    Align _vertical = Align::NONE;
+    Align _horizontal = Align::NONE;
+    glm::vec4 _margin = glm::vec4(0);
 
 private:
     bool _visible = true;

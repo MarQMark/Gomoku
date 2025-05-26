@@ -15,8 +15,11 @@ add_executable(Gomoku
         presentation/input/Input.cpp
 
         presentation/ui/UI.cpp
-        presentation/ui/Button.cpp
+        presentation/ui/Viewable.cpp
         presentation/ui/View.cpp
+        presentation/ui/Label.cpp
+        presentation/ui/Sprite.cpp
+        presentation/ui/Button.cpp
 
         main.cpp
 )

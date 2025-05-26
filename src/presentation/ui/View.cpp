@@ -11,8 +11,7 @@ void View::addViewable(IViewable *viewable) {
 }
 
 void View::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
-    _abs_pos = parentPos + _pos / parentDim;
-    _abs_dim = parentDim * _dim;
+    IViewable::render(renderer, parentPos, parentDim);
 
     for (auto* viewable : _viewables){
         viewable->render(renderer, _abs_pos, _abs_dim);
