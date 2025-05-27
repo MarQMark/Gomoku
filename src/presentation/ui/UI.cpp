@@ -113,7 +113,7 @@ bool UI::cursor_interactable_intersect(IInteractable *interactable) {
 void UI::focus_update(std::vector<IInteractable*>& interactables) {
     if(_focused){
         if(!_focused_view){
-            std::cout << "[WARNING] UI interactable selected but no node. This should not happen\n";
+            std::cout << "[WARNING] UI interactable selected but no View. This should not happen\n";
         }
         else if(!is_view_visible(_view_root, _focused_view)){
             focus_first(interactables);

@@ -15,7 +15,7 @@ public:
     struct Options{
         Font* font;
         glm::vec4 color = glm::vec4(1);
-        glm::vec2 spacing = glm::vec2(0.05f);
+        glm::vec2 spacing = glm::vec2(0.05f, 1);
     };
 
 public:

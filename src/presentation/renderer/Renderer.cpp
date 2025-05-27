@@ -6,7 +6,8 @@
 #include "Vertex.h"
 #include "Shaders.h"
 #include "presentation/input/Input.h"
-#include "presentation/renderer/DefaultFont.h"
+#include "presentation/renderer/KikanFont.h"
+#include "presentation/renderer/GomokuFont.h"
 
 #if defined(__MSC_VER)
 #include <intrin.h>
@@ -40,7 +41,8 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
     addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
 
-    _fonts["default"] = new Font((void*)defaultFont);
+    _fonts["default"] = new Font((void*)gomokuFont);
+    _fonts["kikan"] = new Font((void*)kikanFont);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -182,7 +184,7 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         else if(c == '\r') { x = pos.x;            continue; } // Carriage Return
         else if(c == '\n') {                                   // Newline
             x = pos.x;
-            y-= height * 1.5f * options.spacing.y;
+            y += height * 1.5f * options.spacing.y;
             continue;
         }
 
