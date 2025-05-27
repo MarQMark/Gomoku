@@ -18,15 +18,17 @@ BoardView::~BoardView() {
 }
 
 void BoardView::initializeButtons() {
-    constexpr float buttonSize = 1.0f / BOARD_SIZE;
+    float spacing = 0.001;
+    float gridSize = 1.0f / BOARD_SIZE;
+    float buttonSize = gridSize - 2 * spacing;
 
     for (int y = 0; y < BOARD_SIZE; ++y) {
         for (int x = 0; x < BOARD_SIZE; ++x) {
             const std::string buttonName = "btn_" + std::to_string(x) + "_" + std::to_string(y);
 
             // Calculate position and size
-            const glm::vec2 pos(x * buttonSize, y * buttonSize);
-            constexpr glm::vec2 dim(buttonSize, buttonSize);
+            const glm::vec2 pos(x * gridSize + spacing, y * gridSize + spacing);
+            const glm::vec2 dim(buttonSize, buttonSize);
 
             const auto button = new Button(buttonName, pos, dim);
             const auto data = new ButtonData{this, x, y};

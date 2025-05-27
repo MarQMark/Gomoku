@@ -20,9 +20,9 @@ int main() {
 
     // Create the main game board (centered, square aspect ratio)
     auto* boardView = new BoardView("game_board");
-    boardView->setKeepWidth(true);
+    boardView->setKeepHeight(true);
     boardView->setPos(glm::vec2(0.1f, 0.1f));
-    boardView->setDim(glm::vec2(0.5f, 0.5f));
+    boardView->setDim(glm::vec2(0.8f));
     ui.getViewable<View>("root")->addViewable(boardView);
 
     // Create game status label
