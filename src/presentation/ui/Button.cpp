@@ -12,24 +12,26 @@ Button::Button(std::string name, glm::vec2 pos, glm::vec2 dim) : IInteractable(s
 
 
 void Button::init_maps() {
-    _texture_ids[State::NONE] = -1;
-    _texture_ids[State::HOVERING] = -1;
-    _texture_ids[State::PRESSED] = -1;
-    _texture_ids[State::HOLDING] = -1;
-    _texture_ids[State::RELEASED] = -1;
+    _layer = 5;
 
-    _shader_ids[State::NONE] = 0;
-    _shader_ids[State::HOVERING] = 0;
-    _shader_ids[State::PRESSED] = 0;
-    _shader_ids[State::HOLDING] = 0;
-    _shader_ids[State::RELEASED] = 0;
+    _texture_names[State::NONE] = "";
+    _texture_names[State::HOVERING] = "";
+    _texture_names[State::PRESSED] = "";
+    _texture_names[State::HOLDING] = "";
+    _texture_names[State::RELEASED] = "";
+
+    _shader_names[State::NONE] = "default";
+    _shader_names[State::HOVERING] = "default";
+    _shader_names[State::PRESSED] = "default";
+    _shader_names[State::HOLDING] = "default";
+    _shader_names[State::RELEASED] = "default";
 }
 
 void Button::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IInteractable::render(renderer, parentPos, parentDim);
 
-    if(_texture_ids[getState()] >= 0){
-        renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, _texture_ids[getState()], 0, _shader_ids[getState()]);
+    if(!_texture_names[getState()].empty()){
+        renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_names[getState()]), _layer, _shader_names[getState()]);
     }
     else{
         glm::vec3 color;
@@ -51,18 +53,18 @@ void Button::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim
                 break;
         }
 
-        renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(color, 1), 5, _shader_ids[getState()]);
+        renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(color, 1), _layer, _shader_names[getState()]);
 
         if(isFocused())
-            renderer->drawQuad(_abs_pos, glm::vec2(_abs_dim.x * .02, _abs_dim.y), glm::vec4(.3, .3, .3, 1), 6, _shader_ids[getState()]);
+            renderer->drawQuad(_abs_pos, glm::vec2(_abs_dim.x * .02, _abs_dim.y), glm::vec4(.3, .3, .3, 1), _layer + 0.01, _shader_names[getState()]);
     }
 }
 
-void Button::setTexture(IInteractable::State state, uint16_t textureID) {
-    _texture_ids[state] = textureID;
+void Button::setTexture(IInteractable::State state, std::string name) {
+    _texture_names[state] = name;
 }
 
-void Button::setShader(IInteractable::State state, uint16_t shaderID) {
-    _shader_ids[state] = shaderID;
+void Button::setShader(IInteractable::State state, std::string name) {
+    _shader_names[state] = name;
 }
 

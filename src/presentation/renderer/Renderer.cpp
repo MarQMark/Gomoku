@@ -36,9 +36,9 @@ Renderer::Renderer() {
     if (glewInit() != GLEW_OK)
         throw std::runtime_error("Error initializing glew\n");
 
-    addShader(new Shader("shaders/default.vert", "shaders/default.frag"));
-    addShader(new Shader("shaders/default.vert", "shaders/grid.frag"));
-    addShader(new Shader("shaders/default.vert", "shaders/font.frag"));
+    addShader(new Shader("shaders/default.vert", "shaders/default.frag"), "default");
+    addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
+    addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
 
     _fonts["default"] = new Font((void*)defaultFont);
 
@@ -54,8 +54,11 @@ Renderer::Renderer() {
 }
 
 Renderer::~Renderer() {
-    for (auto* shader : _shaders)
-        delete shader;
+    for (auto pair : _shaders)
+        delete pair.second;
+
+    for (auto pair : _textures)
+        delete pair.second;
 
     for (auto pair : _batches)
         delete pair.second;
@@ -63,29 +66,29 @@ Renderer::~Renderer() {
     delete _window;
 }
 
-BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, uint16_t shader) {
+BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, std::string shader) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
     drawQuadID(buffId, pos, dim, color, layer, shader);
 }
 
-BATCH_FUNC void Renderer::drawTexture(glm::vec2 pos, glm::vec2 dim, uint16_t txtId, int32_t layer, uint16_t shader) {
+BATCH_FUNC void Renderer::drawTexture(glm::vec2 pos, glm::vec2 dim, Texture2D* texture, int32_t layer, std::string shader) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
-    drawTextureID(buffId, pos, dim, txtId, layer, shader);
+    drawTextureID(buffId, pos, dim, texture, layer, shader);
 }
 
 
-BATCH_FUNC void Renderer::drawText(std::string text, glm::vec2 pos, float height, float layer, uint16_t shader, Font::Options options) {
+BATCH_FUNC void Renderer::drawText(std::string text, glm::vec2 pos, float height, float layer, std::string shader, Font::Options options) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
     drawTextID(buffId, text, pos, height, layer, shader, options);
 }
 
-void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, uint16_t shader){
+void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, std::string shader){
     uint64_t batchID = get_batch_id(0, -1, shader);
     if(_enforce_layer)
         batchID = get_batch_id(layer, -1, shader);
@@ -112,13 +115,13 @@ void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 c
     _batches[batchID]->updateBuffer(id, vertices, sizeof(Vertex) * 4, indices, 6);
 }
 
-void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, uint16_t txtId, int32_t layer, uint16_t shader){
-    uint64_t batchID = get_batch_id(0, txtId, shader);
+void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, Texture2D* texture, int32_t layer, std::string shader){
+    uint64_t batchID = get_batch_id(0, texture->get(), shader);
     if(_enforce_layer)
-        batchID = get_batch_id(layer, txtId, shader);
+        batchID = get_batch_id(layer, texture->get(), shader);
 
     if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(get_texture(txtId), get_shader(shader));
+        _batches[batchID] = new Batch(texture, get_shader(shader));
 
     // Create vertices
     Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
@@ -142,7 +145,7 @@ void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, uint16_t
     _batches[batchID]->updateBuffer(id, vertices, sizeof(Vertex) * 4, indices, 6);
 }
 
-void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float height, float layer, uint16_t shader, Font::Options options){
+void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float height, float layer, std::string shader, Font::Options options){
     Font* font = options.font;
     if(!font)
         font = _fonts["default"];
@@ -239,26 +242,26 @@ void Renderer::render() {
     Input::get()->update();
 }
 
-uint16_t Renderer::addShader(Shader *shader) {
-    // return UINT16_MAX if not enough ids for shaders
-    if(_shaders.size() == UINT16_MAX - 1){
-        std::cout << "[ERROR] Shader limit reached\n";
-        return UINT16_MAX;
+int Renderer::addShader(Shader *shader, std::string name) {
+    if(_shaders.count(name)){
+        std::cout << "[WARNING] Shader with same name already exists\n";
+        return -1;
     }
 
-    _shaders.push_back(shader);
-    return _shaders.size() - 1;
+    _shaders[name] = shader;
+    return 1;
 }
 
-uint64_t Renderer::get_batch_id(int32_t layer, uint16_t texture, uint16_t shader) {
-    return (uint64_t) layer << 32 | texture << 16 | shader;
+uint64_t Renderer::get_batch_id(int32_t layer, uint16_t texture, std::string shader) {
+    uint16_t shaderHash = std::hash<std::string>{}(shader);
+    return (uint64_t) layer << 32 | texture << 16 | shaderHash;
 }
 
-Shader *Renderer::get_shader(uint16_t id) {
-    if(id >= _shaders.size())
+Shader *Renderer::get_shader(std::string name) {
+    if(!_shaders.count(name))
         return nullptr;
 
-    return _shaders[id];
+    return _shaders[name];
 }
 
 void Renderer::setEnforceLayer(bool enforceLayer) {
@@ -269,16 +272,21 @@ float Renderer::map_layer(int32_t layer) {
     return 1 / (1 + std::exp((float)layer));
 }
 
-uint16_t Renderer::addTexture(Texture2D *texture) {
-    _textures.push_back(texture);
-    return _textures.size() - 1;
+int Renderer::addTexture(Texture2D *texture, std::string name) {
+    if(_textures.count(name)){
+        std::cout << "[WARNING] Texture with same name already exists\n";
+        return -1;
+    }
+
+    _textures[name] = texture;
+    return 1;
 }
 
-Texture2D *Renderer::get_texture(uint16_t id) {
-    if(id >= _textures.size())
+Texture2D *Renderer::getTexture(std::string name) {
+    if(!_textures.count(name))
         return nullptr;
 
-    return _textures[id];
+    return _textures[name];
 }
 
 glm::vec2 Renderer::getViewportSize() {
@@ -302,4 +310,11 @@ void Renderer::query_errors(const std::string& tag) {
         std::cout << "[OPENGL ERROR] in " << tag << ": " << res << std::endl;
         err = glGetError();
     }
+}
+
+Font *Renderer::getFont(std::string name) {
+    if(!_fonts.count(name))
+        return nullptr;
+
+    return _fonts[name];
 }

@@ -1,22 +1,24 @@
 #include "presentation/ui/Sprite.h"
 
-Sprite::Sprite(std::string name, uint16_t textureID) : IViewable(std::move(name)), _texture_id(textureID){
+Sprite::Sprite(std::string name, std::string textureName) : IViewable(std::move(name)), _texture_name(std::move(textureName)){
+    _layer = 4;
 }
 
-Sprite::Sprite(std::string name, uint16_t textureID, glm::vec2 pos, glm::vec2 dim) :
-        IViewable(std::move(name), pos, dim), _texture_id(textureID){
+Sprite::Sprite(std::string name, std::string textureName, glm::vec2 pos, glm::vec2 dim) :
+        IViewable(std::move(name), pos, dim), _texture_name(std::move(textureName)){
+    _layer = 4;
 }
 
 void Sprite::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
 
-    renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, _texture_id, 8);
+    renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_name), _layer);
 }
 
-void Sprite::setTexture(uint16_t id) {
-    _texture_id = id;
+void Sprite::setTexture(std::string name) {
+    _texture_name = name;
 }
 
-uint16_t Sprite::getTexture() {
-    return _texture_id;
+std::string Sprite::getTexture() {
+    return _texture_name;
 }

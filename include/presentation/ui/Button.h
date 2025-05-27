@@ -10,14 +10,14 @@ public:
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
-    void setTexture(State state, uint16_t textureID);
-    void setShader(State state, uint16_t shaderID);
+    void setTexture(State state, std::string name);
+    void setShader(State state, std::string name);
 
 private:
     void init_maps();
 
-    std::map<State, int32_t> _texture_ids;
-    std::map<State, uint16_t> _shader_ids;
+    std::map<State, std::string> _texture_names;
+    std::map<State, std::string> _shader_names;
 };
 
 

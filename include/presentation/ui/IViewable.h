@@ -45,6 +45,8 @@ public:
     void setAlignV(Align align){_vertical = align;}
     void setAlignH(Align align){_horizontal = align;}
 
+    void setLayer(float layer){_layer = layer;}
+
     virtual void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) = 0;
 
 protected:
@@ -64,6 +66,8 @@ protected:
     Align _vertical = Align::NONE;
     Align _horizontal = Align::NONE;
     glm::vec4 _margin = glm::vec4(0);
+
+    float _layer = 0;
 
 private:
     bool _visible = true;
