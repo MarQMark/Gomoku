@@ -1,7 +1,7 @@
 #include "presentation/ui/IViewable.h"
 
 void IViewable::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim){
-    _abs_pos = parentPos + _pos / parentDim;
+    _abs_pos = parentPos + _pos * parentDim;
     _abs_dim = parentDim * _dim;
 
     glm::vec2 res = renderer->getViewportSize();

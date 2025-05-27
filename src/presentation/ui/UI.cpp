@@ -94,7 +94,7 @@ View *UI::get_view(IViewable *viewable, View *view) {
         if(e == viewable)
             return view;
 
-        auto* childView = dynamic_cast<View*>(viewable);
+        auto* childView = dynamic_cast<View*>(e);
         if(childView && childView->isVisible()){
             auto retVal = get_view(viewable, childView);
             if(retVal)

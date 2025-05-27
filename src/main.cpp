@@ -6,47 +6,77 @@
 #include "presentation/ui/Button.h"
 #include "presentation/ui/Label.h"
 #include "presentation/ui/Sprite.h"
+#include "presentation/ui/BoardView.h"
 
-void testBtnClbk(IInteractable* interactable, IInteractable::State state, void* data){
-    std::cout << "Btn 1 Pressed" << "\n";
+void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
+    std::cout << "New Game Started!" << std::endl;
+    // Cast data to BoardView and reset the game
+    BoardView* boardView = static_cast<BoardView*>(data);
 }
 
 int main() {
-
     Renderer renderer;
     UI ui(&renderer);
 
-    Button btn("testBtn", glm::vec2(0.25), glm::vec2(.25));
-    btn.setKeepWidth(true);
-    btn.registerCallback(testBtnClbk, IInteractable::State::PRESSED);
-    ui.getViewable<View>("root")->addViewable(&btn);
+    // Create the main game board (centered, square aspect ratio)
+    auto* boardView = new BoardView("game_board");
+    boardView->setKeepWidth(true);
+    boardView->setPos(glm::vec2(0.1f, 0.1f));
+    boardView->setDim(glm::vec2(0.5f, 0.5f));
+    ui.getViewable<View>("root")->addViewable(boardView);
 
-    Button btn2("testBtn2", glm::vec2(0.5), glm::vec2(.25));
-    //btn2.setKeepHeight(true);
-    btn2.setAlignH(IViewable::Align::BOTTOM);
-    btn2.setAlignV(IViewable::Align::RIGHT);
-    btn2.setMargin(glm::vec4(0, 0.01, 0, 0.01));
-    btn2.setTexture(IInteractable::State::NONE, "testImg");
-    ui.getViewable<View>("root")->addViewable(&btn2);
+    // Create game status label
+    auto* statusLabel = new Label("statusLabel", "Black Player's Turn");
+    statusLabel->setPos(glm::vec2(0.75f, 0.85f));
+    statusLabel->setDim(glm::vec2(0.2f, 0.05f));
+    ui.getViewable<View>("root")->addViewable(statusLabel);
 
-    Label label("label", "This is a label");
-    label.setDim(glm::vec2(0, 0.05));
-    ui.getViewable<View>("root")->addViewable(&label);
+    // Create New Game button
+    auto* newGameBtn = new Button("newGameBtn", glm::vec2(0.75f, 0.75f), glm::vec2(0.2f, 0.08f));
+    newGameBtn->setKeepWidth(true);
+    newGameBtn->registerCallback(newGameCallback, IInteractable::State::PRESSED, boardView);
+    ui.getViewable<View>("root")->addViewable(newGameBtn);
 
-    Sprite sprite("sprite", "testImg", glm::vec2(0, 0.5), glm::vec2(.25));
-    ui.getViewable<View>("root")->addViewable(&sprite);
+    // Add labels to buttons
+    auto* newGameLabel = new Label("newGameLabel", "New Game");
+    newGameLabel->setPos(glm::vec2(0.01f, 0.02f));
+    newGameLabel->setDim(glm::vec2(0.18f, 0.04f));
+    ui.getViewable<View>("root")->addViewable(newGameLabel);
 
-    int w, h, c;
-    //stbi_set_flip_vertically_on_load(true);
-    unsigned char* buf = stbi_load("/path", &w, &h, &c, 4);
-    Texture2D* txt = new Texture2D(w, h, buf);
-    std::cout << renderer.addTexture(txt, "testImg") << "\n";
+    while(renderer.shouldRun()) {
+        // Update game status label based on current board state
+        const auto& boardState = boardView->getCurrentBoardState();
+        std::string statusText;
 
+        switch(boardState.gameStatus) {
+            case GameStatus::IN_PROGRESS:
+                statusText = boardState.currentPlayerName + "'s Turn";
+                break;
+            case GameStatus::BLACK_WINS:
+                statusText = "Black Wins!";
+                break;
+            case GameStatus::WHITE_WINS:
+                statusText = "White Wins!";
+                break;
+            case GameStatus::DRAW:
+                statusText = "Draw Game!";
+                break;
+            default:
+                statusText = "Game Not Started";
+                break;
+        }
 
-    while(renderer.shouldRun()){
+        statusLabel->setText(statusText);
+
+        // Update UI and render
         ui.update();
         renderer.render();
     }
 
+    // Cleanup
+    delete boardView;
+    delete statusLabel;
+    delete newGameBtn;
+    delete newGameLabel;
     return 0;
 }

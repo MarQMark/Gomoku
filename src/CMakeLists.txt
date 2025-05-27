@@ -20,8 +20,16 @@ add_executable(Gomoku
         presentation/ui/Label.cpp
         presentation/ui/Sprite.cpp
         presentation/ui/Button.cpp
+        presentation/ui/BoardView.cpp
+
+        common/PresentationMapper.cpp
+
+        logic/Board.cpp
+        logic/GameService.cpp
+
 
         main.cpp
+
 )
 
 target_include_directories(Gomoku
