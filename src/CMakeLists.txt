@@ -51,6 +51,12 @@ add_custom_target(copy_shaders ALL
         ${PROJECT_BINARY_DIR}/shaders        COMMENT "Copying shaders into binary directory")
 add_dependencies(Gomoku copy_shaders)
 
+add_custom_target(copy_resources ALL
+        COMMAND  ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/../res
+        ${PROJECT_BINARY_DIR}/res        COMMENT "Copying resources into binary directory")
+add_dependencies(Gomoku copy_resources)
+
 if (UNIX)
     find_package(OpenGL REQUIRED)
     target_link_libraries(Gomoku glut GL dl X11 pthread)
