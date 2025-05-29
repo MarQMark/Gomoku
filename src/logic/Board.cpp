@@ -1,5 +1,7 @@
 #include "logic/Board.h"
 
+#include <iostream>
+
 Board::Board() : _stoneCount(0) {
     initialize_empty();
 }

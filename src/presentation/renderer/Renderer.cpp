@@ -44,9 +44,9 @@ Renderer::Renderer() {
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);
 
-    // TODO: FIX? I dont know
-    // glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LESS);
+    // TODO: Not sure what else to do
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

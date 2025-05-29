@@ -1,5 +1,7 @@
 #include "presentation/ui/Sprite.h"
 
+#include <iostream>
+
 Sprite::Sprite(std::string name, std::string textureName) : IViewable(std::move(name)), _texture_name(std::move(textureName)){
     _layer = 4;
 }

@@ -13,4 +13,8 @@ void main() {
        fragColor = texture(u_sampler2d, v_texCoord);
    else
        fragColor = v_color;
+
+   if(fragColor.a == 0)
+       discard;
+
 }

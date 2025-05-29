@@ -19,7 +19,6 @@ BoardView::BoardView(std::string name) : View(std::move(name)) {
     _mousePressed = false;
     _prevMousePressed = false;
 
-    _gridStart = glm::vec2(-0.01f, -0.01f);
     initializeSprites();
 }
 
@@ -37,52 +36,59 @@ BoardView::~BoardView() {
 
 void BoardView::initializeSprites() {
     // Background and grid setup
-    _backgroundBoard = new Sprite(AssetManager::GameTextures::BOARD_BACKGROUND, AssetManager::GameTextures::BOARD_BACKGROUND, glm::vec2(0, 0), glm::vec2(1, 1));
+    _backgroundBoard = new Sprite(AssetManager::GameTextures::BOARD_BACKGROUND,
+                                 AssetManager::GameTextures::BOARD_BACKGROUND,
+                                 glm::vec2(0, 0), glm::vec2(1, 1));
     _backgroundBoard->setLayer(0);
     _backgroundBoard->setVisible(true);
     addViewable(_backgroundBoard);
 
-    _boardGrid = new Sprite(AssetManager::GameTextures::BOARD_GRID, AssetManager::GameTextures::BOARD_GRID, glm::vec2(0, 0), glm::vec2(1, 1));
+    _boardGrid = new Sprite(AssetManager::GameTextures::BOARD_GRID,
+                           AssetManager::GameTextures::BOARD_GRID,
+                           glm::vec2(0.06f, 0.06f), glm::vec2(0.88f, 0.88f));
     _boardGrid->setLayer(1);
     _boardGrid->setVisible(true);
     addViewable(_boardGrid);
 
+    glm::vec2 gridPos = _boardGrid->getPos();
+    glm::vec2 gridSize = _boardGrid->getDim();
+
     float gridSpacing = 1.0f / (BOARD_SIZE - 1);
-    float stoneSize = gridSpacing;
+    float stoneSize = gridSpacing * gridSize.x;
 
     for (int y = 0; y < BOARD_SIZE; ++y) {
         for (int x = 0; x < BOARD_SIZE; ++x) {
             const std::string spriteName = "stone_" + std::to_string(x) + "_" + std::to_string(y);
 
-            // Calculate intersection position (same logic as hover preview)
-            glm::vec2 intersectionPos = glm::vec2(x * gridSpacing, y * gridSpacing);
+            // Calculate intersection position WITHIN the grid area
+            glm::vec2 relativeIntersection = glm::vec2(x * gridSpacing, y * gridSpacing);
+            glm::vec2 actualIntersection = gridPos + relativeIntersection * gridSize;
 
             // Center stone sprite on intersection
-            glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
+            glm::vec2 centeredPos = actualIntersection - glm::vec2(stoneSize * 0.5f);
 
             _stoneSprites[y][x] = new Sprite(spriteName, AssetManager::GameTextures::BLACK_STONE,
                                            centeredPos, glm::vec2(stoneSize, stoneSize));
             _stoneSprites[y][x]->setLayer(6);
-            _stoneSprites[y][x]->setVisible(false);
+            _stoneSprites[y][x]->setVisible(true);
             addViewable(_stoneSprites[y][x]);
         }
     }
 
-    _hoverPreviewSprite = new Sprite("hover_preview", AssetManager::GameTextures::BLACK_STONE_HOVER,
-                                   glm::vec2(0, 0), glm::vec2(stoneSize, stoneSize));
+    _hoverPreviewSprite = new Sprite("hover_preview", AssetManager::GameTextures::BLACK_STONE_HOVER, glm::vec2(0, 0), glm::vec2(stoneSize, stoneSize));
     _hoverPreviewSprite->setLayer(8);
     _hoverPreviewSprite->setVisible(false);
     addViewable(_hoverPreviewSprite);
 }
 
 void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
-    // Handle mouse input first
     handleMouseInput(renderer);
-    // Update visual state
-    updateStoneDisplay();
     updateHoverPreview();
+    updateStoneDisplay();
 
-    // Render all child elements
+    if (Input::get()->keyXPressed(Key::D)) {
+        debugVisibleSprites();
+    }
     View::render(renderer, parentPos, parentDim);
 }
 
@@ -108,8 +114,6 @@ GridPosition BoardView::mouseToGrid(glm::vec2 mousePos) const {
 }
 
 void BoardView::handleMouseInput(Renderer* renderer) {
-    if (!isVisible()) return;
-
     glm::vec2 mousePos = renderer->getCursorPos();
     glm::vec2 viewportSize = renderer->getViewportSize();
     mousePos = mousePos / viewportSize; // Normalize to 0-1
@@ -153,9 +157,9 @@ void BoardView::processHover(GridPosition gridPos) {
         _showHoverPreview = true;
     } else {
         _showHoverPreview = false;
+        _currentHoverPosition = GridPosition(-1, -1);
     }
 }
-
 void BoardView::processClick(GridPosition gridPos) {
     if (_currentBoardState.gameStatus != GameStatus::IN_PROGRESS) {
         return;
@@ -169,7 +173,8 @@ void BoardView::processClick(GridPosition gridPos) {
         }
     }
 
-    const PlaceStoneCommandDTO command(gridPos.x, gridPos.y, (_currentBoardState.currentTurn == StoneColor::BLACK) ? "black_player" : "white_player");
+    const PlaceStoneCommandDTO command(gridPos.x, gridPos.y,
+                                     (_currentBoardState.currentTurn == StoneColor::BLACK) ? "black_player" : "white_player");
     const MoveResultDTO result = _gameService->processMove(command);
     updateBoardState(result);
 
@@ -191,30 +196,36 @@ void BoardView::updateStoneDisplay() const {
         if (stone.x >= 0 && stone.x < BOARD_SIZE && stone.y >= 0 && stone.y < BOARD_SIZE) {
             Sprite* stoneSprite = _stoneSprites[stone.y][stone.x];
             stoneSprite->setTexture(getStoneTexture(stone.color));
-            stoneSprite->setVisible(true);
+            stoneSprite->setVisible(false);
         }
     }
 }
 
 void BoardView::updateHoverPreview() const {
+    _hoverPreviewSprite->setVisible(false);
     if (_showHoverPreview && _currentHoverPosition.isValid()) {
-        float stoneSize = 1.0f / (BOARD_SIZE - 1);
+        glm::vec2 gridPos = _boardGrid->getPos();
+        glm::vec2 gridSize = _boardGrid->getDim();
 
-        // Position directly on intersection points
-        glm::vec2 intersectionPos = glm::vec2(
-            _currentHoverPosition.x * stoneSize,
-            _currentHoverPosition.y * stoneSize
+        float gridSpacing = 1.0f / (BOARD_SIZE - 1);
+        float stoneSize = gridSpacing * gridSize.x;
+
+        // Calculate intersection position WITHIN the grid area
+        glm::vec2 relativeIntersection = glm::vec2(
+            static_cast<float>(_currentHoverPosition.x) * gridSpacing,
+            static_cast<float>(_currentHoverPosition.y) * gridSpacing
         );
-        glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
+        glm::vec2 actualIntersection = gridPos + relativeIntersection * gridSize;
+
+        // Center stone sprite on intersection
+        glm::vec2 centeredPos = actualIntersection - glm::vec2(stoneSize * 0.5f);
 
         _hoverPreviewSprite->setPos(centeredPos);
         _hoverPreviewSprite->setDim(glm::vec2(stoneSize, stoneSize));
         _hoverPreviewSprite->setTexture(getStoneTexture(_currentBoardState.currentTurn, true));
         _hoverPreviewSprite->setVisible(true);
-        _hoverPreviewSprite->setLayer(4);
-    } else {
-        _hoverPreviewSprite->setVisible(false);
     }
+    std::cout << _hoverPreviewSprite->isVisible() << std::endl;
 }
 
 std::string BoardView::getStoneTexture(const StoneColor color, const bool isHover) {
@@ -226,4 +237,23 @@ std::string BoardView::getStoneTexture(const StoneColor color, const bool isHove
 
 void BoardView::updateBoardState(const MoveResultDTO& result) {
     _currentBoardState = result.boardState;
+}
+
+void BoardView::debugVisibleSprites() const {
+    std::cout << "=== VISIBLE SPRITES DEBUG ===" << std::endl;
+    std::cout << "Hover preview visible: " << (_hoverPreviewSprite->isVisible() ? "YES" : "NO") << std::endl;
+    std::cout << "Hover position: " << _currentHoverPosition.x << ", " << _currentHoverPosition.y << std::endl;
+    std::cout << "Show hover preview: " << (_showHoverPreview ? "YES" : "NO") << std::endl;
+
+    int visibleStones = 0;
+    for (int y = 0; y < BOARD_SIZE; ++y) {
+        for (int x = 0; x < BOARD_SIZE; ++x) {
+            if (_stoneSprites[y][x]->isVisible()) {
+                visibleStones++;
+                std::cout << "Stone visible at: " << x << ", " << y << std::endl;
+            }
+        }
+    }
+    std::cout << "Total visible stones: " << visibleStones << std::endl;
+    std::cout << "============================" << std::endl;
 }

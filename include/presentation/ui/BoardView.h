@@ -28,8 +28,6 @@ private:
 
     static constexpr int BOARD_SIZE = 15;
 
-    glm::vec2 _gridStart;
-
 public:
     BoardView(std::string name);
     ~BoardView();
@@ -62,6 +60,8 @@ private:
 
     static std::string getStoneTexture(StoneColor color, bool isHover = false);
     void updateBoardState(const MoveResultDTO& result);
+
+    void debugVisibleSprites() const;
 };
 
 #endif
