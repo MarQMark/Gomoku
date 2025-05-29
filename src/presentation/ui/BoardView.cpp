@@ -85,10 +85,6 @@ void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm:
     handleMouseInput(renderer);
     updateHoverPreview();
     updateStoneDisplay();
-
-    if (Input::get()->keyXPressed(Key::D)) {
-        debugVisibleSprites();
-    }
     View::render(renderer, parentPos, parentDim);
 }
 
@@ -196,7 +192,7 @@ void BoardView::updateStoneDisplay() const {
         if (stone.x >= 0 && stone.x < BOARD_SIZE && stone.y >= 0 && stone.y < BOARD_SIZE) {
             Sprite* stoneSprite = _stoneSprites[stone.y][stone.x];
             stoneSprite->setTexture(getStoneTexture(stone.color));
-            stoneSprite->setVisible(false);
+            stoneSprite->setVisible(true);
         }
     }
 }
@@ -225,7 +221,6 @@ void BoardView::updateHoverPreview() const {
         _hoverPreviewSprite->setTexture(getStoneTexture(_currentBoardState.currentTurn, true));
         _hoverPreviewSprite->setVisible(true);
     }
-    std::cout << _hoverPreviewSprite->isVisible() << std::endl;
 }
 
 std::string BoardView::getStoneTexture(const StoneColor color, const bool isHover) {
@@ -237,23 +232,4 @@ std::string BoardView::getStoneTexture(const StoneColor color, const bool isHove
 
 void BoardView::updateBoardState(const MoveResultDTO& result) {
     _currentBoardState = result.boardState;
-}
-
-void BoardView::debugVisibleSprites() const {
-    std::cout << "=== VISIBLE SPRITES DEBUG ===" << std::endl;
-    std::cout << "Hover preview visible: " << (_hoverPreviewSprite->isVisible() ? "YES" : "NO") << std::endl;
-    std::cout << "Hover position: " << _currentHoverPosition.x << ", " << _currentHoverPosition.y << std::endl;
-    std::cout << "Show hover preview: " << (_showHoverPreview ? "YES" : "NO") << std::endl;
-
-    int visibleStones = 0;
-    for (int y = 0; y < BOARD_SIZE; ++y) {
-        for (int x = 0; x < BOARD_SIZE; ++x) {
-            if (_stoneSprites[y][x]->isVisible()) {
-                visibleStones++;
-                std::cout << "Stone visible at: " << x << ", " << y << std::endl;
-            }
-        }
-    }
-    std::cout << "Total visible stones: " << visibleStones << std::endl;
-    std::cout << "============================" << std::endl;
 }

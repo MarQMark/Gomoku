@@ -44,7 +44,6 @@ Renderer::Renderer() {
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);
 
-    // TODO: Not sure what else to do
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -230,7 +229,7 @@ bool Renderer::shouldRun() {
 }
 
 void Renderer::render() {
-    glClearColor(.6, .2, .8, 1);
+    glClearColor(0.0, 0.0, 0.0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     query_errors("Renderer::render");

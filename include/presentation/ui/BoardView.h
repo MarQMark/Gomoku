@@ -29,8 +29,8 @@ private:
     static constexpr int BOARD_SIZE = 15;
 
 public:
-    BoardView(std::string name);
-    ~BoardView();
+    explicit BoardView(std::string name);
+    ~BoardView() override;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
@@ -51,17 +51,8 @@ private:
     // Simple coordinate conversion
     GridPosition mouseToGrid(glm::vec2 mousePos) const;
 
-    // Coordinate conversion
-    static glm::vec2 screenToRelative(glm::vec2 screenPos, glm::vec2 boardPos, glm::vec2 boardDim);
-    static glm::vec2 gridToScreenPosition(GridPosition gridPos, glm::vec2 boardPos, glm::vec2 boardDim);
-
-    // Helper methods
-    static bool isMouseInBoardArea(glm::vec2 mousePos, glm::vec2 boardPos, glm::vec2 boardDim);
-
     static std::string getStoneTexture(StoneColor color, bool isHover = false);
     void updateBoardState(const MoveResultDTO& result);
-
-    void debugVisibleSprites() const;
 };
 
 #endif
