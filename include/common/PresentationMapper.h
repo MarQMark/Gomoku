@@ -11,9 +11,10 @@
 class PresentationMapper {
 public:
     // === Presentation → Logic ===
-    static GridPosition commandToPosition(const PlaceStoneCommandDTO& cmd);
-    static bool validatePlaceStoneCommand(const PlaceStoneCommandDTO& cmd);
-    static bool validateMouseCommand(const MouseCommandDTO& cmd);
+    static GridPosition commandToPosition(const MouseCommandDTO& cmd);
+    static bool validatePlaceStoneCommand(const MouseCommandDTO& cmd);
+    static MouseCommandDTO toMouseCommandDTO(glm::vec2 relativePosition, const std::string &playerId);
+    static GridPosition relativeToGrid(glm::vec2 relativePos);
 
     // === Logic → Presentation ===
     static BoardViewDTO toBoardView(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine = {});

@@ -18,7 +18,7 @@ void GameService::newGame() {
     _moveHistory.clear();
 }
 
-MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
+MoveResultDTO GameService::processMove(const MouseCommandDTO& cmd) {
     if (!PresentationMapper::validatePlaceStoneCommand(cmd)) {
         return PresentationMapper::createMoveResult(
             false, _state.board, _state, "Invalid command"
@@ -75,45 +75,19 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
 }
 
 GridHoverResultDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
-    const auto relativePos = glm::vec2(hover_command_dto.relativeBoardX, hover_command_dto.relativeBoardY);
-
-    if (relativePos.x < 0.0f || relativePos.y < 0.0f) {
+    if (!hover_command_dto.gridPosition.isValid() || _state.status != IN_PROGRESS) {
         return {false, GridPosition(-1, -1), STONE_NONE};
     }
 
-    const GridPosition gridPos = relativeToGrid(relativePos.x, relativePos.y);
-
-    if (!gridPos.isValid() || _state.status != IN_PROGRESS) {
-        return {false, GridPosition(-1, -1), STONE_NONE};
+    if (isPositionOccupied(hover_command_dto.gridPosition)) {
+        return {false, hover_command_dto.gridPosition, STONE_NONE};
     }
 
-    if (isPositionOccupied(gridPos)) {
-        return {false, gridPos, STONE_NONE};
-    }
-
-    return {true, gridPos, _state.currentPlayerTurn};
+    return {true, hover_command_dto.gridPosition, _state.currentPlayerTurn};
 }
 
 MoveResultDTO GameService::processMouseClick(const MouseCommandDTO& hover_command_dto) {
-    const auto relativePos = glm::vec2(hover_command_dto.relativeBoardX, hover_command_dto.relativeBoardY);
-
-    if (relativePos.x < 0.0f || relativePos.y < 0.0f) {
-        return PresentationMapper::createMoveResult(
-            false, _state.board, _state, "Click outside grid area"
-        );
-    }
-
-    const GridPosition gridPos = relativeToGrid(relativePos.x, relativePos.y);
-
-    if (!gridPos.isValid()) {
-        return PresentationMapper::createMoveResult(
-            false, _state.board, _state, "Invalid grid position"
-        );
-    }
-
-    // Create a PlaceStoneCommandDTO and process it
-    const PlaceStoneCommandDTO placeCmd(gridPos.x, gridPos.y, hover_command_dto.playerId);
-    return processMove(placeCmd);
+    return processMove(hover_command_dto);
 }
 
 
@@ -197,17 +171,6 @@ std::vector<GridPosition> GameService::getWinningLine(const GridPosition& lastMo
     std::vector<GridPosition> winningLine;
     winningLine.push_back(lastMove);
     return winningLine;
-}
-
-GridPosition GameService::relativeToGrid(const float relativeX, const float relativeY) {
-    int gridX = static_cast<int>(relativeX * (Board::SIZE - 1) + 0.5f);
-    int gridY = static_cast<int>(relativeY * (Board::SIZE - 1) + 0.5f);
-
-    // Clamp to valid range
-    gridX = std::max(0, std::min(Board::SIZE - 1, gridX));
-    gridY = std::max(0, std::min(Board::SIZE - 1, gridY));
-
-    return {gridX, gridY};
 }
 
 bool GameService::isValidGridPosition(const GridPosition& pos) {

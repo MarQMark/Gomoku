@@ -91,9 +91,9 @@ void BoardView::handleMouseInput(Renderer* renderer) {
     const glm::vec2 gridSize = _boardGrid->getAbsDim();
     const std::string currentPlayerId = _gameService->getCurrentPlayerId();
 
-    glm::vec2 relativeMousePos = PresentationMapper::boardAreaToGridRelative(
+    const glm::vec2 relativeMousePos = PresentationMapper::boardAreaToGridRelative(
     gridPos, gridSize, mousePos, viewportSize);
-    const GridHoverResultDTO hoverResult = _gameService->processMouseHover(MouseCommandDTO(relativeMousePos, currentPlayerId));
+    const GridHoverResultDTO hoverResult = _gameService->processMouseHover(PresentationMapper::toMouseCommandDTO(relativeMousePos, currentPlayerId));
 
     if (hoverResult.isValidPosition) {
         _currentHoverPosition = hoverResult.gridPosition;
@@ -105,7 +105,7 @@ void BoardView::handleMouseInput(Renderer* renderer) {
         _mousePressed = Input::get()->mousePressed(Mouse::BUTTON_LEFT);
 
         if (_mousePressed && !_prevMousePressed) {
-            const MoveResultDTO clickResult = _gameService->processMouseClick(MouseCommandDTO(relativeMousePos, currentPlayerId));
+            const MoveResultDTO clickResult = _gameService->processMouseClick(PresentationMapper::toMouseCommandDTO(relativeMousePos, currentPlayerId));
             updateBoardState(clickResult);
 
             if (clickResult.success) {

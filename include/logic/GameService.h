@@ -29,7 +29,7 @@ public:
     GameService& operator=(GameService&&) = default;
 
     // Handle move command from presentation layer
-    MoveResultDTO processMove(const PlaceStoneCommandDTO& cmd);
+    MoveResultDTO processMove(const MouseCommandDTO& cmd);
 
     // Handle mouse interaction commands
     GridHoverResultDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
@@ -51,9 +51,6 @@ public:
     std::string getCurrentPlayerId() const;
 
 private:
-    // Helper methods for coordinate conversion
-    static GridPosition relativeToGrid(float relativeX, float relativeY);
-
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;
 };
