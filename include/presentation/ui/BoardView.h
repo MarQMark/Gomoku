@@ -29,7 +29,6 @@ private:
     static constexpr int BOARD_SIZE = 15;
 
     glm::vec2 _gridStart;
-    glm::vec2 _gridSize;
 
 public:
     BoardView(std::string name);
@@ -43,8 +42,8 @@ public:
 private:
     // Initialization
     void initializeSprites();
-    void updateStoneDisplay();
-    void updateHoverPreview();
+    void updateStoneDisplay() const;
+    void updateHoverPreview() const;
 
     // Mouse interaction
     void handleMouseInput(Renderer* renderer);
@@ -53,15 +52,15 @@ private:
 
     // Simple coordinate conversion
     GridPosition mouseToGrid(glm::vec2 mousePos) const;
-    glm::vec2 gridToMouse(GridPosition gridPos, glm::vec2 viewPos, glm::vec2 viewSize) const;
 
     // Coordinate conversion
-    glm::vec2 screenToRelative(glm::vec2 screenPos, glm::vec2 boardPos, glm::vec2 boardDim);
-    glm::vec2 gridToScreenPosition(GridPosition gridPos, glm::vec2 boardPos, glm::vec2 boardDim);
+    static glm::vec2 screenToRelative(glm::vec2 screenPos, glm::vec2 boardPos, glm::vec2 boardDim);
+    static glm::vec2 gridToScreenPosition(GridPosition gridPos, glm::vec2 boardPos, glm::vec2 boardDim);
 
     // Helper methods
-    bool isMouseInBoardArea(glm::vec2 mousePos, glm::vec2 boardPos, glm::vec2 boardDim);
-    std::string getStoneTexture(StoneColor color, bool isHover = false);
+    static bool isMouseInBoardArea(glm::vec2 mousePos, glm::vec2 boardPos, glm::vec2 boardDim);
+
+    static std::string getStoneTexture(StoneColor color, bool isHover = false);
     void updateBoardState(const MoveResultDTO& result);
 };
 

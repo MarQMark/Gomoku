@@ -16,12 +16,6 @@ int main() {
     Renderer renderer;
     UI ui(&renderer);
 
-    // Create the main game board (centered, square aspect ratio)
-    auto* boardView = new BoardView("game_board");
-    boardView->setKeepHeight(true);
-    boardView->setPos(glm::vec2(0.1f, 0.1f));
-    boardView->setDim(glm::vec2(0.8f));
-    ui.getViewable<View>("root")->addViewable(boardView);
 
     // Init Assets
     AssetManager::initialize();
@@ -33,6 +27,15 @@ int main() {
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE), AssetManager::GameTextures::WHITE_STONE);
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE_HOVER), AssetManager::GameTextures::BLACK_STONE_HOVER);
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
+    renderer.setEnforceLayer(true);
+
+    // Create the main game board (centered, square aspect ratio)
+    auto* boardView = new BoardView("game_board");
+    boardView->setKeepHeight(true);
+    boardView->setPos(glm::vec2(0.1f, 0.1f));
+    boardView->setDim(glm::vec2(0.8f));
+    ui.getViewable<View>("root")->addViewable(boardView);
+
 
     // Create game status label
     auto* statusLabel = new Label("statusLabel", "Black Player's Turn");

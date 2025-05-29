@@ -38,12 +38,12 @@ Texture2D* AssetManager::getTexture(const std::string& name) {
 }
 
 bool AssetManager::tryLoadFromFiles() {
-    auto boardGridTexture = loadTextureFromFile("res/board_grid.png");
-    auto boardTexture = loadTextureFromFile("res/board_background.png");
-    auto blackStone = loadTextureFromFile("res/black_stone.png");
-    auto whiteStone = loadTextureFromFile("res/white_stone.png");
-    auto blackHover = loadTextureFromFile("res/black_stone_hover.png");
-    auto whiteHover = loadTextureFromFile("res/white_stone_hover.png");
+    auto boardGridTexture = loadTextureFromFile("res/", GameTextures::BOARD_GRID, ".png");
+    auto boardTexture = loadTextureFromFile("res/", GameTextures::BOARD_BACKGROUND, ".png");
+    auto blackStone = loadTextureFromFile("res/", GameTextures::BLACK_STONE, ".png");
+    auto whiteStone = loadTextureFromFile("res/", GameTextures::WHITE_STONE, ".png");
+    auto blackHover = loadTextureFromFile("res/", GameTextures::BLACK_STONE_HOVER, ".png");
+    auto whiteHover = loadTextureFromFile("res/", GameTextures::WHITE_STONE_HOVER, ".png");
 
     if (boardGridTexture && boardTexture && blackStone && whiteStone && blackHover && whiteHover) {
         _textures[GameTextures::BOARD_GRID] = std::move(boardGridTexture);
@@ -58,12 +58,13 @@ bool AssetManager::tryLoadFromFiles() {
     return false;
 }
 
-std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& filepath) {
+std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding) {
+    const std::string fullPath = folderPath + filepath + fileEnding;
     int w, h, c;
-    unsigned char* buf = stbi_load(filepath.c_str(), &w, &h, &c, 4);
+    unsigned char* buf = stbi_load(fullPath.c_str(), &w, &h, &c, 4);
 
     if (!buf) {
-        std::cout << "Failed to load texture: " << filepath << std::endl;
+        std::cout << "Failed to load texture: " << fullPath << std::endl;
         return nullptr;
     }
 

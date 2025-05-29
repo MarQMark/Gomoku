@@ -31,13 +31,8 @@ private:
     static AssetManager* s_instance;
 
     std::unordered_map<std::string, std::unique_ptr<Texture2D>> _textures;
-
-    // Simple loading helpers
     bool tryLoadFromFiles();
-    void createDefaultTextures();
-
-    static std::unique_ptr<Texture2D> loadTextureFromFile(const std::string& filepath);
-    static std::unique_ptr<Texture2D> createColorTexture(int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+    static std::unique_ptr<Texture2D> loadTextureFromFile(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding);
 };
 
 #endif
