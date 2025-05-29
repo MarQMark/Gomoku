@@ -68,10 +68,11 @@ public:
     int getStoneCount() const;
 
     // Position validation and queries
-    bool isValidPosition(const GridPosition& pos) const;
+    static bool isValidPosition(const GridPosition& pos);
     std::vector<GridPosition> getOccupiedPositions() const;
     std::vector<GridPosition> getEmptyPositions() const;
-    std::vector<GridPosition> getAdjacentPositions(const GridPosition& pos) const;
+
+    static std::vector<GridPosition> getAdjacentPositions(const GridPosition& pos);
 
     // Comparison operators
     bool operator==(const Board& other) const;
@@ -101,4 +102,4 @@ struct GameState {
         , lastMove(-1, -1) {}
 };
 
-#endif //BOARD_H
+#endif

@@ -1,5 +1,6 @@
 #include "logic/GameService.h"
 #include "common/PresentationMapper.h"
+#include <cmath>
 
 GameService::GameService() {
     newGame();
@@ -8,9 +9,9 @@ GameService::GameService() {
 // Initialize game state
 void GameService::newGame() {
     _state.board = Board();
-    _state.currentPlayerTurn = StoneColor::BLACK;
+    _state.currentPlayerTurn = BLACK;
     _state.moveNumber = 0;
-    _state.status = GameStatus::IN_PROGRESS;
+    _state.status = IN_PROGRESS;
     _state.lastMove = GridPosition(-1, -1);
     _player1Id = "black_player";
     _player2Id = "white_player";
@@ -18,13 +19,13 @@ void GameService::newGame() {
 }
 
 MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
-    if (!PresentationMapper::validateCommand(cmd)) {
+    if (!PresentationMapper::validatePlaceStoneCommand(cmd)) {
         return PresentationMapper::createMoveResult(
             false, _state.board, _state, "Invalid command"
         );
     }
 
-    if (_state.status != GameStatus::IN_PROGRESS) {
+    if (_state.status != IN_PROGRESS) {
         return PresentationMapper::createMoveResult(
             false, _state.board, _state, "Game is not in progress"
         );
@@ -37,7 +38,7 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
         );
     }
 
-    if (_state.board.getColor(pos) != StoneColor::STONE_NONE) {
+    if (_state.board.getColor(pos) != STONE_NONE) {
         return PresentationMapper::createMoveResult(
             false, _state.board, _state, "Position already occupied"
         );
@@ -55,24 +56,66 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
 
     // Check for win
     std::vector<GridPosition> winningLine;
-    StoneColor winner = checkForWin(pos, _state.currentPlayerTurn);
-    if (winner != StoneColor::STONE_NONE) {
-        _state.status = (winner == StoneColor::BLACK) ? GameStatus::BLACK_WINS : GameStatus::WHITE_WINS;
-        winningLine = getWinningLine(pos, _state.currentPlayerTurn); // Simplified
+    const StoneColor winner = checkForWin(pos, _state.currentPlayerTurn);
+    if (winner != STONE_NONE) {
+        _state.status = (winner == BLACK) ? BLACK_WINS : WHITE_WINS;
+        winningLine = getWinningLine(pos, _state.currentPlayerTurn);
     } else if (_state.board.isFull()) {
-        _state.status = GameStatus::DRAW;
+        _state.status = DRAW;
     }
 
-
-    if (_state.status == GameStatus::IN_PROGRESS) {
-        _state.currentPlayerTurn = (_state.currentPlayerTurn == StoneColor::BLACK)
-                                  ? StoneColor::WHITE : StoneColor::BLACK;
+    if (_state.status == IN_PROGRESS) {
+        _state.currentPlayerTurn = (_state.currentPlayerTurn == BLACK)
+                                  ? WHITE : BLACK;
     }
 
     return PresentationMapper::createMoveResult(
         true, _state.board, _state, "", winningLine
     );
 }
+
+GridHoverResultDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
+    const auto relativePos = glm::vec2(hover_command_dto.relativeBoardX, hover_command_dto.relativeBoardY);
+
+    if (relativePos.x < 0.0f || relativePos.y < 0.0f) {
+        return {false, GridPosition(-1, -1), STONE_NONE};
+    }
+
+    const GridPosition gridPos = relativeToGrid(relativePos.x, relativePos.y);
+
+    if (!gridPos.isValid() || _state.status != IN_PROGRESS) {
+        return {false, GridPosition(-1, -1), STONE_NONE};
+    }
+
+    if (isPositionOccupied(gridPos)) {
+        return {false, gridPos, STONE_NONE};
+    }
+
+    return {true, gridPos, _state.currentPlayerTurn};
+}
+
+MoveResultDTO GameService::processMouseClick(const MouseCommandDTO& hover_command_dto) {
+    const auto relativePos = glm::vec2(hover_command_dto.relativeBoardX, hover_command_dto.relativeBoardY);
+
+    if (relativePos.x < 0.0f || relativePos.y < 0.0f) {
+        return PresentationMapper::createMoveResult(
+            false, _state.board, _state, "Click outside grid area"
+        );
+    }
+
+    const GridPosition gridPos = relativeToGrid(relativePos.x, relativePos.y);
+
+    if (!gridPos.isValid()) {
+        return PresentationMapper::createMoveResult(
+            false, _state.board, _state, "Invalid grid position"
+        );
+    }
+
+    // Create a PlaceStoneCommandDTO and process it
+    const PlaceStoneCommandDTO placeCmd(gridPos.x, gridPos.y, hover_command_dto.playerId);
+    return processMove(placeCmd);
+}
+
 
 StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
@@ -100,7 +143,7 @@ StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneCol
         }
     }
 
-    return StoneColor::STONE_NONE;
+    return STONE_NONE;
 }
 
 bool GameService::undoLastMove() {
@@ -108,7 +151,7 @@ bool GameService::undoLastMove() {
         return false;
     }
 
-    Move lastMove = _moveHistory.back();
+    const Move lastMove = _moveHistory.back();
     _moveHistory.pop_back();
 
     if (!_state.board.removeStone(lastMove.position)) {
@@ -118,7 +161,7 @@ bool GameService::undoLastMove() {
 
     _state.moveNumber--;
     _state.currentPlayerTurn = lastMove.color;
-    _state.status = GameStatus::IN_PROGRESS;
+    _state.status = IN_PROGRESS;
 
     if (!_moveHistory.empty()) {
         _state.lastMove = _moveHistory.back().position;
@@ -130,14 +173,14 @@ bool GameService::undoLastMove() {
 }
 
 void GameService::pauseGame() {
-    if (_state.status == GameStatus::IN_PROGRESS) {
-        _state.status = GameStatus::PAUSED;
+    if (_state.status == IN_PROGRESS) {
+        _state.status = PAUSED;
     }
 }
 
 void GameService::resumeGame() {
-    if (_state.status == GameStatus::PAUSED) {
-        _state.status = GameStatus::IN_PROGRESS;
+    if (_state.status == PAUSED) {
+        _state.status = IN_PROGRESS;
     }
 }
 
@@ -147,13 +190,30 @@ void GameService::setPlayerIds(const std::string& player1Id, const std::string& 
 }
 
 std::string GameService::getCurrentPlayerId() const {
-    return (_state.currentPlayerTurn == StoneColor::BLACK) ? _player1Id : _player2Id;
+    return (_state.currentPlayerTurn == BLACK) ? _player1Id : _player2Id;
 }
 
 std::vector<GridPosition> GameService::getWinningLine(const GridPosition& lastMove, StoneColor color) {
     std::vector<GridPosition> winningLine;
-
     winningLine.push_back(lastMove);
-
     return winningLine;
+}
+
+GridPosition GameService::relativeToGrid(const float relativeX, const float relativeY) {
+    int gridX = static_cast<int>(relativeX * (Board::SIZE - 1) + 0.5f);
+    int gridY = static_cast<int>(relativeY * (Board::SIZE - 1) + 0.5f);
+
+    // Clamp to valid range
+    gridX = std::max(0, std::min(Board::SIZE - 1, gridX));
+    gridY = std::max(0, std::min(Board::SIZE - 1, gridY));
+
+    return {gridX, gridY};
+}
+
+bool GameService::isValidGridPosition(const GridPosition& pos) {
+    return pos.isValid();
+}
+
+bool GameService::isPositionOccupied(const GridPosition& pos) const {
+    return _state.board.getColor(pos) != STONE_NONE;
 }

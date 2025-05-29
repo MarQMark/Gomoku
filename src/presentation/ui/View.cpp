@@ -10,7 +10,7 @@ void View::addViewable(IViewable *viewable) {
     _viewables.push_back(viewable);
 }
 
-void View::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+void View::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
     if(!isVisible())
         return;

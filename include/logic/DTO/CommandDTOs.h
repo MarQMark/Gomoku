@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+#include "glm/vec2.hpp"
+
 // Command DTOs for Presentation -> Logic communication
 struct PlaceStoneCommandDTO {
     int x;
@@ -14,22 +16,16 @@ struct PlaceStoneCommandDTO {
         : x(x_), y(y_), playerId(std::move(playerId_)) {}
 };
 
-struct MouseHoverCommandDTO {
-    float relativeX;  // 0.0 to 1.0 within board area
-    float relativeY;  // 0.0 to 1.0 within board area
+struct MouseCommandDTO {
+    float relativeBoardX;  // 0.0 to 1.0 within board area
+    float relativeBoardY;  // 0.0 to 1.0 within board area
     std::string playerId;
 
-    MouseHoverCommandDTO(const float x, const float y, std::string  playerId_)
-        : relativeX(x), relativeY(y), playerId(std::move(playerId_)) {}
-};
+    MouseCommandDTO(const float x, const float y, std::string  playerId_)
+        : relativeBoardX(x), relativeBoardY(y), playerId(std::move(playerId_)) {}
 
-struct MouseClickCommandDTO {
-    float relativeX;  // 0.0 to 1.0 within board area
-    float relativeY;  // 0.0 to 1.0 within board area
-    std::string playerId;
-
-    MouseClickCommandDTO(const float x, const float y, std::string  playerId_)
-        : relativeX(x), relativeY(y), playerId(std::move(playerId_)) {}
+    MouseCommandDTO(const glm::vec2 relativeMousePos, std::string  playerId_)
+    : relativeBoardX(relativeMousePos.x), relativeBoardY(relativeMousePos.y), playerId(std::move(playerId_)) {}
 };
 
 struct UndoMoveCommandDTO {

@@ -6,7 +6,7 @@ Button::Button(std::string name) : IInteractable(std::move(name)) {
     init_maps();
 }
 
-Button::Button(std::string name, glm::vec2 pos, glm::vec2 dim) : IInteractable(std::move(name), pos, dim) {
+Button::Button(std::string name, const glm::vec2 pos, const glm::vec2 dim) : IInteractable(std::move(name), pos, dim) {
     init_maps();
 }
 
@@ -27,7 +27,7 @@ void Button::init_maps() {
     _shader_names[State::RELEASED] = "default";
 }
 
-void Button::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     IInteractable::render(renderer, parentPos, parentDim);
     if(!isVisible())
         return;
@@ -62,11 +62,11 @@ void Button::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim
     }
 }
 
-void Button::setTexture(IInteractable::State state, std::string name) {
+void Button::setTexture(const IInteractable::State state, std::string name) {
     _texture_names[state] = name;
 }
 
-void Button::setShader(IInteractable::State state, std::string name) {
+void Button::setShader(const IInteractable::State state, std::string name) {
     _shader_names[state] = name;
 }
 

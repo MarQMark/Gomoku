@@ -12,7 +12,7 @@ std::string Label::getText() {
     return _text;
 }
 
-void Label::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+void Label::render(Renderer *renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
     if(!isVisible())
         return;

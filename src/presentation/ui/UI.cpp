@@ -10,10 +10,10 @@ void UI::update() {
     if(!_view_root->isVisible())
         return;
 
-    glm::vec2 dim = _renderer->getViewportSize();
+    const glm::vec2 dim = _renderer->getViewportSize();
     _ui_mouse = _renderer->getCursorPos() / dim;
 
-    bool leftClick = Input::get()->mousePressed(Mouse::BUTTON_LEFT);
+    const bool leftClick = Input::get()->mousePressed(Mouse::BUTTON_LEFT);
 
     std::vector<IInteractable*> interactables;
     get_interactable(_view_root, interactables);
@@ -47,7 +47,7 @@ void UI::get_interactable(View* view, std::vector<IInteractable *> &interactable
     }
 }
 
-void UI::update_interactable(bool leftClick, std::vector<IInteractable*>& interactables) {
+void UI::update_interactable(const bool leftClick, std::vector<IInteractable*>& interactables) {
     for(auto* interactable : interactables){
 
         // Prevent being able to interact with twice (keyboard && mouse)
@@ -96,7 +96,7 @@ View *UI::get_view(IViewable *viewable, View *view) {
 
         auto* childView = dynamic_cast<View*>(e);
         if(childView && childView->isVisible()){
-            auto retVal = get_view(viewable, childView);
+            const auto retVal = get_view(viewable, childView);
             if(retVal)
                 return retVal;
         }
@@ -105,7 +105,7 @@ View *UI::get_view(IViewable *viewable, View *view) {
     return nullptr;
 }
 
-bool UI::cursor_interactable_intersect(IInteractable *interactable) {
+bool UI::cursor_interactable_intersect(IInteractable *interactable) const {
     return (_ui_mouse.x > interactable->getAbsPos().x && _ui_mouse.x < interactable->getAbsPos().x + interactable->getAbsDim().x &&
             _ui_mouse.y > interactable->getAbsPos().y && _ui_mouse.y < interactable->getAbsPos().y + interactable->getAbsDim().y);
 }

@@ -11,7 +11,7 @@ Sprite::Sprite(std::string name, std::string textureName, glm::vec2 pos, glm::ve
     _layer = 4;
 }
 
-void Sprite::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+void Sprite::render(Renderer *renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
     if(!isVisible())
         return;

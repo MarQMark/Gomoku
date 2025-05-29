@@ -1,10 +1,10 @@
 #include "presentation/ui/IViewable.h"
 
-void IViewable::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim){
+void IViewable::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim){
     _abs_pos = parentPos + _pos * parentDim;
     _abs_dim = parentDim * _dim;
 
-    glm::vec2 res = renderer->getViewportSize();
+    const glm::vec2 res = renderer->getViewportSize();
     if(_keep_width)
         _abs_dim.y *= (res.x / res.y);
     if(_keep_height)

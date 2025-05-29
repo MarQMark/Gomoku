@@ -5,6 +5,7 @@
 
 #include "Board.h"
 #include "DTO/CommandDTOs.h"
+#include "glm/vec2.hpp"
 #include "presentation/DTO/ViewModelDTOs.h"
 
 class GameService {
@@ -15,7 +16,8 @@ private:
     std::string _player2Id;
 
     StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
-    std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color);
+
+    static std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color);
 
 public:
     GameService();
@@ -29,13 +31,14 @@ public:
     // Handle move command from presentation layer
     MoveResultDTO processMove(const PlaceStoneCommandDTO& cmd);
 
-    // Handle mouse interaction commands (optional future enhancement)
-    GridHoverResultDTO processHover(const MouseHoverCommandDTO& cmd);
-    MoveResultDTO processClick(const MouseClickCommandDTO& cmd);
+    // Handle mouse interaction commands
+    GridHoverResultDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
+    MoveResultDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
 
     // Game state queries
     const GameState& getCurrentState() const { return _state; }
     const std::vector<Move>& getMoveHistory() const { return _moveHistory; }
+    static int getBoardSize() { return Board::SIZE; }
 
     // Game control methods
     void newGame();
@@ -49,8 +52,10 @@ public:
 
 private:
     // Helper methods for coordinate conversion
-    GridPosition relativeToGrid(float relativeX, float relativeY) const;
-    bool isValidGridPosition(const GridPosition& pos) const;
+    static GridPosition relativeToGrid(float relativeX, float relativeY);
+
+    static bool isValidGridPosition(const GridPosition& pos);
+    bool isPositionOccupied(const GridPosition& pos) const;
 };
 
-#endif // GAMESERVICE_H
+#endif

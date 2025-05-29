@@ -4,7 +4,6 @@
 #include "presentation/ui/View.h"
 #include "presentation/ui/Sprite.h"
 #include "logic/GameService.h"
-#include "logic/DTO/CommandDTOs.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 #include <memory>
 #include <array>
@@ -14,19 +13,15 @@ private:
     std::unique_ptr<GameService> _gameService;
     BoardViewDTO _currentBoardState;
 
-    // Visual elements
-    Sprite* _backgroundBoard;
-    Sprite* _boardGrid;
-    std::array<std::array<Sprite*, 15>, 15> _stoneSprites;
-    Sprite* _hoverPreviewSprite;
+    Sprite* _backgroundBoard{};
+    Sprite* _boardGrid{};
+    std::array<std::array<Sprite*, Board::SIZE>, Board::SIZE> _stoneSprites{};
+    Sprite* _hoverPreviewSprite{};
 
-    // State tracking
     GridPosition _currentHoverPosition;
     bool _showHoverPreview;
     bool _mousePressed;
     bool _prevMousePressed;
-
-    static constexpr int BOARD_SIZE = 15;
 
 public:
     explicit BoardView(std::string name);
@@ -34,22 +29,14 @@ public:
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
-    // Board state access
     const BoardViewDTO& getCurrentBoardState() const { return _currentBoardState; }
 
 private:
-    // Initialization
     void initializeSprites();
     void updateStoneDisplay() const;
-    void updateHoverPreview() const;
+    void updateHoverPreview(StoneColor previewColor) const;
 
-    // Mouse interaction
     void handleMouseInput(Renderer* renderer);
-    void processHover(GridPosition mousePos);
-    void processClick(GridPosition mousePos);
-
-    // Simple coordinate conversion
-    GridPosition mouseToGrid(glm::vec2 mousePos) const;
 
     static std::string getStoneTexture(StoneColor color, bool isHover = false);
     void updateBoardState(const MoveResultDTO& result);

@@ -1,25 +1,23 @@
 #include "logic/Board.h"
 
-#include <iostream>
-
 Board::Board() : _stoneCount(0) {
     initialize_empty();
 }
 
 void Board::initialize_empty() {
     for (auto& row : _grid) {
-        row.fill(StoneColor::STONE_NONE);
+        row.fill(STONE_NONE);
     }
     _stoneCount = 0;
 }
 
-bool Board::placeStone(const GridPosition& pos, StoneColor color) {
-    if (!isValidPosition(pos) || color == StoneColor::STONE_NONE) {
+bool Board::placeStone(const GridPosition& pos, const StoneColor color) {
+    if (!isValidPosition(pos) || color == STONE_NONE) {
         return false;
     }
 
     // Check if position is already occupied
-    if (_grid[pos.y][pos.x] != StoneColor::STONE_NONE) {
+    if (_grid[pos.y][pos.x] != STONE_NONE) {
         return false;
     }
 
@@ -36,12 +34,12 @@ bool Board::removeStone(const GridPosition& pos) {
     }
 
     // Check if a stone to remove
-    if (_grid[pos.y][pos.x] == StoneColor::STONE_NONE) {
+    if (_grid[pos.y][pos.x] == STONE_NONE) {
         return false;
     }
 
     // Remove the stone
-    _grid[pos.y][pos.x] = StoneColor::STONE_NONE;
+    _grid[pos.y][pos.x] = STONE_NONE;
     _stoneCount--;
 
     return true;
@@ -53,7 +51,7 @@ void Board::clear() {
 
 StoneColor Board::getColor(const GridPosition& pos) const {
     if (!isValidPosition(pos)) {
-        return StoneColor::STONE_NONE;
+        return STONE_NONE;
     }
     return _grid[pos.y][pos.x];
 }
@@ -70,7 +68,7 @@ int Board::getStoneCount() const {
     return _stoneCount;
 }
 
-bool Board::isValidPosition(const GridPosition& pos) const {
+bool Board::isValidPosition(const GridPosition& pos) {
     return pos.x >= 0 && pos.x < SIZE && pos.y >= 0 && pos.y < SIZE;
 }
 
@@ -80,7 +78,7 @@ std::vector<GridPosition> Board::getOccupiedPositions() const {
 
     for (int y = 0; y < SIZE; ++y) {
         for (int x = 0; x < SIZE; ++x) {
-            if (_grid[y][x] != StoneColor::STONE_NONE) {
+            if (_grid[y][x] != STONE_NONE) {
                 positions.emplace_back(x, y);
             }
         }
@@ -95,7 +93,7 @@ std::vector<GridPosition> Board::getEmptyPositions() const {
 
     for (int y = 0; y < SIZE; ++y) {
         for (int x = 0; x < SIZE; ++x) {
-            if (_grid[y][x] == StoneColor::STONE_NONE) {
+            if (_grid[y][x] == STONE_NONE) {
                 positions.emplace_back(x, y);
             }
         }
@@ -104,13 +102,12 @@ std::vector<GridPosition> Board::getEmptyPositions() const {
     return positions;
 }
 
-std::vector<GridPosition> Board::getAdjacentPositions(const GridPosition& pos) const {
+std::vector<GridPosition> Board::getAdjacentPositions(const GridPosition& pos) {
     std::vector<GridPosition> adjacent;
     adjacent.reserve(8);
 
-    // All 8 directions: up, down, left, right, and 4 diagonals
-    static const int dx[] = {-1, -1, -1,  0,  0,  1,  1,  1};
-    static const int dy[] = {-1,  0,  1, -1,  1, -1,  0,  1};
+    static constexpr int dx[] = {-1, -1, -1,  0,  0,  1,  1,  1};
+    static constexpr int dy[] = {-1,  0,  1, -1,  1, -1,  0,  1};
 
     for (int i = 0; i < 8; ++i) {
         GridPosition adj(pos.x + dx[i], pos.y + dy[i]);

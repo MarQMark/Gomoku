@@ -1,5 +1,6 @@
 #include "presentation/ui/BoardView.h"
 #include "presentation/input/Input.h"
+#include "common/PresentationMapper.h"
 #include <iostream>
 
 #include "presentation/assets/AssetManager.h"
@@ -7,14 +8,10 @@
 BoardView::BoardView(std::string name) : View(std::move(name)) {
     _gameService = std::make_unique<GameService>();
 
-    // Initialize state
-    _currentBoardState.boardSize = 15;
-    _currentBoardState.currentTurn = StoneColor::BLACK;
-    _currentBoardState.currentPlayerName = "Black Player";
-    _currentBoardState.gameStatus = GameStatus::IN_PROGRESS;
-    _currentBoardState.moveNumber = 0;
+    // Initialize state from GameService
+    const GameState& gameState = _gameService->getCurrentState();
+    _currentBoardState = PresentationMapper::toBoardView(gameState.board, gameState);
 
-    _currentHoverPosition = GridPosition(-1, -1);
     _showHoverPreview = false;
     _mousePressed = false;
     _prevMousePressed = false;
@@ -27,8 +24,9 @@ BoardView::~BoardView() {
     delete _boardGrid;
     delete _hoverPreviewSprite;
 
-    for (int y = 0; y < BOARD_SIZE; ++y) {
-        for (int x = 0; x < BOARD_SIZE; ++x) {
+    const int boardSize = GameService::getBoardSize();
+    for (int y = 0; y < boardSize; ++y) {
+        for (int x = 0; x < boardSize; ++x) {
             delete _stoneSprites[y][x];
         }
     }
@@ -50,27 +48,26 @@ void BoardView::initializeSprites() {
     _boardGrid->setVisible(true);
     addViewable(_boardGrid);
 
-    glm::vec2 gridPos = _boardGrid->getPos();
-    glm::vec2 gridSize = _boardGrid->getDim();
+    const glm::vec2 boardPos = _boardGrid->getPos();
+    const glm::vec2 boardSize = _boardGrid->getDim();
 
-    float gridSpacing = 1.0f / (BOARD_SIZE - 1);
-    float stoneSize = gridSpacing * gridSize.x;
+    // Get board size from logic layer
+    const int gridSize = GameService::getBoardSize();
+    const float stoneSize = PresentationMapper::calculateStoneSize(boardSize, gridSize);
 
-    for (int y = 0; y < BOARD_SIZE; ++y) {
-        for (int x = 0; x < BOARD_SIZE; ++x) {
+    // Create stone sprites using logic layer positioning
+    for (int y = 0; y < gridSize; ++y) {
+        for (int x = 0; x < gridSize; ++x) {
             const std::string spriteName = "stone_" + std::to_string(x) + "_" + std::to_string(y);
 
-            // Calculate intersection position WITHIN the grid area
-            glm::vec2 relativeIntersection = glm::vec2(x * gridSpacing, y * gridSpacing);
-            glm::vec2 actualIntersection = gridPos + relativeIntersection * gridSize;
-
-            // Center stone sprite on intersection
-            glm::vec2 centeredPos = actualIntersection - glm::vec2(stoneSize * 0.5f);
+            // Get intersection position from logic layer
+            glm::vec2 intersectionPos = PresentationMapper::gridToViewPosition(x, y, boardPos, boardSize, gridSize);
+            const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
 
             _stoneSprites[y][x] = new Sprite(spriteName, AssetManager::GameTextures::BLACK_STONE,
                                            centeredPos, glm::vec2(stoneSize, stoneSize));
             _stoneSprites[y][x]->setLayer(6);
-            _stoneSprites[y][x]->setVisible(true);
+            _stoneSprites[y][x]->setVisible(false);
             addViewable(_stoneSprites[y][x]);
         }
     }
@@ -83,118 +80,63 @@ void BoardView::initializeSprites() {
 
 void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     handleMouseInput(renderer);
-    updateHoverPreview();
     updateStoneDisplay();
     View::render(renderer, parentPos, parentDim);
 }
 
-// Mouse to grid conversion using the grid overlay bounds
-GridPosition BoardView::mouseToGrid(glm::vec2 mousePos) const {
+void BoardView::handleMouseInput(Renderer* renderer) {
+    const glm::vec2 mousePos = renderer->getCursorPos();
+    const glm::vec2 viewportSize = renderer->getViewportSize();
     const glm::vec2 gridPos = _boardGrid->getAbsPos();
     const glm::vec2 gridSize = _boardGrid->getAbsDim();
+    const std::string currentPlayerId = _gameService->getCurrentPlayerId();
 
-    // Mouse not in grid
-    if (mousePos.x < gridPos.x || mousePos.x > gridPos.x + gridSize.x ||
-        mousePos.y < gridPos.y || mousePos.y > gridPos.y + gridSize.y)
-        return GridPosition(-1, -1);
+    glm::vec2 relativeMousePos = PresentationMapper::boardAreaToGridRelative(
+    gridPos, gridSize, mousePos, viewportSize);
+    const GridHoverResultDTO hoverResult = _gameService->processMouseHover(MouseCommandDTO(relativeMousePos, currentPlayerId));
 
-    // Convert to grid coordinates
-    const glm::vec2 relativePos = (mousePos - gridPos) / gridSize;
-    int gridX = static_cast<int>(relativePos.x * (BOARD_SIZE - 1) + 0.5f);
-    int gridY = static_cast<int>(relativePos.y * (BOARD_SIZE - 1) + 0.5f);
-
-    gridX = std::max(0, std::min(BOARD_SIZE - 1, gridX));
-    gridY = std::max(0, std::min(BOARD_SIZE - 1, gridY));
-
-    return GridPosition(gridX, gridY);
-}
-
-void BoardView::handleMouseInput(Renderer* renderer) {
-    glm::vec2 mousePos = renderer->getCursorPos();
-    glm::vec2 viewportSize = renderer->getViewportSize();
-    mousePos = mousePos / viewportSize; // Normalize to 0-1
-
-    // Use the actual absolute position and dimensions of this view
-    GridPosition gridPos = mouseToGrid(mousePos);
-
-    if (gridPos.x >= 0 && gridPos.y >= 0) {
-        processHover(gridPos);
+    if (hoverResult.isValidPosition) {
+        _currentHoverPosition = hoverResult.gridPosition;
+        _showHoverPreview = true;
+        updateHoverPreview(hoverResult.previewColor);
 
         // Handle clicks
         _prevMousePressed = _mousePressed;
         _mousePressed = Input::get()->mousePressed(Mouse::BUTTON_LEFT);
 
         if (_mousePressed && !_prevMousePressed) {
-            processClick(gridPos);
+            const MoveResultDTO clickResult = _gameService->processMouseClick(MouseCommandDTO(relativeMousePos, currentPlayerId));
+            updateBoardState(clickResult);
+
+            if (clickResult.success) {
+                _showHoverPreview = false;
+                _hoverPreviewSprite->setVisible(false);
+            }
+
+            if (!clickResult.success) {
+                std::cout << "Move failed: " << clickResult.errorMessage << std::endl;
+            }
         }
     } else {
-        // Mouse is outside grid
+        // Mouse is outside grid area or position invalid
         _showHoverPreview = false;
-    }
-}
-
-void BoardView::processHover(GridPosition gridPos) {
-    if (_currentBoardState.gameStatus != GameStatus::IN_PROGRESS) {
-        _showHoverPreview = false;
-        return;
-    }
-
-    // Check if position is occupied
-    bool occupied = false;
-    for (const auto& stone : _currentBoardState.stones) {
-        if (stone.x == gridPos.x && stone.y == gridPos.y) {
-            occupied = true;
-            break;
-        }
-    }
-
-    if (!occupied) {
-        _currentHoverPosition = gridPos;
-        _showHoverPreview = true;
-    } else {
-        _showHoverPreview = false;
-        _currentHoverPosition = GridPosition(-1, -1);
         _hoverPreviewSprite->setVisible(false);
     }
 }
 
-
-void BoardView::processClick(GridPosition gridPos) {
-    if (_currentBoardState.gameStatus != GameStatus::IN_PROGRESS) {
-        return;
-    }
-
-    // Check if position is available
-    for (const auto& stone : _currentBoardState.stones) {
-        if (stone.x == gridPos.x && stone.y == gridPos.y) {
-            std::cout << "Position already occupied!" << std::endl;
-            return;
-        }
-    }
-
-    const PlaceStoneCommandDTO command(gridPos.x, gridPos.y,
-                                     (_currentBoardState.currentTurn == StoneColor::BLACK) ? "black_player" : "white_player");
-    const MoveResultDTO result = _gameService->processMove(command);
-    updateBoardState(result);
-    _showHoverPreview = false;
-    _hoverPreviewSprite->setVisible(false);
-
-    if (!result.success) {
-        std::cout << "Move failed: " << result.errorMessage << std::endl;
-    }
-}
-
 void BoardView::updateStoneDisplay() const {
+    const int boardSize = GameService::getBoardSize();
+
     // Hide all stone sprites first
-    for (int y = 0; y < BOARD_SIZE; ++y) {
-        for (int x = 0; x < BOARD_SIZE; ++x) {
+    for (int y = 0; y < boardSize; ++y) {
+        for (int x = 0; x < boardSize; ++x) {
             _stoneSprites[y][x]->setVisible(false);
         }
     }
 
     // Show sprites for placed stones
     for (const auto& stone : _currentBoardState.stones) {
-        if (stone.x >= 0 && stone.x < BOARD_SIZE && stone.y >= 0 && stone.y < BOARD_SIZE) {
+        if (stone.x >= 0 && stone.x < boardSize && stone.y >= 0 && stone.y < boardSize) {
             Sprite* stoneSprite = _stoneSprites[stone.y][stone.x];
             stoneSprite->setTexture(getStoneTexture(stone.color));
             stoneSprite->setVisible(true);
@@ -202,28 +144,21 @@ void BoardView::updateStoneDisplay() const {
     }
 }
 
-void BoardView::updateHoverPreview() const {
+void BoardView::updateHoverPreview(const StoneColor previewColor) const {
     if (_showHoverPreview && _currentHoverPosition.isValid()) {
-        glm::vec2 gridPos = _boardGrid->getPos();
-        glm::vec2 gridSize = _boardGrid->getDim();
-
-        float gridSpacing = 1.0f / (BOARD_SIZE - 1);
-        float stoneSize = gridSpacing * gridSize.x;
-
-        // Calculate intersection position WITHIN the grid area
-        glm::vec2 relativeIntersection = glm::vec2(
-            static_cast<float>(_currentHoverPosition.x) * gridSpacing,
-            static_cast<float>(_currentHoverPosition.y) * gridSpacing
-        );
-        glm::vec2 actualIntersection = gridPos + relativeIntersection * gridSize;
-
-        // Center stone sprite on intersection
-        glm::vec2 centeredPos = actualIntersection - glm::vec2(stoneSize * 0.5f);
+        const glm::vec2 boardPos = _boardGrid->getPos();
+        const glm::vec2 boardSize = _boardGrid->getDim();
+        const int gridSize = GameService::getBoardSize();
+        const float stoneSize = PresentationMapper::calculateStoneSize(boardSize, gridSize);
+        const glm::vec2 intersectionPos = PresentationMapper::gridToViewPosition(_currentHoverPosition.x, _currentHoverPosition.y, boardPos, boardSize, gridSize);
+        const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
 
         _hoverPreviewSprite->setPos(centeredPos);
         _hoverPreviewSprite->setDim(glm::vec2(stoneSize, stoneSize));
-        _hoverPreviewSprite->setTexture(getStoneTexture(_currentBoardState.currentTurn, true));
+        _hoverPreviewSprite->setTexture(getStoneTexture(previewColor, true));
         _hoverPreviewSprite->setVisible(true);
+    } else {
+        _hoverPreviewSprite->setVisible(false);
     }
 }
 
