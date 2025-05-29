@@ -57,6 +57,8 @@ int Batch::render() {
 
     for(auto pair : _buffers)
         pair.second->used = false;
+
+    return 1;
 }
 
 void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, uint32_t ibSize) {
