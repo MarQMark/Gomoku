@@ -7,7 +7,8 @@
 class View : public IViewable{
 public:
     View(std::string name);
-    ~View() = default;
+
+    virtual ~View() = default;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

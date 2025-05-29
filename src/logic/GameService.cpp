@@ -11,7 +11,7 @@ void GameService::newGame() {
     _state.currentPlayerTurn = StoneColor::BLACK;
     _state.moveNumber = 0;
     _state.status = GameStatus::IN_PROGRESS;
-    _state.lastMove = Position(-1, -1);
+    _state.lastMove = GridPosition(-1, -1);
     _player1Id = "black_player";
     _player2Id = "white_player";
     _moveHistory.clear();
@@ -30,7 +30,7 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
         );
     }
 
-    Position pos = PresentationMapper::commandToPosition(cmd);
+    GridPosition pos = PresentationMapper::commandToPosition(cmd);
     if (!pos.isValid()) {
         return PresentationMapper::createMoveResult(
             false, _state.board, _state, "Invalid board position"
@@ -54,7 +54,7 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
     _state.moveNumber++;
 
     // Check for win
-    std::vector<Position> winningLine;
+    std::vector<GridPosition> winningLine;
     StoneColor winner = checkForWin(pos, _state.currentPlayerTurn);
     if (winner != StoneColor::STONE_NONE) {
         _state.status = (winner == StoneColor::BLACK) ? GameStatus::BLACK_WINS : GameStatus::WHITE_WINS;
@@ -74,21 +74,21 @@ MoveResultDTO GameService::processMove(const PlaceStoneCommandDTO& cmd) {
     );
 }
 
-StoneColor GameService::checkForWin(const Position& lastMove, const StoneColor color) const {
+StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
         constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
         int count = 1;
         const int dx = directions[dir][0];
         const int dy = directions[dir][1];
 
-        Position check(lastMove.x + dx, lastMove.y + dy);
+        GridPosition check(lastMove.x + dx, lastMove.y + dy);
         while (check.isValid() && _state.board.getColor(check) == color) {
             count++;
             check.x += dx;
             check.y += dy;
         }
 
-        check = Position(lastMove.x - dx, lastMove.y - dy);
+        check = GridPosition(lastMove.x - dx, lastMove.y - dy);
         while (check.isValid() && _state.board.getColor(check) == color) {
             count++;
             check.x -= dx;
@@ -123,7 +123,7 @@ bool GameService::undoLastMove() {
     if (!_moveHistory.empty()) {
         _state.lastMove = _moveHistory.back().position;
     } else {
-        _state.lastMove = Position(-1, -1);
+        _state.lastMove = GridPosition(-1, -1);
     }
 
     return true;
@@ -150,10 +150,10 @@ std::string GameService::getCurrentPlayerId() const {
     return (_state.currentPlayerTurn == StoneColor::BLACK) ? _player1Id : _player2Id;
 }
 
-std::vector<Position> GameService::getWinningLine(const Position& lastMove, StoneColor color) {
-    std::vector<Position> winningLine;
-    
+std::vector<GridPosition> GameService::getWinningLine(const GridPosition& lastMove, StoneColor color) {
+    std::vector<GridPosition> winningLine;
+
     winningLine.push_back(lastMove);
-    
+
     return winningLine;
 }

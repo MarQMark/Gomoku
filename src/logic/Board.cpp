@@ -11,7 +11,7 @@ void Board::initialize_empty() {
     _stoneCount = 0;
 }
 
-bool Board::placeStone(const Position& pos, StoneColor color) {
+bool Board::placeStone(const GridPosition& pos, StoneColor color) {
     if (!isValidPosition(pos) || color == StoneColor::STONE_NONE) {
         return false;
     }
@@ -28,7 +28,7 @@ bool Board::placeStone(const Position& pos, StoneColor color) {
     return true;
 }
 
-bool Board::removeStone(const Position& pos) {
+bool Board::removeStone(const GridPosition& pos) {
     if (!isValidPosition(pos)) {
         return false;
     }
@@ -49,7 +49,7 @@ void Board::clear() {
     initialize_empty();
 }
 
-StoneColor Board::getColor(const Position& pos) const {
+StoneColor Board::getColor(const GridPosition& pos) const {
     if (!isValidPosition(pos)) {
         return StoneColor::STONE_NONE;
     }
@@ -68,12 +68,12 @@ int Board::getStoneCount() const {
     return _stoneCount;
 }
 
-bool Board::isValidPosition(const Position& pos) const {
+bool Board::isValidPosition(const GridPosition& pos) const {
     return pos.x >= 0 && pos.x < SIZE && pos.y >= 0 && pos.y < SIZE;
 }
 
-std::vector<Position> Board::getOccupiedPositions() const {
-    std::vector<Position> positions;
+std::vector<GridPosition> Board::getOccupiedPositions() const {
+    std::vector<GridPosition> positions;
     positions.reserve(_stoneCount);
 
     for (int y = 0; y < SIZE; ++y) {
@@ -87,8 +87,8 @@ std::vector<Position> Board::getOccupiedPositions() const {
     return positions;
 }
 
-std::vector<Position> Board::getEmptyPositions() const {
-    std::vector<Position> positions;
+std::vector<GridPosition> Board::getEmptyPositions() const {
+    std::vector<GridPosition> positions;
     positions.reserve(SIZE * SIZE - _stoneCount);
 
     for (int y = 0; y < SIZE; ++y) {
@@ -102,8 +102,8 @@ std::vector<Position> Board::getEmptyPositions() const {
     return positions;
 }
 
-std::vector<Position> Board::getAdjacentPositions(const Position& pos) const {
-    std::vector<Position> adjacent;
+std::vector<GridPosition> Board::getAdjacentPositions(const GridPosition& pos) const {
+    std::vector<GridPosition> adjacent;
     adjacent.reserve(8);
 
     // All 8 directions: up, down, left, right, and 4 diagonals
@@ -111,7 +111,7 @@ std::vector<Position> Board::getAdjacentPositions(const Position& pos) const {
     static const int dy[] = {-1,  0,  1, -1,  1, -1,  0,  1};
 
     for (int i = 0; i < 8; ++i) {
-        Position adj(pos.x + dx[i], pos.y + dy[i]);
+        GridPosition adj(pos.x + dx[i], pos.y + dy[i]);
         if (isValidPosition(adj)) {
             adjacent.push_back(adj);
         }

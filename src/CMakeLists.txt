@@ -29,6 +29,8 @@ add_executable(Gomoku
 
 
         main.cpp
+        presentation/assets/AssetManager.cpp
+        ../include/presentation/assets/AssetManager.h
 
 )
 

@@ -6,7 +6,7 @@
 
 #include "common/Common.h"
 
-struct Position;
+struct GridPosition;
 
 struct StoneViewDTO {
     int x, y;
@@ -22,7 +22,7 @@ struct BoardViewDTO {
     std::string currentPlayerName;
     GameStatus gameStatus;
     int moveNumber;
-    std::optional<std::vector<Position>> winningLine;
+    std::optional<std::vector<GridPosition>> winningLine;
 };
 
 struct MoveResultDTO {
@@ -30,6 +30,16 @@ struct MoveResultDTO {
     std::string errorMessage;
     BoardViewDTO boardState;
     std::optional<StoneColor> winner;
+};
+
+struct GridHoverResultDTO {
+    bool isValidPosition;
+    GridPosition gridPosition;
+    StoneColor previewColor;
+
+    GridHoverResultDTO() : isValidPosition(false), gridPosition(-1, -1), previewColor(StoneColor::STONE_NONE) {}
+    GridHoverResultDTO(const bool valid, const GridPosition pos, const StoneColor color)
+        : isValidPosition(valid), gridPosition(pos), previewColor(color) {}
 };
 
 #endif

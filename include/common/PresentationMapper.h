@@ -9,12 +9,12 @@
 class PresentationMapper {
 public:
     // === Presentation → Logic ===
-    static Position commandToPosition(const PlaceStoneCommandDTO& cmd);
+    static GridPosition commandToPosition(const PlaceStoneCommandDTO& cmd);
     static bool validateCommand(const PlaceStoneCommandDTO& cmd);
 
     // === Logic → Presentation ===
-    static BoardViewDTO toBoardView(const Board& board, const GameState& state, const std::vector<Position>& winningLine = {});
-    static MoveResultDTO createMoveResult(bool success, const Board& board, const GameState& state, const std::string& error = "", const std::vector<Position>& winningLine = {});
+    static BoardViewDTO toBoardView(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine = {});
+    static MoveResultDTO createMoveResult(bool success, const Board& board, const GameState& state, const std::string& error = "", const std::vector<GridPosition>& winningLine = {});
 };
 
 #endif // PRESENTATIONMAPPER_H

@@ -2,17 +2,17 @@
 #include <algorithm>
 
 // === Presentation → Logic ===
-Position PresentationMapper::commandToPosition(const PlaceStoneCommandDTO& cmd) {
-    return Position(cmd.x, cmd.y);
+GridPosition PresentationMapper::commandToPosition(const PlaceStoneCommandDTO& cmd) {
+    return GridPosition(cmd.x, cmd.y);
 }
 
 bool PresentationMapper::validateCommand(const PlaceStoneCommandDTO& cmd) {
-    const Position pos(cmd.x, cmd.y);
+    const GridPosition pos(cmd.x, cmd.y);
     return pos.isValid() && !cmd.playerId.empty();
 }
 
 // === Logic → Presentation ===
-BoardViewDTO PresentationMapper::toBoardView(const Board& board, const GameState& state, const std::vector<Position>& winningLine) {
+BoardViewDTO PresentationMapper::toBoardView(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine) {
     BoardViewDTO view;
     view.boardSize = Board::SIZE;
     view.currentTurn = state.currentPlayerTurn;
@@ -24,7 +24,7 @@ BoardViewDTO PresentationMapper::toBoardView(const Board& board, const GameState
                             ? "Black Player" : "White Player";
 
     // Convert occupied positions to stone views
-    for (const Position& pos : board.getOccupiedPositions()) {
+    for (const GridPosition& pos : board.getOccupiedPositions()) {
         StoneViewDTO stone;
         stone.x = pos.x;
         stone.y = pos.y;
@@ -49,7 +49,7 @@ MoveResultDTO PresentationMapper::createMoveResult(bool success,
                                         const Board& board,
                                         const GameState& state,
                                         const std::string& error,
-                                        const std::vector<Position>& winningLine) {
+                                        const std::vector<GridPosition>& winningLine) {
     MoveResultDTO result;
     result.success = success;
 

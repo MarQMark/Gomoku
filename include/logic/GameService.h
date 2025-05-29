@@ -14,8 +14,8 @@ private:
     std::string _player1Id;
     std::string _player2Id;
 
-    StoneColor checkForWin(const Position& lastMove, StoneColor color) const;
-    std::vector<Position> getWinningLine(const Position& lastMove, StoneColor color);
+    StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
+    std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color);
 
 public:
     GameService();
@@ -28,6 +28,10 @@ public:
 
     // Handle move command from presentation layer
     MoveResultDTO processMove(const PlaceStoneCommandDTO& cmd);
+
+    // Handle mouse interaction commands (optional future enhancement)
+    GridHoverResultDTO processHover(const MouseHoverCommandDTO& cmd);
+    MoveResultDTO processClick(const MouseClickCommandDTO& cmd);
 
     // Game state queries
     const GameState& getCurrentState() const { return _state; }
@@ -42,6 +46,11 @@ public:
     // Player management
     void setPlayerIds(const std::string& player1Id, const std::string& player2Id);
     std::string getCurrentPlayerId() const;
+
+private:
+    // Helper methods for coordinate conversion
+    GridPosition relativeToGrid(float relativeX, float relativeY) const;
+    bool isValidGridPosition(const GridPosition& pos) const;
 };
 
 #endif // GAMESERVICE_H

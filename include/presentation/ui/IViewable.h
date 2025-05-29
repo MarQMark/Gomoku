@@ -46,6 +46,7 @@ public:
     void setAlignH(Align align){_horizontal = align;}
 
     void setLayer(float layer){_layer = layer;}
+    float getLayer() const{ return _layer;}
 
     virtual void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) = 0;
 

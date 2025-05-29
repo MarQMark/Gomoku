@@ -1,16 +1,14 @@
 #include "presentation/renderer/Renderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "presentation/renderer/stb_image/stb_image.h"
+#include "presentation/assets/AssetManager.h"
 #include "presentation/ui/UI.h"
 #include "presentation/ui/Button.h"
 #include "presentation/ui/Label.h"
-#include "presentation/ui/Sprite.h"
 #include "presentation/ui/BoardView.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
     std::cout << "New Game Started!" << std::endl;
-    // Cast data to BoardView and reset the game
     BoardView* boardView = static_cast<BoardView*>(data);
 }
 
@@ -24,6 +22,17 @@ int main() {
     boardView->setPos(glm::vec2(0.1f, 0.1f));
     boardView->setDim(glm::vec2(0.8f));
     ui.getViewable<View>("root")->addViewable(boardView);
+
+    // Init Assets
+    AssetManager::initialize();
+    AssetManager::instance()->loadGameAssets();
+    auto* assets = AssetManager::instance();
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BOARD_BACKGROUND), AssetManager::GameTextures::BOARD_BACKGROUND);
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BOARD_GRID), AssetManager::GameTextures::BOARD_GRID);
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE), AssetManager::GameTextures::BLACK_STONE);
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE), AssetManager::GameTextures::WHITE_STONE);
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE_HOVER), AssetManager::GameTextures::BLACK_STONE_HOVER);
+    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
     // Create game status label
     auto* statusLabel = new Label("statusLabel", "Black Player's Turn");
