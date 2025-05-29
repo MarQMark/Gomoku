@@ -25,11 +25,7 @@ void AssetManager::cleanup() {
 }
 
 void AssetManager::loadGameAssets() {
-    if (tryLoadFromFiles()) {
-        std::cout << "Assets loaded from files" << std::endl;
-    } else {
-        std::cout << "Asset files not found." << std::endl;
-    }
+    loadTexturesFromFiles();
 }
 
 Texture2D* AssetManager::getTexture(const std::string& name) {
@@ -37,25 +33,13 @@ Texture2D* AssetManager::getTexture(const std::string& name) {
     return (it != _textures.end()) ? it->second.get() : nullptr;
 }
 
-bool AssetManager::tryLoadFromFiles() {
-    auto boardGridTexture = loadTextureFromFile("res/", GameTextures::BOARD_GRID, ".png");
-    auto boardTexture = loadTextureFromFile("res/", GameTextures::BOARD_BACKGROUND, ".png");
-    auto blackStone = loadTextureFromFile("res/", GameTextures::BLACK_STONE, ".png");
-    auto whiteStone = loadTextureFromFile("res/", GameTextures::WHITE_STONE, ".png");
-    auto blackHover = loadTextureFromFile("res/", GameTextures::BLACK_STONE_HOVER, ".png");
-    auto whiteHover = loadTextureFromFile("res/", GameTextures::WHITE_STONE_HOVER, ".png");
-
-    if (boardGridTexture && boardTexture && blackStone && whiteStone && blackHover && whiteHover) {
-        _textures[GameTextures::BOARD_GRID] = std::move(boardGridTexture);
-        _textures[GameTextures::BOARD_BACKGROUND] = std::move(boardTexture);
-        _textures[GameTextures::BLACK_STONE] = std::move(blackStone);
-        _textures[GameTextures::WHITE_STONE] = std::move(whiteStone);
-        _textures[GameTextures::BLACK_STONE_HOVER] = std::move(blackHover);
-        _textures[GameTextures::WHITE_STONE_HOVER] = std::move(whiteHover);
-        return true;
-    }
-    
-    return false;
+void AssetManager::loadTexturesFromFiles() {
+    _textures[GameTextures::BOARD_GRID] = loadTextureFromFile("res/", GameTextures::BOARD_GRID, ".png");
+    _textures[GameTextures::BOARD_BACKGROUND] = loadTextureFromFile("res/", GameTextures::BOARD_BACKGROUND, ".png");
+    _textures[GameTextures::BLACK_STONE] = loadTextureFromFile("res/", GameTextures::BLACK_STONE, ".png");
+    _textures[GameTextures::WHITE_STONE] = loadTextureFromFile("res/", GameTextures::WHITE_STONE, ".png");
+    _textures[GameTextures::BLACK_STONE_HOVER] = loadTextureFromFile("res/", GameTextures::BLACK_STONE_HOVER, ".png");
+    _textures[GameTextures::WHITE_STONE_HOVER] = loadTextureFromFile("res/", GameTextures::WHITE_STONE_HOVER, ".png");
 }
 
 std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding) {
@@ -64,8 +48,7 @@ std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& 
     unsigned char* buf = stbi_load(fullPath.c_str(), &w, &h, &c, 4);
 
     if (!buf) {
-        std::cout << "Failed to load texture: " << fullPath << std::endl;
-        return nullptr;
+        throw std::runtime_error("Failed to load texture: " + fullPath);
     }
 
     auto texture = std::make_unique<Texture2D>(w, h, buf);

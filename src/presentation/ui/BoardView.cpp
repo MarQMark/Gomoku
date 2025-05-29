@@ -154,8 +154,11 @@ void BoardView::processHover(GridPosition gridPos) {
     } else {
         _showHoverPreview = false;
         _currentHoverPosition = GridPosition(-1, -1);
+        _hoverPreviewSprite->setVisible(false);
     }
 }
+
+
 void BoardView::processClick(GridPosition gridPos) {
     if (_currentBoardState.gameStatus != GameStatus::IN_PROGRESS) {
         return;
@@ -173,6 +176,8 @@ void BoardView::processClick(GridPosition gridPos) {
                                      (_currentBoardState.currentTurn == StoneColor::BLACK) ? "black_player" : "white_player");
     const MoveResultDTO result = _gameService->processMove(command);
     updateBoardState(result);
+    _showHoverPreview = false;
+    _hoverPreviewSprite->setVisible(false);
 
     if (!result.success) {
         std::cout << "Move failed: " << result.errorMessage << std::endl;
@@ -198,7 +203,6 @@ void BoardView::updateStoneDisplay() const {
 }
 
 void BoardView::updateHoverPreview() const {
-    _hoverPreviewSprite->setVisible(false);
     if (_showHoverPreview && _currentHoverPosition.isValid()) {
         glm::vec2 gridPos = _boardGrid->getPos();
         glm::vec2 gridSize = _boardGrid->getDim();
