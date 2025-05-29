@@ -29,6 +29,8 @@ void Button::init_maps() {
 
 void Button::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IInteractable::render(renderer, parentPos, parentDim);
+    if(!isVisible())
+        return;
 
     if(!_texture_names[getState()].empty()){
         renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_names[getState()]), _layer, _shader_names[getState()]);

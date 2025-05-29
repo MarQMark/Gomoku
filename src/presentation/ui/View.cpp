@@ -12,6 +12,8 @@ void View::addViewable(IViewable *viewable) {
 
 void View::render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
+    if(!isVisible())
+        return;
 
     for (auto* viewable : _viewables){
         viewable->render(renderer, _abs_pos, _abs_dim);

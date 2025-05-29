@@ -14,6 +14,8 @@ std::string Label::getText() {
 
 void Label::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
+    if(!isVisible())
+        return;
 
     renderer->drawTextID((uint64_t)this, _text, _abs_pos, _abs_dim.y, _layer, "font");
 }

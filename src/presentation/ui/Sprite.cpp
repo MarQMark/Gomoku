@@ -11,6 +11,8 @@ Sprite::Sprite(std::string name, std::string textureName, glm::vec2 pos, glm::ve
 
 void Sprite::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
+    if(!isVisible())
+        return;
 
     renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_name), _layer);
 }
