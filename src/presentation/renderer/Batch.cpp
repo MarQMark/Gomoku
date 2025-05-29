@@ -16,12 +16,10 @@ Batch::~Batch() {
     }
 
     delete _vb;
-
-    if(_ib)
-        delete _ib;
+    delete _ib;
 }
 
-void Batch::render() {
+int Batch::render() {
     // remove all unused vertices
     for (auto it = _buffers.begin(); it != _buffers.end(); ) {
         if (!it->second->used) {
@@ -33,11 +31,17 @@ void Batch::render() {
         }
     }
 
-    if(_dirty)
-        recreate_buffers();
+    if(_dirty){
+        // Returns false if Batch is empty
+        if(recreate_buffers() != 1)
+            return -1;
+    }
 
-    if(!_shader || !_ib)
-        return;
+
+    if(!_shader)
+        return -2;
+    if(!_ib)
+        return -3;
 
     _shader->bind();
 
@@ -107,7 +111,7 @@ void Batch::update_ib(Buffer *buffer, uint32_t *ib, uint32_t ibSize) {
     _dirty = true;
 }
 
-void Batch::recreate_buffers() {
+int Batch::recreate_buffers() {
     uint32_t vbSize = 0;
     uint32_t ibLen = 0;
     for (auto pair : _buffers) {
@@ -115,8 +119,9 @@ void Batch::recreate_buffers() {
         ibLen += pair.second->ib_len;
     }
 
+    // Return if all buffers are empty i.e. complete batch is empty => nothing to render
     if(_buffers.empty() || vbSize == 0 || ibLen == 0)
-        return;
+        return -1;
 
     uint8_t* vertices = (uint8_t*)malloc(vbSize);
     uint32_t* indices = (uint32_t*)malloc(ibLen * sizeof(uint32_t));
@@ -146,4 +151,6 @@ void Batch::recreate_buffers() {
     free(indices);
 
     _dirty = false;
+
+    return 1;
 }

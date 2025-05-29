@@ -235,9 +235,16 @@ void Renderer::render() {
 
     query_errors("Renderer::render");
 
+    std::vector<uint64_t> emptyBatches;
     for (auto pair : _batches) {
-        pair.second->render();
+        if(pair.second->render() == -1)
+            emptyBatches.push_back(pair.first);
     }
+    for(auto id : emptyBatches){
+        delete _batches[id];
+        _batches.erase(id);
+    }
+
 
     glfwSwapBuffers(_window->getGLFWWindow());
     glfwPollEvents();

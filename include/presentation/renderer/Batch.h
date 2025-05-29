@@ -11,7 +11,14 @@ public:
     Batch(Texture2D* texture2D = nullptr, Shader* shader = nullptr);
     ~Batch();
 
-    void render();
+    /* Returns Values:
+     *   1 -> Success
+     *  -1 -> Batch is empty
+     *  -2 -> Invalid Shader
+     *  -3 -> Invalid Index Buffer
+     *
+     */
+    int render();
 
     void updateBuffer(uint64_t id, void* vb, uint32_t vbSize, uint32_t* ib, uint32_t ibSize);
 
@@ -42,7 +49,7 @@ private:
     void update_ib(Buffer* buffer, uint32_t* ib, uint32_t ibSize);
 
     bool _dirty = true;
-    void recreate_buffers();
+    int recreate_buffers();
 };
 
 #endif //GOMOKU_BATCH_H
