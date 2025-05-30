@@ -27,9 +27,6 @@
 #error "Incompatible Compiler"
 #endif
 
-void window_size_callback(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
 
 Renderer::Renderer() {
     _window = new Window(1280, 720);
@@ -40,6 +37,10 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/default.vert", "shaders/default.frag"), "default");
     addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
     addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
+    addShader(new Shader("shaders/stone.vert", "shaders/default.frag"), "stone");
+    // TODO: FIX
+    addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
+    get_shader("bg")->uniform2fv("u_resolution", glm::vec2(1280, 720));
 
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);
@@ -50,16 +51,14 @@ Renderer::Renderer() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glfwSetWindowSizeCallback(_window->getGLFWWindow(), window_size_callback);
-
     query_errors("Renderer::Constructor");
 }
 
 Renderer::~Renderer() {
-    for (auto pair : _shaders)
+    for (const auto& pair : _shaders)
         delete pair.second;
 
-    for (auto pair : _textures)
+    for (const auto& pair : _textures)
         delete pair.second;
 
     for (auto pair : _batches)
@@ -68,42 +67,47 @@ Renderer::~Renderer() {
     delete _window;
 }
 
-BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, std::string shader) {
+BATCH_FUNC void Renderer::drawQuad(glm::vec2 pos, glm::vec2 dim, glm::vec4 color, const Options& options) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
-    drawQuadID(buffId, pos, dim, color, layer, shader);
+    drawQuadID(buffId, pos, dim, color, options);
 }
 
-BATCH_FUNC void Renderer::drawTexture(glm::vec2 pos, glm::vec2 dim, Texture2D* texture, int32_t layer, std::string shader) {
+BATCH_FUNC void Renderer::drawTexture(glm::vec2 pos, glm::vec2 dim, Texture2D* texture, const Options& options) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
-    drawTextureID(buffId, pos, dim, texture, layer, shader);
+    drawTextureID(buffId, pos, dim, texture, options);
 }
 
 
-BATCH_FUNC void Renderer::drawText(std::string text, glm::vec2 pos, float height, float layer, std::string shader, Font::Options options) {
+BATCH_FUNC void Renderer::drawText(std::string text, glm::vec2 pos, float height, const Options& options, Font::Options fontOptions) {
     BATCH_FORCE_STACK
     uint64_t buffId = GET_RED_ADDR;
 
-    drawTextID(buffId, text, pos, height, layer, shader, options);
+    drawTextID(buffId, text, pos, height, options, fontOptions);
 }
 
-void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 color, int32_t layer, std::string shader){
-    uint64_t batchID = get_batch_id(0, -1, shader);
+void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 color, const Options& options){
+    BatchID batchID;
+    batchID.texture = -1;
+    batchID.shader = std::hash<std::string>{}(options.shaderName);
+    batchID.animation = options.animationID;
     if(_enforce_layer)
-        batchID = get_batch_id(layer, -1, shader);
+        batchID.layer = options.layer;
 
     if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(nullptr, get_shader(shader));
+        _batches[batchID] = new Batch(nullptr, get_shader(options.shaderName));
+
+    _batches[batchID]->setAnimator(options.animator);
 
     // Create vertices
     Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
-    vertices[0].position = glm::vec3(pos,                            map_layer(layer));
-    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),      map_layer(layer));
-    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, dim.y), map_layer(layer));
-    vertices[3].position = glm::vec3(pos + glm::vec2(0,     dim.y), map_layer(layer));
+    vertices[0].position = glm::vec3(pos,                           map_layer(options.layer));
+    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),     map_layer(options.layer));
+    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, dim.y), map_layer(options.layer));
+    vertices[3].position = glm::vec3(pos + glm::vec2(0,     dim.y), map_layer(options.layer));
     for(int i = 0; i < 4; i++){
         vertices[i].color = color;
         vertices[i].texCoords = glm::vec2(0);
@@ -117,26 +121,33 @@ void Renderer::drawQuadID(uint64_t id, glm::vec2 pos, glm::vec2 dim, glm::vec4 c
     _batches[batchID]->updateBuffer(id, vertices, sizeof(Vertex) * 4, indices, 6);
 }
 
-void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, Texture2D* texture, int32_t layer, std::string shader){
-    uint64_t batchID = get_batch_id(0, texture->get(), shader);
+void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, Texture2D* texture, const Options& options){
+    BatchID batchID;
+    batchID.texture = texture->get();
+    batchID.shader = std::hash<std::string>{}(options.shaderName);
+    batchID.animation = options.animationID;
     if(_enforce_layer)
-        batchID = get_batch_id(layer, texture->get(), shader);
+        batchID.layer = options.layer;
 
     if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(texture, get_shader(shader));
+        _batches[batchID] = new Batch(texture, get_shader(options.shaderName));
+
+    _batches[batchID]->setAnimator(options.animator);
 
     // Create vertices
     Vertex* vertices = (Vertex*) malloc(sizeof(Vertex) * 4);
-    vertices[0].position = glm::vec3(pos,                           map_layer(layer));
-    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),     map_layer(layer));
-    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, dim.y), map_layer(layer));
-    vertices[3].position = glm::vec3(pos + glm::vec2(0,     dim.y), map_layer(layer));
+    vertices[0].position = glm::vec3(pos,                           map_layer(options.layer));
+    vertices[1].position = glm::vec3(pos + glm::vec2(dim.x, 0),     map_layer(options.layer));
+    vertices[2].position = glm::vec3(pos + glm::vec2(dim.x, dim.y), map_layer(options.layer));
+    vertices[3].position = glm::vec3(pos + glm::vec2(0,     dim.y), map_layer(options.layer));
     vertices[0].texCoords = glm::vec2(0, 0);
     vertices[1].texCoords = glm::vec2(1, 0);
     vertices[2].texCoords = glm::vec2(1, 1);
     vertices[3].texCoords = glm::vec2(0, 1);
+    glm::vec2 center = pos + (dim / 2.f);
     for(int i = 0; i < 4; i++){
         vertices[i].color = glm::vec4(0);
+        vertices[i].normal = glm::normalize(glm::vec2(vertices[i].position) - center);
     }
 
     // Create indices
@@ -147,17 +158,22 @@ void Renderer::drawTextureID(uint64_t id, glm::vec2 pos, glm::vec2 dim, Texture2
     _batches[batchID]->updateBuffer(id, vertices, sizeof(Vertex) * 4, indices, 6);
 }
 
-void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float height, float layer, std::string shader, Font::Options options){
-    Font* font = options.font;
+void Renderer::drawTextID(uint64_t id, const std::string& text, glm::vec2 pos, float height, const Options& options, Font::Options fontOptions){
+    Font* font = fontOptions.font;
     if(!font)
         font = _fonts["default"];
 
-    uint64_t batchID = get_batch_id(0, font->getID(), shader);
+    BatchID batchID;
+    batchID.texture = font->getID();
+    batchID.shader = std::hash<std::string>{}(options.shaderName);
+    batchID.animation = options.animationID;
     if(_enforce_layer)
-        batchID = get_batch_id(layer, font->getID(), shader);
+        batchID.layer = options.layer;
 
     if(!_batches.count(batchID))
-        _batches[batchID] = new Batch(font->getTexture(), get_shader(shader));
+        _batches[batchID] = new Batch(font->getTexture(), get_shader(options.shaderName));
+
+    _batches[batchID]->setAnimator(options.animator);
 
     Font::Glyph* g = font->getGlyph('A');
     glm::vec2 viewportDim = getViewportSize();
@@ -184,7 +200,7 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         else if(c == '\r') { x = pos.x;            continue; } // Carriage Return
         else if(c == '\n') {                                   // Newline
             x = pos.x;
-            y += height * 1.5f * options.spacing.y;
+            y += height * 1.5f * fontOptions.spacing.y;
             continue;
         }
 
@@ -195,10 +211,10 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         float offY = g->offset.y * scale;
 
         //Position
-        vertices[nVertex + 0].position = glm::vec3(x + offX,          y + offY,           map_layer(layer));
-        vertices[nVertex + 1].position = glm::vec3(x + offX + cWidth, y + offY,           map_layer(layer));
-        vertices[nVertex + 2].position = glm::vec3(x + offX + cWidth, y + offY + cHeight, map_layer(layer));
-        vertices[nVertex + 3].position = glm::vec3(x + offX,          y + offY + cHeight, map_layer(layer));
+        vertices[nVertex + 0].position = glm::vec3(x + offX,          y + offY,           map_layer(options.layer));
+        vertices[nVertex + 1].position = glm::vec3(x + offX + cWidth, y + offY,           map_layer(options.layer));
+        vertices[nVertex + 2].position = glm::vec3(x + offX + cWidth, y + offY + cHeight, map_layer(options.layer));
+        vertices[nVertex + 3].position = glm::vec3(x + offX,          y + offY + cHeight, map_layer(options.layer));
 
         // set Texture Coords
         vertices[nVertex + 0].texCoords = glm::vec2(g->pos.x,               1 - (g->pos.y));
@@ -207,7 +223,7 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
         vertices[nVertex + 3].texCoords = glm::vec2(g->pos.x,               1 - (g->pos.y + g->dim.y));
 
         for (int i = 0; i < 4; ++i)
-            vertices[nVertex + i].color = options.color;
+            vertices[nVertex + i].color = fontOptions.color;
 
         indices[indexCnt++] = nVertex + 0;
         indices[indexCnt++] = nVertex + 1;
@@ -218,7 +234,7 @@ void Renderer::drawTextID(uint64_t id, std::string text, glm::vec2 pos, float he
 
         nVertex+=4;
 
-        x += cWidth + whitespace * options.spacing.x;
+        x += cWidth + whitespace * fontOptions.spacing.x;
     }
 
     _batches[batchID]->updateBuffer(id, vertices, sizeof(Vertex) * 4 * textLen, indices, 6 * textLen);
@@ -234,7 +250,10 @@ void Renderer::render() {
 
     query_errors("Renderer::render");
 
-    std::vector<uint64_t> emptyBatches;
+    // TODO: FIX
+    get_shader("bg")->uniform1lf("u_time", glfwGetTime());
+
+    std::vector<BatchID> emptyBatches;
     for (auto pair : _batches) {
         if(pair.second->render() == -1)
             emptyBatches.push_back(pair.first);
@@ -244,14 +263,11 @@ void Renderer::render() {
         _batches.erase(id);
     }
 
-
-    glfwSwapBuffers(_window->getGLFWWindow());
-    glfwPollEvents();
-
+    _window->update();
     Input::get()->update();
 }
 
-int Renderer::addShader(Shader *shader, std::string name) {
+int Renderer::addShader(Shader *shader, const std::string& name) {
     if(_shaders.count(name)){
         std::cout << "[WARNING] Shader with same name already exists\n";
         return -1;
@@ -261,12 +277,12 @@ int Renderer::addShader(Shader *shader, std::string name) {
     return 1;
 }
 
-uint64_t Renderer::get_batch_id(int32_t layer, uint16_t texture, std::string shader) {
+uint64_t Renderer::get_batch_id(float layer, uint16_t texture, const std::string& shader) {
     uint16_t shaderHash = std::hash<std::string>{}(shader);
     return (uint64_t) layer << 32 | texture << 16 | shaderHash;
 }
 
-Shader *Renderer::get_shader(std::string name) {
+Shader *Renderer::get_shader(const std::string& name) {
     if(!_shaders.count(name))
         return nullptr;
 
@@ -277,11 +293,11 @@ void Renderer::setEnforceLayer(bool enforceLayer) {
     _enforce_layer = enforceLayer;
 }
 
-float Renderer::map_layer(int32_t layer) {
-    return 1 / (1 + std::exp((float)layer));
+float Renderer::map_layer(float layer) {
+    return 1 / (1 + std::exp(layer));
 }
 
-int Renderer::addTexture(Texture2D *texture, std::string name) {
+int Renderer::addTexture(Texture2D *texture, const std::string& name) {
     if(_textures.count(name)){
         std::cout << "[WARNING] Texture with same name already exists\n";
         return -1;
@@ -291,7 +307,7 @@ int Renderer::addTexture(Texture2D *texture, std::string name) {
     return 1;
 }
 
-Texture2D *Renderer::getTexture(std::string name) {
+Texture2D *Renderer::getTexture(const std::string& name) {
     if(!_textures.count(name))
         return nullptr;
 
@@ -321,7 +337,7 @@ void Renderer::query_errors(const std::string& tag) {
     }
 }
 
-Font *Renderer::getFont(std::string name) {
+Font *Renderer::getFont(const std::string& name) {
     if(!_fonts.count(name))
         return nullptr;
 

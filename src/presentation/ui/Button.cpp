@@ -32,8 +32,12 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
     if(!isVisible())
         return;
 
+    Renderer::Options options;
+    options.layer = _layer;
+    options.shaderName = _shader_names[getState()];
+
     if(!_texture_names[getState()].empty()){
-        renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_names[getState()]), _layer, _shader_names[getState()]);
+        renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_names[getState()]), options);
     }
     else{
         glm::vec3 color;
@@ -55,10 +59,12 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
                 break;
         }
 
-        renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(color, 1), _layer, _shader_names[getState()]);
+        renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(color, 1), options);
 
-        if(isFocused())
-            renderer->drawQuad(_abs_pos, glm::vec2(_abs_dim.x * .02, _abs_dim.y), glm::vec4(.3, .3, .3, 1), _layer + 0.01, _shader_names[getState()]);
+        if(isFocused()){
+            options.layer = _layer + 0.01,
+            renderer->drawQuad(_abs_pos, glm::vec2(_abs_dim.x * .02, _abs_dim.y), glm::vec4(.3, .3, .3, 1), options);
+        }
     }
 }
 

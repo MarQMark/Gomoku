@@ -11,6 +11,7 @@ add_executable(Gomoku
         presentation/renderer/Shader.cpp
         presentation/renderer/Batch.cpp
         presentation/renderer/Font.cpp
+        presentation/renderer/Animator.cpp
 
         presentation/input/Input.cpp
 
@@ -22,18 +23,17 @@ add_executable(Gomoku
         presentation/ui/Button.cpp
         presentation/ui/BoardView.cpp
 
-        logic/mapping/MapLogicToView.cpp
+        presentation/assets/AssetManager.cpp
+        presentation/assets/AssetManager.h
 
+        presentation/mapping/MapPresentationToCommand.cpp
+        presentation/mapping/MapPresentationToCommand.h
+
+        logic/mapping/MapLogicToView.cpp
         logic/Board.cpp
         logic/GameService.cpp
 
-
         main.cpp
-        presentation/assets/AssetManager.cpp
-        ../include/presentation/assets/AssetManager.h
-        presentation/mapping/MapPresentationToCommand.cpp
-        ../include/presentation/mapping/MapPresentationToCommand.h
-
 )
 
 target_include_directories(Gomoku

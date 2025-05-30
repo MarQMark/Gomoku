@@ -5,6 +5,7 @@ in vec2 v_texCoord;
 in vec3 v_fragPos;
 
 uniform sampler2D u_sampler2d;
+uniform float time;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -16,5 +17,4 @@ void main() {
 
    if(fragColor.a == 0)
        discard;
-
 }

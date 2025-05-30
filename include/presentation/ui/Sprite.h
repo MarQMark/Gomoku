@@ -14,8 +14,11 @@ public:
     void setTexture(std::string name);
     std::string getTexture();
 
+    Animator* getAnimator();
+
 private:
-    std::string _texture_name = 0;
+    std::string _texture_name{};
+    Animator _animator;
 };
 
 

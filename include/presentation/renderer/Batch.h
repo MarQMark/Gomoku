@@ -5,6 +5,7 @@
 #include "Texture2D.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Animator.h"
 
 class Batch {
 public:
@@ -21,6 +22,7 @@ public:
     int render();
 
     void updateBuffer(uint64_t id, void* vb, uint32_t vbSize, uint32_t* ib, uint32_t ibSize);
+    void setAnimator(Animator* animator);
 
 private:
 
@@ -39,6 +41,7 @@ private:
 
     Texture2D* _texture2D{};
     Shader* _shader{};
+    Animator* _animator{};
 
     VertexBuffer* _vb{};
     IndexBuffer* _ib{};

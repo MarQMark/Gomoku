@@ -28,6 +28,16 @@ int main() {
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE_HOVER), AssetManager::GameTextures::BLACK_STONE_HOVER);
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
+    // TODO: FIX
+    Button bg("background", glm::vec2(), glm::vec2(1));
+    bg.setShader(IInteractable::State::NONE, "bg");
+    bg.setShader(IInteractable::State::HOVERING, "bg");
+    bg.setShader(IInteractable::State::PRESSED, "bg");
+    bg.setShader(IInteractable::State::HOLDING, "bg");
+    bg.setShader(IInteractable::State::RELEASED, "bg");
+    bg.setLayer(0);
+    ui.getViewable<View>("root")->addViewable(&bg);
+
     // Create the main game board (centered, square aspect ratio)
     auto* boardView = new BoardView("game_board", &gameService);
     boardView->setKeepHeight(true);

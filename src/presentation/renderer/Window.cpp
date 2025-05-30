@@ -3,6 +3,10 @@
 #include "GLFW/glfw3.h"
 #include "presentation/input/Input.h"
 
+void window_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
 Window::Window(int32_t width, int32_t height){
     if(!glfwInit()){
         throw std::runtime_error("Could not initialize GLFW\n");
@@ -15,6 +19,7 @@ Window::Window(int32_t width, int32_t height){
     }
 
     glfwMakeContextCurrent(_window);
+    glfwSetWindowSizeCallback(_window, window_size_callback);
 
     Input::init(_window);
 }
@@ -37,4 +42,9 @@ void Window::getSize(int* width, int *height) {
 
 void Window::getCursorPos(double *x, double *y) {
     glfwGetCursorPos(_window, x, y);
+}
+
+void Window::update() {
+    glfwSwapBuffers(_window);
+    glfwPollEvents();
 }

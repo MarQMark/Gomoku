@@ -17,5 +17,8 @@ void Label::render(Renderer *renderer, const glm::vec2 parentPos, const glm::vec
     if(!isVisible())
         return;
 
-    renderer->drawTextID((uint64_t)this, _text, _abs_pos, _abs_dim.y, _layer, "font");
+    Renderer::Options options;
+    options.layer = _layer;
+    options.shaderName = "font";
+    renderer->drawTextID((uint64_t)this, _text, _abs_pos, _abs_dim.y, options);
 }

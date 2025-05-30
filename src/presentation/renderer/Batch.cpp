@@ -1,7 +1,7 @@
 #include "presentation/renderer/Batch.h"
 #include "Vertex.h"
-#include <string.h>
 #include <iostream>
+#include <cstring>
 
 Batch::Batch(Texture2D *texture2D, Shader *shader) :  _texture2D(texture2D), _shader(shader) {
     _vb = new VertexBuffer(Vertex::getLayout(), sizeof(Vertex));
@@ -37,13 +37,14 @@ int Batch::render() {
             return -1;
     }
 
-
     if(!_shader)
         return -2;
     if(!_ib)
         return -3;
 
     _shader->bind();
+    if(_animator)
+        _animator->clbk(_shader);
 
     if(_texture2D){
         _texture2D->bind();
@@ -143,8 +144,7 @@ int Batch::recreate_buffers() {
         iIdx += highestIdx + 1;
     }
 
-    if(_ib)
-        delete _ib;
+    delete _ib;
 
     _ib = new IndexBuffer(indices, ibLen);
     _vb->addVertices((char*)vertices, vbSize / sizeof(Vertex));
@@ -155,4 +155,8 @@ int Batch::recreate_buffers() {
     _dirty = false;
 
     return 1;
+}
+
+void Batch::setAnimator(Animator *animator) {
+    _animator = animator;
 }

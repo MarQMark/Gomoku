@@ -16,6 +16,8 @@ public:
     void getSize(int* width, int* height);
     void getCursorPos(double* x, double* y);
 
+    void update();
+
 private:
     GLFWwindow* _window {};
 };

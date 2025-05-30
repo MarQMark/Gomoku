@@ -111,6 +111,7 @@ void BoardView::addStoneSprite(const StoneViewDTO stone) {
     _stoneSprites[stone.pos.y][stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
+    stoneSprite->getAnimator()->setDuration(.3);
     addViewable(stoneSprite);
 }
 
