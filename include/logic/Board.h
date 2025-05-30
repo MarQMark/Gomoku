@@ -2,9 +2,12 @@
 #define BOARD_H
 
 #include <array>
+#include <iostream>
+#include <ostream>
 #include <vector>
 #include "common/Common.h"
 
+struct LineInfo;
 struct GridPosition;
 
 class Board {
@@ -35,6 +38,7 @@ public:
     std::vector<GridPosition> getEmptyPositions() const;
 
     static std::vector<GridPosition> getAdjacentPositions(const GridPosition& pos);
+    LineInfo getLineInDirection(const GridPosition& pos, StoneColor color, int dx, int dy) const;
 
     // Comparison operators
     bool operator==(const Board& other) const;
@@ -69,11 +73,20 @@ struct GridPosition {
         return !(*this == other);
     }
 
-    // Useful for using Position as a key in maps
     bool operator<(const GridPosition& other) const {
         if (y != other.y) return y < other.y;
         return x < other.x;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const GridPosition& pos) {
+        os << "(" << pos.x << ", " << pos.y << ")";
+        return os;
+    }
+};
+
+struct LineInfo {
+    std::vector<GridPosition> positions;
+    int count;
 };
 
 struct Move {

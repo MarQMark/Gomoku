@@ -62,16 +62,16 @@ int main() {
         std::string statusText;
 
         switch(boardState.gameStatus) {
-            case GameStatus::IN_PROGRESS:
+            case IN_PROGRESS:
                 statusText = boardState.currentPlayerName + "'s Turn";
                 break;
-            case GameStatus::BLACK_WINS:
+            case BLACK_WINS:
                 statusText = "Black Wins!";
                 break;
-            case GameStatus::WHITE_WINS:
+            case WHITE_WINS:
                 statusText = "White Wins!";
                 break;
-            case GameStatus::DRAW:
+            case DRAW:
                 statusText = "Draw Game!";
                 break;
             default:

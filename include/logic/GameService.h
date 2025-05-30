@@ -17,7 +17,6 @@ private:
 
     StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
 
-    static std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color);
     static bool isPlayerValid(const std::string &playerId);
 
 public:
@@ -34,6 +33,7 @@ public:
     MouseHoverViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
     MoveViewDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
     BoardViewDTO getBoardState() const;
+    std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
     const std::vector<Move>& getMoveHistory() const { return _moveHistory; }
     static int getBoardSize() { return Board::SIZE; }
 
@@ -50,6 +50,7 @@ public:
 private:
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;
+    static constexpr int WINNING_LENGTH = 5;
 };
 
 #endif

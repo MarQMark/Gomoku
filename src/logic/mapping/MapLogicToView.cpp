@@ -18,11 +18,6 @@ BoardViewDTO MapLogicToView::toBoardView(const Board& board, const GameState& st
         StoneViewDTO stone{};
         stone.pos = pos;
         stone.previewColor = board.getColor(pos);
-        stone.isLastMove = (pos == state.lastMove);
-        stone.isWinningStone = std::find(winningLine.begin(),
-                                       winningLine.end(),
-                                       pos) != winningLine.end();
-
         view.stones.push_back(stone);
     }
 
@@ -35,24 +30,16 @@ BoardViewDTO MapLogicToView::toBoardView(const Board& board, const GameState& st
 }
 
 MoveViewDTO MapLogicToView::createMoveView(const bool success,
-                                        const Board& board,
-                                        const GameState& state,
-                                        const std::string& error,
-                                        const std::vector<GridPosition>& winningLine) {
+                                        const BoardViewDTO& view,
+                                        const StoneViewDTO& stone,
+                                        const std::string& error) {
     MoveViewDTO result;
     result.success = success;
+    result.stone = stone;
+    result.boardView = view;
 
-    if (success) {
-        result.boardState = toBoardView(board, state, winningLine);
-
-        if (state.status == BLACK_WINS) {
-            result.winner = BLACK;
-        } else if (state.status == WHITE_WINS) {
-            result.winner = WHITE;
-        }
-    } else {
+    if (!success) {
         result.errorMessage = error;
-        result.boardState = toBoardView(board, state);
     }
 
     return result;

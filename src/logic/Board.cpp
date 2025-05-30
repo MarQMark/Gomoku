@@ -119,6 +119,33 @@ std::vector<GridPosition> Board::getAdjacentPositions(const GridPosition& pos) {
     return adjacent;
 }
 
+LineInfo Board::getLineInDirection(const GridPosition& pos, const StoneColor color, const int dx, const int dy) const {
+    LineInfo info;
+    info.positions.push_back(pos);
+    info.count = 1;
+
+    // Check positive direction
+    GridPosition check(pos.x + dx, pos.y + dy);
+    while (check.isValid() && getColor(check) == color) {
+        info.positions.push_back(check);
+        info.count++;
+        check.x += dx;
+        check.y += dy;
+    }
+
+    // Check negative direction
+    check = GridPosition(pos.x - dx, pos.y - dy);
+    while (check.isValid() && getColor(check) == color) {
+        info.positions.insert(info.positions.begin(), check);
+        info.count++;
+        check.x -= dx;
+        check.y -= dy;
+    }
+
+    return info;
+}
+
+
 bool Board::operator==(const Board& other) const {
     // Quick check first
     if (_stoneCount != other._stoneCount) {

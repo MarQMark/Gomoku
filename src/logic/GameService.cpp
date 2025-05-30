@@ -1,6 +1,5 @@
 #include "logic/GameService.h"
-#include "../../include/logic/mapping/MapLogicToView.h"
-#include <cmath>
+#include "logic/mapping/MapLogicToView.h"
 
 GameService::GameService() {
     newGame();
@@ -19,7 +18,7 @@ void GameService::newGame() {
 }
 
 BoardViewDTO GameService::getBoardState() const {
-    return MapLogicToView::toBoardView(_state.board, _state);
+    return MapLogicToView::toBoardView(_state.board, _state, getWinningLine(_state.lastMove, _state.currentPlayerTurn));
 }
 
 MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
@@ -28,31 +27,31 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
 
     if (!isValidGridPosition(pos)) {
         return MapLogicToView::createMoveView(
-            false, _state.board, _state, "Invalid command"
+            false, getBoardState(),StoneViewDTO(false, pos, _state.currentPlayerTurn), "Invalid command"
         );
     }
 
     if (_state.status != IN_PROGRESS) {
         return MapLogicToView::createMoveView(
-            false, _state.board, _state, "Game is not in progress"
+            false, getBoardState(), StoneViewDTO(false, pos, _state.currentPlayerTurn), "Game is not in progress"
         );
     }
 
     if (!pos.isValid()) {
         return MapLogicToView::createMoveView(
-            false, _state.board, _state, "Invalid board position"
+            false, getBoardState(), StoneViewDTO(false, pos, _state.currentPlayerTurn), "Invalid board position"
         );
     }
 
     if (_state.board.getColor(pos) != STONE_NONE) {
         return MapLogicToView::createMoveView(
-            false, _state.board, _state, "Position already occupied"
+            false, getBoardState(), StoneViewDTO(false, pos, _state.currentPlayerTurn), "Position already occupied"
         );
     }
 
     if (!_state.board.placeStone(pos, _state.currentPlayerTurn)) {
         return MapLogicToView::createMoveView(
-            false, _state.board, _state, "Failed to place stone"
+            false, getBoardState(), StoneViewDTO(false, pos, _state.currentPlayerTurn), "Failed to place stone"
         );
     }
 
@@ -61,22 +60,29 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
     _state.moveNumber++;
 
     // Check for win
-    std::vector<GridPosition> winningLine;
     const StoneColor winner = checkForWin(pos, _state.currentPlayerTurn);
     if (winner != STONE_NONE) {
+        const auto winningPositions = getWinningLine(_state.lastMove, _state.currentPlayerTurn);
         _state.status = (winner == BLACK) ? BLACK_WINS : WHITE_WINS;
-        winningLine = getWinningLine(pos, _state.currentPlayerTurn);
-    } else if (_state.board.isFull()) {
-        _state.status = DRAW;
+
+        return MapLogicToView::createMoveView(true,
+            MapLogicToView::toBoardView(_state.board, _state, winningPositions),
+            StoneViewDTO(true, pos, _state.currentPlayerTurn));
     }
 
+    if (_state.board.isFull()) {
+        _state.status = DRAW;
+        return MapLogicToView::createMoveView(true, getBoardState(), StoneViewDTO(true, pos, _state.currentPlayerTurn), "");
+    }
+
+    // Swap turn
+    const StoneColor prevPlayerTurn = _state.currentPlayerTurn;
     if (_state.status == IN_PROGRESS) {
-        _state.currentPlayerTurn = (_state.currentPlayerTurn == BLACK)
-                                  ? WHITE : BLACK;
+        _state.currentPlayerTurn = (_state.currentPlayerTurn == BLACK) ? WHITE : BLACK;
     }
 
     return MapLogicToView::createMoveView(
-        true, _state.board, _state, "", winningLine
+        true, getBoardState(), StoneViewDTO(true, pos, prevPlayerTurn), ""
     );
 }
 
@@ -96,34 +102,31 @@ MoveViewDTO GameService::processMouseClick(const MouseCommandDTO& hover_command_
     return processMove(hover_command_dto);
 }
 
+std::vector<GridPosition> GameService::getWinningLine(const GridPosition &lastMove, const StoneColor color) const {
+    for (int dir = 0; dir < 4; dir++) {
+        constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
+        auto line = _state.board.getLineInDirection(lastMove, color, directions[dir][0], directions[dir][1]);
+        if (line.count >= 5) {
+            return line.positions;
+        }
+    }
+
+    return {};
+}
+
+
 StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
         constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
-        int count = 1;
-        const int dx = directions[dir][0];
-        const int dy = directions[dir][1];
-
-        GridPosition check(lastMove.x + dx, lastMove.y + dy);
-        while (check.isValid() && _state.board.getColor(check) == color) {
-            count++;
-            check.x += dx;
-            check.y += dy;
-        }
-
-        check = GridPosition(lastMove.x - dx, lastMove.y - dy);
-        while (check.isValid() && _state.board.getColor(check) == color) {
-            count++;
-            check.x -= dx;
-            check.y -= dy;
-        }
-
-        if (count >= 5) {
+        const auto line = _state.board.getLineInDirection(lastMove, color, directions[dir][0], directions[dir][1]);
+        if (line.count >= 5) {
             return color;
         }
     }
 
     return STONE_NONE;
 }
+
 
 bool GameService::undoLastMove() {
     if (_moveHistory.empty()) {
@@ -170,12 +173,6 @@ void GameService::setPlayerIds(const std::string& player1Id, const std::string& 
 
 std::string GameService::getCurrentPlayerId() const {
     return (_state.currentPlayerTurn == BLACK) ? _player1Id : _player2Id;
-}
-
-std::vector<GridPosition> GameService::getWinningLine(const GridPosition& lastMove, StoneColor color) {
-    std::vector<GridPosition> winningLine;
-    winningLine.push_back(lastMove);
-    return winningLine;
 }
 
 bool GameService::isPlayerValid(const std::string &playerId) {

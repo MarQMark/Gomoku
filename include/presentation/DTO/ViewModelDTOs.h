@@ -14,17 +14,15 @@ struct MouseHoverViewDTO {
 
 struct StoneViewDTO {
     bool isValidPosition;
-    bool isLastMove;
-    bool isWinningStone;
     GridPosition pos;
     StoneColor previewColor;
 
-    StoneViewDTO() : isValidPosition(false), isLastMove(false), isWinningStone(false), pos(-1, -1),
+    StoneViewDTO() : isValidPosition(false), pos(-1, -1),
                      previewColor(STONE_NONE) {
     }
 
-    StoneViewDTO(const bool valid, const GridPosition pos, const StoneColor color, const bool lastMove = false, const bool winningStone = false)
-        : isValidPosition(valid), isLastMove(lastMove), isWinningStone(winningStone), pos(pos), previewColor(color) {
+    StoneViewDTO(const bool valid, const GridPosition pos, const StoneColor color)
+        : isValidPosition(valid), pos(pos), previewColor(color) {
     }
 };
 struct BoardViewDTO {
@@ -34,16 +32,14 @@ struct BoardViewDTO {
     std::string currentPlayerName;
     GameStatus gameStatus;
     int moveNumber;
-    std::optional<std::vector<GridPosition>> winningLine;
+    std::vector<GridPosition> winningLine;
 };
 
 struct MoveViewDTO {
     bool success;
     std::string errorMessage;
-    BoardViewDTO boardState;
-    std::optional<StoneColor> winner;
+    BoardViewDTO boardView;
+    StoneViewDTO stone;
 };
-
-
 
 #endif

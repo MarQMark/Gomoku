@@ -15,7 +15,8 @@ private:
 
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};
-    std::array<std::array<Sprite*, Board::SIZE>, Board::SIZE> _stoneSprites{};
+
+    std::vector<std::vector<Sprite*>> _stoneSprites;
     Sprite* _hoverPreviewSprite{};
 
     bool _showHoverPreview;
@@ -29,19 +30,17 @@ public:
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
-    const BoardViewDTO& getCurrentBoardState() const { return _currentBoardState; }
+    BoardViewDTO getCurrentBoardState() const;
 
 private:
     void initializeSprites();
-    void updateStoneDisplay() const;
     void updateHoverPreview(StoneColor previewColor, GridPosition hoverPosition) const;
-
     void handleMouseInput(Renderer* renderer);
-
+    void handleMouseHover(glm::vec2 relativeMousePos);
+    void addStoneSprite(StoneViewDTO stone);
+    void handleMouseClick(glm::vec2 relativeMousePos);
     static std::string getStoneTexture(StoneColor color, bool isHover = false);
-    void updateBoardState(const MoveViewDTO& result);
-
-    float calculateStoneSize(glm::vec2 boardSize) const;
+    float calculateStoneSize() const;
 
     static glm::vec2 relativeInsideGridView(glm::vec2 boardPos, glm::vec2 boardSize,
                                              glm::vec2 mousePos, glm::vec2 viewportSize);
