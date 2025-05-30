@@ -24,10 +24,8 @@ add_executable(Gomoku
         presentation/ui/BoardView.cpp
 
         presentation/assets/AssetManager.cpp
-        presentation/assets/AssetManager.h
 
         presentation/mapping/MapPresentationToCommand.cpp
-        presentation/mapping/MapPresentationToCommand.h
 
         logic/mapping/MapLogicToView.cpp
         logic/Board.cpp
