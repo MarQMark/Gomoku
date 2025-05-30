@@ -5,50 +5,12 @@
 #include <vector>
 #include "common/Common.h"
 
-struct GridPosition {
-    int x, y;
-
-    GridPosition() : x(-1), y(-1) {}
-    GridPosition(const int x_, const int y_) : x(x_), y(y_) {}
-
-    bool isValid() const {
-        return x >= 0 && x < 15 && y >= 0 && y < 15;
-    }
-
-    bool operator==(const GridPosition& other) const {
-        return x == other.x && y == other.y;
-    }
-
-    bool operator!=(const GridPosition& other) const {
-        return !(*this == other);
-    }
-
-    // Useful for using Position as a key in maps
-    bool operator<(const GridPosition& other) const {
-        if (y != other.y) return y < other.y;
-        return x < other.x;
-    }
-};
-
-struct Move {
-    GridPosition position;
-    StoneColor color;
-
-    Move(const GridPosition pos, const StoneColor color) : position(pos), color(color) {}
-
-    bool isValid() const {
-        return position.isValid() && color != StoneColor::STONE_NONE;
-    }
-
-    bool operator==(const Move& other) const {
-        return position == other.position && color == other.color;
-    }
-};
+struct GridPosition;
 
 class Board {
 public:
     static constexpr int SIZE = 15;
-    
+
     Board();
     ~Board() = default;
     Board(const Board&) = default;
@@ -88,6 +50,47 @@ private:
     void initialize_empty();
 };
 
+
+struct GridPosition {
+    int x, y;
+
+    GridPosition() : x(-1), y(-1) {}
+    GridPosition(const int x_, const int y_) : x(x_), y(y_) {}
+
+    bool isValid() const {
+        return x >= 0 && x < Board::SIZE && y >= 0 && y < Board::SIZE;
+    }
+
+    bool operator==(const GridPosition& other) const {
+        return x == other.x && y == other.y;
+    }
+
+    bool operator!=(const GridPosition& other) const {
+        return !(*this == other);
+    }
+
+    // Useful for using Position as a key in maps
+    bool operator<(const GridPosition& other) const {
+        if (y != other.y) return y < other.y;
+        return x < other.x;
+    }
+};
+
+struct Move {
+    GridPosition position;
+    StoneColor color;
+
+    Move(const GridPosition pos, const StoneColor color) : position(pos), color(color) {}
+
+    bool isValid() const {
+        return position.isValid() && color != StoneColor::STONE_NONE;
+    }
+
+    bool operator==(const Move& other) const {
+        return position == other.position && color == other.color;
+    }
+};
+
 struct GameState {
     Board board;
     StoneColor currentPlayerTurn;
@@ -95,11 +98,13 @@ struct GameState {
     GameStatus status;
     GridPosition lastMove;
 
-    GameState() 
+    GameState()
         : currentPlayerTurn(StoneColor::BLACK)
         , moveNumber(0)
         , status(GameStatus::NOT_STARTED)
         , lastMove(-1, -1) {}
 };
+
+
 
 #endif

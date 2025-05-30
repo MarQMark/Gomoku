@@ -22,7 +22,7 @@ add_executable(Gomoku
         presentation/ui/Button.cpp
         presentation/ui/BoardView.cpp
 
-        common/PresentationMapper.cpp
+        logic/mapping/MapLogicToView.cpp
 
         logic/Board.cpp
         logic/GameService.cpp
@@ -31,6 +31,8 @@ add_executable(Gomoku
         main.cpp
         presentation/assets/AssetManager.cpp
         ../include/presentation/assets/AssetManager.h
+        presentation/mapping/MapPresentationToCommand.cpp
+        ../include/presentation/mapping/MapPresentationToCommand.h
 
 )
 

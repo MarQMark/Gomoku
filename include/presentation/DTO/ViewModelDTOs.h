@@ -6,17 +6,29 @@
 
 #include "common/Common.h"
 
-struct GridPosition;
-
-struct StoneViewDTO {
-    int x, y;
-    StoneColor color;
-    bool isLastMove;
-    bool isWinningStone;
+struct MouseHoverViewDTO {
+    bool isValidPosition;
+    GridPosition stonePosition;
+    StoneColor previewColor;
 };
 
+struct StoneViewDTO {
+    bool isValidPosition;
+    bool isLastMove;
+    bool isWinningStone;
+    GridPosition pos;
+    StoneColor previewColor;
+
+    StoneViewDTO() : isValidPosition(false), isLastMove(false), isWinningStone(false), pos(-1, -1),
+                     previewColor(STONE_NONE) {
+    }
+
+    StoneViewDTO(const bool valid, const GridPosition pos, const StoneColor color, const bool lastMove = false, const bool winningStone = false)
+        : isValidPosition(valid), isLastMove(lastMove), isWinningStone(winningStone), pos(pos), previewColor(color) {
+    }
+};
 struct BoardViewDTO {
-    int boardSize = 15;
+    int boardSize;
     std::vector<StoneViewDTO> stones;
     StoneColor currentTurn;
     std::string currentPlayerName;
@@ -25,21 +37,13 @@ struct BoardViewDTO {
     std::optional<std::vector<GridPosition>> winningLine;
 };
 
-struct MoveResultDTO {
+struct MoveViewDTO {
     bool success;
     std::string errorMessage;
     BoardViewDTO boardState;
     std::optional<StoneColor> winner;
 };
 
-struct GridHoverResultDTO {
-    bool isValidPosition;
-    GridPosition gridPosition;
-    StoneColor previewColor;
 
-    GridHoverResultDTO() : isValidPosition(false), gridPosition(-1, -1), previewColor(StoneColor::STONE_NONE) {}
-    GridHoverResultDTO(const bool valid, const GridPosition pos, const StoneColor color)
-        : isValidPosition(valid), gridPosition(pos), previewColor(color) {}
-};
 
 #endif

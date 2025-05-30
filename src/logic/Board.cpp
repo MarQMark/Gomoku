@@ -69,7 +69,7 @@ int Board::getStoneCount() const {
 }
 
 bool Board::isValidPosition(const GridPosition& pos) {
-    return pos.x >= 0 && pos.x < SIZE && pos.y >= 0 && pos.y < SIZE;
+    return pos.isValid();
 }
 
 std::vector<GridPosition> Board::getOccupiedPositions() const {

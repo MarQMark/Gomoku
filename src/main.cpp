@@ -13,6 +13,7 @@ void newGameCallback(IInteractable* interactable, IInteractable::State state, vo
 }
 
 int main() {
+    GameService gameService;
     Renderer renderer;
     UI ui(&renderer);
 
@@ -28,7 +29,7 @@ int main() {
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
     // Create the main game board (centered, square aspect ratio)
-    auto* boardView = new BoardView("game_board");
+    auto* boardView = new BoardView("game_board", &gameService);
     boardView->setKeepHeight(true);
     boardView->setAlignH(IViewable::CENTER);
     boardView->setAlignV(IViewable::CENTER);

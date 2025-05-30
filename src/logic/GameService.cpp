@@ -1,5 +1,5 @@
 #include "logic/GameService.h"
-#include "common/PresentationMapper.h"
+#include "../../include/logic/mapping/MapLogicToView.h"
 #include <cmath>
 
 GameService::GameService() {
@@ -18,34 +18,40 @@ void GameService::newGame() {
     _moveHistory.clear();
 }
 
-MoveResultDTO GameService::processMove(const MouseCommandDTO& cmd) {
-    if (!PresentationMapper::validatePlaceStoneCommand(cmd)) {
-        return PresentationMapper::createMoveResult(
+BoardViewDTO GameService::getBoardState() const {
+    return MapLogicToView::toBoardView(_state.board, _state);
+}
+
+MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
+
+    GridPosition pos = cmd.gridPosition;
+
+    if (!isValidGridPosition(pos)) {
+        return MapLogicToView::createMoveView(
             false, _state.board, _state, "Invalid command"
         );
     }
 
     if (_state.status != IN_PROGRESS) {
-        return PresentationMapper::createMoveResult(
+        return MapLogicToView::createMoveView(
             false, _state.board, _state, "Game is not in progress"
         );
     }
 
-    GridPosition pos = PresentationMapper::commandToPosition(cmd);
     if (!pos.isValid()) {
-        return PresentationMapper::createMoveResult(
+        return MapLogicToView::createMoveView(
             false, _state.board, _state, "Invalid board position"
         );
     }
 
     if (_state.board.getColor(pos) != STONE_NONE) {
-        return PresentationMapper::createMoveResult(
+        return MapLogicToView::createMoveView(
             false, _state.board, _state, "Position already occupied"
         );
     }
 
     if (!_state.board.placeStone(pos, _state.currentPlayerTurn)) {
-        return PresentationMapper::createMoveResult(
+        return MapLogicToView::createMoveView(
             false, _state.board, _state, "Failed to place stone"
         );
     }
@@ -69,12 +75,12 @@ MoveResultDTO GameService::processMove(const MouseCommandDTO& cmd) {
                                   ? WHITE : BLACK;
     }
 
-    return PresentationMapper::createMoveResult(
+    return MapLogicToView::createMoveView(
         true, _state.board, _state, "", winningLine
     );
 }
 
-GridHoverResultDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
+MouseHoverViewDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
     if (!hover_command_dto.gridPosition.isValid() || _state.status != IN_PROGRESS) {
         return {false, GridPosition(-1, -1), STONE_NONE};
     }
@@ -86,10 +92,9 @@ GridHoverResultDTO GameService::processMouseHover(const MouseCommandDTO& hover_c
     return {true, hover_command_dto.gridPosition, _state.currentPlayerTurn};
 }
 
-MoveResultDTO GameService::processMouseClick(const MouseCommandDTO& hover_command_dto) {
+MoveViewDTO GameService::processMouseClick(const MouseCommandDTO& hover_command_dto) {
     return processMove(hover_command_dto);
 }
-
 
 StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
@@ -171,6 +176,10 @@ std::vector<GridPosition> GameService::getWinningLine(const GridPosition& lastMo
     std::vector<GridPosition> winningLine;
     winningLine.push_back(lastMove);
     return winningLine;
+}
+
+bool GameService::isPlayerValid(const std::string &playerId) {
+    return !playerId.empty();
 }
 
 bool GameService::isValidGridPosition(const GridPosition& pos) {

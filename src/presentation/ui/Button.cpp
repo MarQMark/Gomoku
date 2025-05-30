@@ -14,17 +14,17 @@ Button::Button(std::string name, const glm::vec2 pos, const glm::vec2 dim) : IIn
 void Button::init_maps() {
     _layer = 5;
 
-    _texture_names[State::NONE] = "";
-    _texture_names[State::HOVERING] = "";
-    _texture_names[State::PRESSED] = "";
-    _texture_names[State::HOLDING] = "";
-    _texture_names[State::RELEASED] = "";
+    _texture_names[NONE] = "";
+    _texture_names[HOVERING] = "";
+    _texture_names[PRESSED] = "";
+    _texture_names[HOLDING] = "";
+    _texture_names[RELEASED] = "";
 
-    _shader_names[State::NONE] = "default";
-    _shader_names[State::HOVERING] = "default";
-    _shader_names[State::PRESSED] = "default";
-    _shader_names[State::HOLDING] = "default";
-    _shader_names[State::RELEASED] = "default";
+    _shader_names[NONE] = "default";
+    _shader_names[HOVERING] = "default";
+    _shader_names[PRESSED] = "default";
+    _shader_names[HOLDING] = "default";
+    _shader_names[RELEASED] = "default";
 }
 
 void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
@@ -38,19 +38,19 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
     else{
         glm::vec3 color;
         switch (getState()) {
-            case State::NONE:
+            case NONE:
                 color = glm::vec3(.5);
                 break;
-            case State::HOVERING:
+            case HOVERING:
                 color = glm::vec3(.7);
                 break;
-            case State::PRESSED:
+            case PRESSED:
                 color = glm::vec3(.3);
                 break;
-            case State::HOLDING:
+            case HOLDING:
                 color = glm::vec3(.15);
                 break;
-            case State::RELEASED:
+            case RELEASED:
                 color = glm::vec3(.8);
                 break;
         }
@@ -62,11 +62,11 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
     }
 }
 
-void Button::setTexture(const IInteractable::State state, std::string name) {
+void Button::setTexture(const State state, std::string name) {
     _texture_names[state] = name;
 }
 
-void Button::setShader(const IInteractable::State state, std::string name) {
+void Button::setShader(const State state, std::string name) {
     _shader_names[state] = name;
 }
 

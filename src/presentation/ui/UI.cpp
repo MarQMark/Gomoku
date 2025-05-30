@@ -13,7 +13,7 @@ void UI::update() {
     const glm::vec2 dim = _renderer->getViewportSize();
     _ui_mouse = _renderer->getCursorPos() / dim;
 
-    const bool leftClick = Input::get()->mousePressed(Mouse::BUTTON_LEFT);
+    const bool leftClick = Input::get()->mousePressed(BUTTON_LEFT);
 
     std::vector<IInteractable*> interactables;
     get_interactable(_view_root, interactables);
@@ -119,10 +119,10 @@ void UI::focus_update(std::vector<IInteractable*>& interactables) {
             focus_first(interactables);
         }
         else if(_focused->isInteractable()){
-            if(Input::get()->keyPressed(Key::ENTER) && _enter_pressed){
+            if(Input::get()->keyPressed(ENTER) && _enter_pressed){
                 _focused->changeState(IInteractable::State::HOLDING);
             }
-            else if(Input::get()->keyPressed(Key::ENTER)){
+            else if(Input::get()->keyPressed(ENTER)){
                 _focused->changeState(IInteractable::State::PRESSED);
             }
             else if(_enter_pressed){
@@ -131,7 +131,7 @@ void UI::focus_update(std::vector<IInteractable*>& interactables) {
         }
     }
 
-    if(Input::get()->keyXPressed(Key::TAB)){
+    if(Input::get()->keyXPressed(TAB)){
         if(!_focused_view)
             _focused_view = _view_root;
         if(!_focused)
@@ -146,7 +146,7 @@ void UI::focus_update(std::vector<IInteractable*>& interactables) {
                 }
             }
 
-            if(Input::get()->keyPressed(Key::LEFT_SHIFT) || Input::get()->keyPressed(Key::RIGHT_SHIFT))
+            if(Input::get()->keyPressed(LEFT_SHIFT) || Input::get()->keyPressed(RIGHT_SHIFT))
                 i == 0 ? i = interactables.size() - 1 : i--;
             else
                 i = (i + 1) % interactables.size();
@@ -158,7 +158,7 @@ void UI::focus_update(std::vector<IInteractable*>& interactables) {
         }
     }
 
-    _enter_pressed = Input::get()->keyPressed(Key::ENTER);
+    _enter_pressed = Input::get()->keyPressed(ENTER);
 }
 
 void UI::focus_first(std::vector<IInteractable*>& interactables) {

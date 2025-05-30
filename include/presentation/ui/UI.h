@@ -29,14 +29,16 @@ private:
     bool _enter_pressed = false;
     glm::vec2 _ui_mouse{};
 
-    void get_interactable(View* view, std::vector<IInteractable*> &interactables);
+    static void get_interactable(View* view, std::vector<IInteractable*> &interactables);
     void update_interactable(bool leftClick, std::vector<IInteractable*>& interactables);
     void focus_set(IInteractable* interactable, View* view);
-    View* get_view(IViewable *viewable, View *view);
+
+    static View* get_view(IViewable *viewable, View *view);
     bool cursor_interactable_intersect(IInteractable* interactable) const;
     void focus_update(std::vector<IInteractable*>& interactables);
     void focus_first(std::vector<IInteractable*>& interactables);
-    bool is_view_visible(View* parent, View* view);
+
+    static bool is_view_visible(View* parent, View* view);
 };
 
 

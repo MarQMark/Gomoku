@@ -18,6 +18,7 @@ private:
     StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
 
     static std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color);
+    static bool isPlayerValid(const std::string &playerId);
 
 public:
     GameService();
@@ -29,14 +30,10 @@ public:
     GameService& operator=(GameService&&) = default;
 
     // Handle move command from presentation layer
-    MoveResultDTO processMove(const MouseCommandDTO& cmd);
-
-    // Handle mouse interaction commands
-    GridHoverResultDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
-    MoveResultDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
-
-    // Game state queries
-    const GameState& getCurrentState() const { return _state; }
+    MoveViewDTO processMove(const MouseCommandDTO& cmd);
+    MouseHoverViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
+    MoveViewDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
+    BoardViewDTO getBoardState() const;
     const std::vector<Move>& getMoveHistory() const { return _moveHistory; }
     static int getBoardSize() { return Board::SIZE; }
 
