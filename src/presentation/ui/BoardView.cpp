@@ -85,14 +85,8 @@ void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm:
 }
 
 void BoardView::handleMouseInput(Renderer* renderer) {
-    const glm::vec2 mousePos = renderer->getCursorPos();
-    const glm::vec2 viewportSize = renderer->getViewportSize();
-    const glm::vec2 gridPos = _boardGrid->getAbsPos();
-    const glm::vec2 gridSize = _boardGrid->getAbsDim();
     const std::string currentPlayerId = _gameService->getCurrentPlayerId();
-
-    const glm::vec2 relativeMousePos = PresentationMapper::boardAreaToGridRelative(
-    gridPos, gridSize, mousePos, viewportSize);
+    const glm::vec2 relativeMousePos = PresentationMapper::boardAreaToGridRelative(_boardGrid->getAbsPos(), _boardGrid->getAbsDim(), renderer->getCursorPos(), renderer->getViewportSize());
     const GridHoverResultDTO hoverResult = _gameService->processMouseHover(PresentationMapper::toMouseCommandDTO(relativeMousePos, currentPlayerId));
 
     if (hoverResult.isValidPosition) {
