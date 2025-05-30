@@ -72,19 +72,19 @@ bool Board::isValidPosition(const GridPosition& pos) {
     return pos.isValid();
 }
 
-std::vector<GridPosition> Board::getOccupiedPositions() const {
-    std::vector<GridPosition> positions;
-    positions.reserve(_stoneCount);
+std::vector<Move> Board::getOccupiedPositions() const {
+    std::vector<Move> moves;
+    moves.reserve(_stoneCount);
 
     for (int y = 0; y < SIZE; ++y) {
         for (int x = 0; x < SIZE; ++x) {
             if (_grid[y][x] != STONE_NONE) {
-                positions.emplace_back(x, y);
+                moves.emplace_back(Move(GridPosition(x, y), _grid[y][x]));
             }
         }
     }
 
-    return positions;
+    return moves;
 }
 
 std::vector<GridPosition> Board::getEmptyPositions() const {

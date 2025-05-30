@@ -1,6 +1,7 @@
 #include "presentation/renderer/Renderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
+#include "logic/GameService.h"
 #include "presentation/assets/AssetManager.h"
 #include "presentation/ui/UI.h"
 #include "presentation/ui/Button.h"
@@ -67,7 +68,6 @@ int main() {
     ui.getViewable<View>("root")->addViewable(newGameLabel);
 
     while(renderer.shouldRun()) {
-        // Update game status label based on current board state
         const auto& boardState = boardView->getCurrentBoardState();
         std::string statusText;
 

@@ -3,16 +3,13 @@
 
 #include "presentation/ui/View.h"
 #include "presentation/ui/Sprite.h"
-#include "logic/GameService.h"
 #include "presentation/DTO/ViewModelDTOs.h"
-#include <memory>
-#include <array>
+
+class GameService;
 
 class BoardView final : public View {
 private:
     GameService* _gameService;
-    BoardViewDTO _currentBoardState;
-
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};
 
@@ -34,18 +31,18 @@ public:
 
 private:
     void initializeSprites();
-    void updateHoverPreview(StoneColor previewColor, GridPosition hoverPosition) const;
+    void updateHoverPreview(ViewColor previewColor, ViewPosition hoverPosition) const;
     void handleMouseInput(Renderer* renderer);
     void handleMouseHover(glm::vec2 relativeMousePos);
-    void addStoneSprite(StoneViewDTO stone);
+    void addStoneSprite(StoneViewDTO stone, const BoardViewDTO &boardView);
     void handleMouseClick(glm::vec2 relativeMousePos);
-    static std::string getStoneTexture(StoneColor color, bool isHover = false);
+    static std::string getStoneTexture(ViewColor color, bool isHover = false);
     float calculateStoneSize() const;
 
     static glm::vec2 relativeInsideGridView(glm::vec2 boardPos, glm::vec2 boardSize,
                                              glm::vec2 mousePos, glm::vec2 viewportSize);
 
-    static glm::vec2 gridToViewPosition(GridPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
+    static glm::vec2 gridToViewPosition(ViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
 };
 
 #endif

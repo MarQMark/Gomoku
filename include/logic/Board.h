@@ -5,10 +5,18 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
+
 #include "common/Common.h"
 
+struct Move;
 struct LineInfo;
 struct GridPosition;
+
+enum StoneColor {
+    STONE_NONE,
+    BLACK,
+    WHITE,
+};
 
 class Board {
 public:
@@ -34,7 +42,7 @@ public:
 
     // Position validation and queries
     static bool isValidPosition(const GridPosition& pos);
-    std::vector<GridPosition> getOccupiedPositions() const;
+    std::vector<Move> getOccupiedPositions() const;
     std::vector<GridPosition> getEmptyPositions() const;
 
     static std::vector<GridPosition> getAdjacentPositions(const GridPosition& pos);
@@ -53,7 +61,6 @@ private:
 
     void initialize_empty();
 };
-
 
 struct GridPosition {
     int x, y;
@@ -117,6 +124,7 @@ struct GameState {
         , status(GameStatus::NOT_STARTED)
         , lastMove(-1, -1) {}
 };
+
 
 
 

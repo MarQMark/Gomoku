@@ -1,12 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-enum StoneColor {
-    STONE_NONE,
-    BLACK,
-    WHITE,
-};
-
 enum GameStatus {
     NOT_STARTED,
     IN_PROGRESS,
@@ -15,7 +9,5 @@ enum GameStatus {
     DRAW,
     PAUSED
 };
-
-
 
 #endif

@@ -1,7 +1,3 @@
-//
-// Created by Henk on 30.05.2025.
-//
-
 #include "presentation/mapping/MapPresentationToCommand.h"
 
 MouseCommandDTO MapPresentationToCommand::toMouseCommandDTO(glm::vec2 relativePosition) {

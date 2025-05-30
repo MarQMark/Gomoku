@@ -2,13 +2,14 @@
 #include "presentation/input/Input.h"
 #include <iostream>
 
+#include "logic/GameService.h"
 #include "presentation/assets/AssetManager.h"
 #include "presentation/mapping/MapPresentationToCommand.h"
 
 BoardView::BoardView(std::string name, GameService* gameService) : View(std::move(name)) {
     _gameService = gameService;
-    _currentBoardState = _gameService->getBoardState();
-    _stoneSprites.resize(_currentBoardState.boardSize, std::vector<Sprite*>(_currentBoardState.boardSize, nullptr));
+    const auto boardState = getCurrentBoardState();
+    _stoneSprites.resize(boardState.boardSize, std::vector<Sprite*>(boardState.boardSize, nullptr));
     _showHoverPreview = false;
     _mousePressed = false;
     _prevMousePressed = false;
@@ -19,9 +20,10 @@ BoardView::~BoardView() {
     delete _backgroundBoard;
     delete _boardGrid;
     delete _hoverPreviewSprite;
+    const auto boardState = getCurrentBoardState();
 
-    for (int y = 0; y < _currentBoardState.boardSize; ++y) {
-        for (int x = 0; x < _currentBoardState.boardSize; ++x) {
+    for (int y = 0; y < boardState.boardSize; ++y) {
+        for (int x = 0; x < boardState.boardSize; ++x) {
             delete _stoneSprites[y][x];
         }
     }
@@ -56,9 +58,8 @@ void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm:
 }
 
 BoardViewDTO BoardView::getCurrentBoardState() const {
-    return _currentBoardState;
+    return _gameService->getBoardState();
 }
-
 
 void BoardView::handleMouseInput(Renderer* renderer) {
     const glm::vec2 relativeMousePos = relativeInsideGridView(_boardGrid->getAbsPos(), _boardGrid->getAbsDim(), renderer->getCursorPos(), renderer->getViewportSize());
@@ -67,14 +68,14 @@ void BoardView::handleMouseInput(Renderer* renderer) {
 }
 
 void BoardView::handleMouseHover(const glm::vec2 relativeMousePos) {
-    const MouseHoverViewDTO mouseHoverDTO = _gameService->processMouseHover(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos));
+    const StoneViewDTO mouseHoverDTO = _gameService->processMouseHover(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos));
     if (!mouseHoverDTO.isValidPosition) {
         _showHoverPreview = false;
         _hoverPreviewSprite->setVisible(false);
         return;
     }
     _showHoverPreview = true;
-    updateHoverPreview(mouseHoverDTO.previewColor, mouseHoverDTO.stonePosition);
+    updateHoverPreview(mouseHoverDTO.previewColor, mouseHoverDTO.pos);
 }
 
 void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
@@ -83,17 +84,10 @@ void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
 
     if (_mousePressed && !_prevMousePressed) {
         const MoveViewDTO clickResult = _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos));
-        _currentBoardState = clickResult.boardView;
         if (clickResult.success) {
-            addStoneSprite(clickResult.stone);
+            addStoneSprite(clickResult.stone, clickResult.boardView);
             _showHoverPreview = false;
             _hoverPreviewSprite->setVisible(false);
-        }
-
-        if (!clickResult.boardView.winningLine.empty()) {
-            for (const auto pos : clickResult.boardView.winningLine) {
-                std::cout << pos << std::endl;
-            }
         }
 
         if (!clickResult.success) {
@@ -102,12 +96,12 @@ void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
     }
 }
 
-void BoardView::addStoneSprite(const StoneViewDTO stone) {
+void BoardView::addStoneSprite(const StoneViewDTO stone, const BoardViewDTO &boardView) {
     const std::string spriteName = "stone_" + std::to_string(stone.pos.x) + "_" + std::to_string(stone.pos.y);
-    const glm::vec2 intersectionPos = gridToViewPosition(GridPosition(stone.pos.x, stone.pos.y), _boardGrid->getPos(), _boardGrid->getDim(), _currentBoardState.boardSize);
+    const glm::vec2 intersectionPos = gridToViewPosition(stone.pos, _boardGrid->getPos(), _boardGrid->getDim(), boardView.boardSize);
     const float stoneSize = calculateStoneSize();
     const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
-    const auto stoneSprite = new Sprite(spriteName, getStoneTexture(stone.previewColor), centeredPos, glm::vec2(stoneSize, stoneSize));
+    const auto stoneSprite = new Sprite(spriteName, getStoneTexture(stone.previewColor, false), centeredPos, glm::vec2(stoneSize, stoneSize));
     _stoneSprites[stone.pos.y][stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
@@ -115,9 +109,8 @@ void BoardView::addStoneSprite(const StoneViewDTO stone) {
     addViewable(stoneSprite);
 }
 
-
-void BoardView::updateHoverPreview(const StoneColor previewColor, const GridPosition hoverPosition) const {
-    if (_showHoverPreview && hoverPosition.isValid()) {
+void BoardView::updateHoverPreview(const ViewColor previewColor, const ViewPosition hoverPosition) const {
+    if (_showHoverPreview) {
         const int gridSize = GameService::getBoardSize();
         const float stoneSize = calculateStoneSize();
         const glm::vec2 intersectionPos = gridToViewPosition(hoverPosition, _boardGrid->getPos(), _boardGrid->getDim(), gridSize);
@@ -132,21 +125,19 @@ void BoardView::updateHoverPreview(const StoneColor previewColor, const GridPosi
     }
 }
 
-std::string BoardView::getStoneTexture(const StoneColor color, const bool isHover) {
+std::string BoardView::getStoneTexture(const ViewColor color, const bool isHover) {
     if (isHover) {
-        return (color == BLACK) ? AssetManager::GameTextures::BLACK_STONE_HOVER : AssetManager::GameTextures::WHITE_STONE_HOVER;
+        return (color == ViewColor::BLACK) ? AssetManager::GameTextures::BLACK_STONE_HOVER : AssetManager::GameTextures::WHITE_STONE_HOVER;
     }
-    return (color == BLACK) ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE;
+    return (color == ViewColor::BLACK) ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE;
 }
 
-
 float BoardView::calculateStoneSize() const {
-    const float gridSpacing = 1.0f / (float)(_currentBoardState.boardSize - 1);
+    const float gridSpacing = 1.0f / (float)(getCurrentBoardState().boardSize - 1);
     return gridSpacing * _boardGrid->getDim().x;
 }
 
-
-glm::vec2 BoardView::gridToViewPosition(const GridPosition position, const glm::vec2 boardPos, const glm::vec2 boardSize, const int boardSizeGrid) {
+glm::vec2 BoardView::gridToViewPosition(const ViewPosition position, const glm::vec2 boardPos, const glm::vec2 boardSize, const int boardSizeGrid) {
     const float gridSpacing = 1.0f / (float)(boardSizeGrid - 1);
     const auto relativeIntersection = glm::vec2(
         (float)position.x * gridSpacing,

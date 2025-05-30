@@ -5,8 +5,8 @@
 
 #include "Board.h"
 #include "DTO/CommandDTOs.h"
-#include "glm/vec2.hpp"
 #include "presentation/DTO/ViewModelDTOs.h"
+
 
 class GameService {
 private:
@@ -30,7 +30,7 @@ public:
 
     // Handle move command from presentation layer
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
-    MouseHoverViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
+    StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
     MoveViewDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
     BoardViewDTO getBoardState() const;
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;

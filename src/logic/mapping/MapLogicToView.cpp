@@ -1,35 +1,48 @@
 #include "logic/mapping/MapLogicToView.h"
 
-#include <algorithm>
-
-// === Logic → Presentation ===
-BoardViewDTO MapLogicToView::toBoardView(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine) {
+BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine) {
     BoardViewDTO view;
     view.boardSize = Board::SIZE;
-    view.currentTurn = state.currentPlayerTurn;
+    view.currentTurn = mapToViewColor(state.currentPlayerTurn);
+    view.currentPlayerName = (state.currentPlayerTurn == BLACK) ? "Black Player" : "White Player";
     view.gameStatus = state.status;
     view.moveNumber = state.moveNumber;
 
-    // Convert current player color to name
-    view.currentPlayerName = (state.currentPlayerTurn == BLACK) ? "Black Player" : "White Player";
 
     // Convert occupied positions to stone views
-    for (const GridPosition& pos : board.getOccupiedPositions()) {
-        StoneViewDTO stone{};
-        stone.pos = pos;
-        stone.previewColor = board.getColor(pos);
-        view.stones.push_back(stone);
+    for (const Move& move : board.getOccupiedPositions()) {
+        view.stones.push_back(createStoneViewDTO(move.position.isValid(), move.position, move.color));
     }
 
     // Add winning line if game is won
     if (!winningLine.empty()) {
-        view.winningLine = winningLine;
+        std::vector<ViewPosition> winningViewLines;
+        for (const GridPosition& line : winningLine) {
+            winningViewLines.push_back(ViewPosition(line.x, line.y));
+        }
+        view.winningLine = winningViewLines;
     }
 
     return view;
 }
 
-MoveViewDTO MapLogicToView::createMoveView(const bool success,
+StoneViewDTO MapLogicToView::createStoneViewDTO(const bool isValid, const GridPosition gridPosition, const StoneColor stoneColor) {
+    StoneViewDTO view;
+    view.isValidPosition = isValid;
+    view.pos = ViewPosition(gridPosition.x, gridPosition.y);
+    view.previewColor = mapToViewColor(stoneColor);
+    return view;
+}
+
+ViewColor MapLogicToView::mapToViewColor(const StoneColor stoneColor) {
+    switch (stoneColor) {
+        case BLACK: return ViewColor::BLACK;
+        case WHITE: return ViewColor::WHITE;
+        default: return ViewColor::NONE;
+    }
+}
+
+MoveViewDTO MapLogicToView::createMoveViewDTO(const bool success,
                                         const BoardViewDTO& view,
                                         const StoneViewDTO& stone,
                                         const std::string& error) {
