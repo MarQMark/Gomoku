@@ -26,6 +26,7 @@ int main() {
     bgAnimator->setRenderer(&renderer);
     bgAnimator->setTexture2(AssetManager::getName(Textures::black_stone));
     bg.setAnimator(bgAnimator);
+    bg.setLayer(-1);
     ui.getViewable<View>("root")->addViewable(&bg);
 
     // Create the main game board (centered, square aspect ratio)

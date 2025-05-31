@@ -31,7 +31,7 @@ void Sprite::render(Renderer *renderer, const glm::vec2 parentPos, const glm::ve
         options.shaderName = _animator->getShader();
         options.animator = _animator;
         options.animationID = (uint64_t)this;
-        options.layer = _animator->getLayer();
+        options.layer += _animator->getLayer();
     }
     renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_name), options);
 }
