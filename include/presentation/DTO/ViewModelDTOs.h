@@ -1,6 +1,7 @@
 #ifndef VIEWMODELDTOS_H
 #define VIEWMODELDTOS_H
 #include <string>
+#include <utility>
 #include <vector>
 #include <ostream>
 
@@ -37,10 +38,15 @@ struct BoardViewDTO {
 };
 
 struct MoveViewDTO {
-    bool success;
+    bool success = false;
     std::string errorMessage;
     BoardViewDTO boardView;
     StoneViewDTO stone;
+    std::string currentPlayerName;
+
+    MoveViewDTO() = default;
+    MoveViewDTO(const bool cond, std::string  string, BoardViewDTO  board_view_dto, const StoneViewDTO stone_view_dto)
+        : success(cond), errorMessage(std::move(string)), boardView(std::move(board_view_dto)), stone(stone_view_dto){}
 };
 
 #endif

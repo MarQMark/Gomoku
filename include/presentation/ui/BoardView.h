@@ -1,14 +1,14 @@
 #ifndef BOARDVIEW_H
 #define BOARDVIEW_H
 
+#include "logic/interfaces/IGameEventListener.h"
 #include "presentation/ui/View.h"
 #include "presentation/ui/Sprite.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 
 class IGameService;
 
-class BoardView final : public View {
-private:
+class BoardView final : public View, public IGameEventListener {
     IGameService* _gameService;
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};
@@ -33,7 +33,7 @@ private:
     void updateHoverPreview(ViewColor previewColor, ViewPosition hoverPosition) const;
     void handleMouseInput(Renderer* renderer);
     void handleMouseHover(glm::vec2 relativeMousePos);
-    void addStoneSprite(StoneViewDTO stone, const BoardViewDTO &boardView);
+    void addStoneSprite(const MoveViewDTO &move);
     void handleMouseClick(glm::vec2 relativeMousePos);
     static std::string getStoneTexture(ViewColor color, bool isHover = false);
     float calculateStoneSize() const;
@@ -42,6 +42,9 @@ private:
                                              glm::vec2 mousePos, glm::vec2 viewportSize);
 
     static glm::vec2 gridToViewPosition(ViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
+
+public:
+    void onMoveCompleted(const MoveViewDTO &move) override;
 };
 
 #endif

@@ -48,11 +48,13 @@ ViewColor MapLogicToView::mapToViewColor(const StoneColor stoneColor) {
 MoveViewDTO MapLogicToView::createMoveViewDTO(const bool success,
                                         const BoardViewDTO& view,
                                         const StoneViewDTO& stone,
+                                        const IPlayer& player,
                                         const std::string& error) {
     MoveViewDTO result;
     result.success = success;
     result.stone = stone;
     result.boardView = view;
+    result.currentPlayerName = player.getName();
 
     if (!success) {
         result.errorMessage = error;

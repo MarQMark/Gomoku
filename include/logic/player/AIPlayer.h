@@ -22,7 +22,11 @@ public:
     GridPosition calculateBestMove(const Board& board) const;
 
 private:
-    static GridPosition minimax(const Board& board, int depth) ;
+    GridPosition getBestMoveWithRandomness(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+    static GridPosition findWinningMove(const Board& board, StoneColor color);
+    static GridPosition getRandomMove(const std::vector<GridPosition>& emptyPositions);
+    GridPosition getBestMove(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+    int evaluatePosition(const Board& board, const GridPosition& pos) const;
 };
 
 

@@ -38,6 +38,7 @@ add_executable(Gomoku
         main.cpp
         logic/player/HumanPlayer.cpp
         logic/player/AIPlayer.cpp
+        common/Time.cpp
 )
 
 target_include_directories(Gomoku

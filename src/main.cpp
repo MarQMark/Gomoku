@@ -6,6 +6,7 @@
 #include "presentation/ui/Label.h"
 #include "presentation/ui/BoardView.h"
 #include "animator/BackgroundAnimator.h"
+#include "common/Time.h"
 #include "presentation/ui/DrawerView.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
@@ -14,6 +15,7 @@ void newGameCallback(IInteractable* interactable, IInteractable::State state, vo
 }
 
 int main() {
+    Time::init();
     GameService gameService;
     Renderer renderer;
     UI ui(&renderer);
@@ -109,8 +111,8 @@ int main() {
 
         statusLabel->setText(statusText);
 
-        // Update UI and render
         ui.update();
+        Time::get()->update();
         renderer.render();
     }
 

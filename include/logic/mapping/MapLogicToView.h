@@ -13,7 +13,7 @@ public:
 
     static ViewColor mapToViewColor(StoneColor stoneColor);
 
-    static MoveViewDTO createMoveViewDTO(bool success, const BoardViewDTO &view, const StoneViewDTO &stone, const std::string &error = "");
+    static MoveViewDTO createMoveViewDTO(bool success, const BoardViewDTO &view, const StoneViewDTO &stone, const IPlayer &player, const std::string &error = "");
 };
 
 #endif

@@ -23,6 +23,8 @@ struct GameSetupCommandDTO {
 
 struct MouseCommandDTO {
     GridPosition gridPosition;
+
+    MouseCommandDTO() : gridPosition(GridPosition()) {}
     explicit MouseCommandDTO(const GridPosition gridPosition)
         : gridPosition(gridPosition) {}
 };

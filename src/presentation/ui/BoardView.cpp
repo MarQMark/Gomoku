@@ -6,16 +6,18 @@
 #include "presentation/assets/AssetManager.h"
 #include "presentation/mapping/MapPresentationToCommand.h"
 #include "animator/SimpleAnimator.h"
+#include "common/Time.h"
 
 BoardView::BoardView(std::string name, IGameService* gameService) : View(std::move(name)) {
     _gameService = gameService;
+    _gameService->addListener(this);
     const int size = _gameService->getBoardSize();
     _stoneSprites.resize(size, std::vector<Sprite*>(size, nullptr));
     _showHoverPreview = false;
     _mousePressed = false;
     _prevMousePressed = false;
     initializeSprites();
-    _gameService->startNewGame(GameSetupCommandDTO(GameMode::HUMAN_VS_HUMAN));
+    _gameService->startNewGame(GameSetupCommandDTO(GameMode::AI_VS_AI));
 }
 
 BoardView::~BoardView() {
@@ -58,6 +60,7 @@ void BoardView::initializeSprites() {
 }
 
 void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
+    _gameService->update(Time::get()->getDeltaTime());
     View::render(renderer, parentPos, parentDim);
     handleMouseInput(renderer);
 }
@@ -88,26 +91,17 @@ void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
     _mousePressed = Input::get()->mousePressed(BUTTON_LEFT);
 
     if (_mousePressed && !_prevMousePressed) {
-        const MoveViewDTO clickResult = _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
-        if (clickResult.success) {
-            addStoneSprite(clickResult.stone, clickResult.boardView);
-            _showHoverPreview = false;
-            _hoverPreviewSprite->setVisible(false);
-        }
-
-        if (!clickResult.success) {
-            std::cout << "Move failed: " << clickResult.errorMessage << std::endl;
-        }
+        _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
     }
 }
 
-void BoardView::addStoneSprite(const StoneViewDTO stone, const BoardViewDTO &boardView) {
-    const std::string spriteName = "stone_" + std::to_string(stone.pos.x) + "_" + std::to_string(stone.pos.y);
-    const glm::vec2 intersectionPos = gridToViewPosition(stone.pos, _boardGrid->getPos(), _boardGrid->getDim(), boardView.boardSize);
+void BoardView::addStoneSprite(const MoveViewDTO &move) {
+    const std::string spriteName = "stone_" + std::to_string(move.stone.pos.x) + "_" + std::to_string(move.stone.pos.y);
+    const glm::vec2 intersectionPos = gridToViewPosition(move.stone.pos, _boardGrid->getPos(), _boardGrid->getDim(), _gameService->getBoardSize());
     const float stoneSize = calculateStoneSize();
     const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
-    const auto stoneSprite = new Sprite(spriteName, getStoneTexture(stone.previewColor, false), centeredPos, glm::vec2(stoneSize, stoneSize));
-    _stoneSprites[stone.pos.y][stone.pos.x] = stoneSprite;
+    const auto stoneSprite = new Sprite(spriteName, getStoneTexture(move.stone.previewColor, false), centeredPos, glm::vec2(stoneSize, stoneSize));
+    _stoneSprites[move.stone.pos.y][move.stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
     auto* animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone");
@@ -158,8 +152,14 @@ glm::vec2 BoardView::gridToViewPosition(const ViewPosition position, const glm::
     return actualIntersection;
 }
 
+void BoardView::onMoveCompleted(const MoveViewDTO& move) {
+    addStoneSprite(move);
+    _showHoverPreview = false;
+    _hoverPreviewSprite->setVisible(false);
+}
+
 glm::vec2 BoardView::relativeInsideGridView(const glm::vec2 boardPos, const glm::vec2 boardSize,
-                                                     const glm::vec2 mousePos, const glm::vec2 viewportSize) {
+                                            const glm::vec2 mousePos, const glm::vec2 viewportSize) {
     const glm::vec2 normalizedMouse = mousePos / viewportSize;
 
     if (normalizedMouse.x < boardPos.x || normalizedMouse.x > boardPos.x + boardSize.x ||
@@ -167,7 +167,6 @@ glm::vec2 BoardView::relativeInsideGridView(const glm::vec2 boardPos, const glm:
         return {-1.0f, -1.0f};
     }
 
-    // Convert to relative coordinates within the grid area (0.0 to 1.0)
     const glm::vec2 relativeMouse = (normalizedMouse - boardPos) / boardSize;
 
     return relativeMouse;
