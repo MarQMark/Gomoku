@@ -29,14 +29,8 @@ int main() {
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE_HOVER), AssetManager::GameTextures::BLACK_STONE_HOVER);
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
-    // TODO: FIX
-    Button bg("background", glm::vec2(), glm::vec2(1));
-    bg.setShader(IInteractable::State::NONE, "bg");
-    bg.setShader(IInteractable::State::HOVERING, "bg");
-    bg.setShader(IInteractable::State::PRESSED, "bg");
-    bg.setShader(IInteractable::State::HOLDING, "bg");
-    bg.setShader(IInteractable::State::RELEASED, "bg");
-    bg.setLayer(0);
+    Sprite bg("background", AssetManager::GameTextures::BLACK_STONE, glm::vec2(), glm::vec2(1));
+    bg.setAnimator(new Animator(0, 0, "bg"));
     ui.getViewable<View>("root")->addViewable(&bg);
 
     // Create the main game board (centered, square aspect ratio)
@@ -74,6 +68,7 @@ int main() {
         switch(boardState.gameStatus) {
             case IN_PROGRESS:
                 statusText = boardState.currentPlayerName + "'s Turn";
+                bg.setTexture(boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE);
                 break;
             case BLACK_WINS:
                 statusText = "Black Wins!";

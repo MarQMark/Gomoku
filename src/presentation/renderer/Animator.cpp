@@ -5,12 +5,19 @@ Animator::Animator(double duration) : _duration(duration) {
     _curr_time = _duration;
 }
 
-void Animator::clbk(Shader* shader) {
+Animator::Animator(double duration, float layer, std::string shader) : _duration(duration), _layer(layer), _shader(std::move(shader)){
+    _last_time = glfwGetTime();
+    _curr_time = _duration;
+}
+
+void Animator::update(Shader* shader) {
     if(!isActive())
         return;
 
     shader->uniform1lf("u_time", (float)_curr_time);
-    shader->uniform1lf("u_duration", (float)_duration);
+
+    if(_duration != 0)
+        shader->uniform1lf("u_duration", (float)_duration);
 
     _curr_time += glfwGetTime() - _last_time;
     _last_time = glfwGetTime();
@@ -23,9 +30,36 @@ void Animator::reset() {
 
 void Animator::setDuration(double duration) {
     _duration = duration;
-    reset();
 }
 
 bool Animator::isActive() const {
-    return _curr_time < _duration;
+    return _curr_time < _duration || _duration == 0;
+}
+
+float Animator::getLayer() const {
+    return _layer;
+}
+
+void Animator::setLayer(float layer) {
+    _layer = layer;
+}
+
+const std::string &Animator::getShader() const {
+    return _shader;
+}
+
+void Animator::setShader(const std::string &shader) {
+    _shader = shader;
+}
+
+uint32_t Animator::getInstanceCount() const {
+    return _instance_counter;
+}
+
+void Animator::addInstance() {
+    _instance_counter++;
+}
+
+void Animator::removeInstance() {
+    _instance_counter--;
 }

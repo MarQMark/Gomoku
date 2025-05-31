@@ -34,18 +34,10 @@ void main() {
     pos.y-=1;
     pos.y *= -1;
 
-    //pos.xy += normal * sin(u_time) * 0.1 * vec2(9.f/16.f, 1);
-    //pos.x += normal.x * easeBackInOut(1 - (u_time / u_duration), 1.70158f) * 0.01;//* (9.f/16.f);
-    //pos.y -= normal.y * easeBackInOut(1 - (u_time / u_duration), 1.70158f) * 0.01;
-
     float ratio = (2.f/3.f);
-    float time = min(u_time / (u_duration * ratio), 1);
-    pos.x = normal.x * .2 * (1 - time) + pos.x * time;
-    pos.y = (-1 - normal.y * .2) * (1 - time) + pos.y * time;
-
-    time = step(ratio, u_time / (u_duration)) * (u_time - u_duration * ratio) / (u_duration * (1 - ratio));
-    pos.x += normal.x * easeBackInOut(1 - time, 1.70158f) * 0.01;//* (9.f/16.f);
-    pos.y -= normal.y * easeBackInOut(1 - time, 1.70158f) * 0.01;
+    float time = step(ratio, u_time / (u_duration)) * (u_time - u_duration * ratio) / (u_duration * (1 - ratio));
+    pos.x -= normal.x * easeBackInOut(time, 1.70158f) * 0.01;
+    pos.y += normal.y * easeBackInOut(time, 1.70158f) * 0.01;
 
     gl_Position = pos;
 }

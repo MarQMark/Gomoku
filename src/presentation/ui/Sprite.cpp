@@ -12,6 +12,14 @@ Sprite::Sprite(std::string name, std::string textureName, glm::vec2 pos, glm::ve
     _layer = 4;
 }
 
+Sprite::~Sprite() {
+    if(_animator){
+        _animator->removeInstance();
+        if(_animator->getInstanceCount() == 0)
+            delete _animator;
+    }
+}
+
 void Sprite::render(Renderer *renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
     IViewable::render(renderer, parentPos, parentDim);
     if(!isVisible())
@@ -19,10 +27,11 @@ void Sprite::render(Renderer *renderer, const glm::vec2 parentPos, const glm::ve
 
     Renderer::Options options;
     options.layer = _layer;
-    if(_animator.isActive()){
-        options.shaderName = "stone";
-        options.animator = &_animator;
+    if(_animator && _animator->isActive()){
+        options.shaderName = _animator->getShader();
+        options.animator = _animator;
         options.animationID = (uint64_t)this;
+        options.layer = _animator->getLayer();
     }
     renderer->drawTextureID((uint64_t)this, _abs_pos, _abs_dim, renderer->getTexture(_texture_name), options);
 }
@@ -36,5 +45,13 @@ std::string Sprite::getTexture() {
 }
 
 Animator *Sprite::getAnimator() {
-    return &_animator;
+    return _animator;
+}
+
+void Sprite::setAnimator(Animator *animator) {
+    if(_animator)
+        _animator->removeInstance();
+
+    _animator = animator;
+    _animator->addInstance();
 }

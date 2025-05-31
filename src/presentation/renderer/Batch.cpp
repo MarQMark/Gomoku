@@ -44,7 +44,7 @@ int Batch::render() {
 
     _shader->bind();
     if(_animator)
-        _animator->clbk(_shader);
+        _animator->update(_shader);
 
     if(_texture2D){
         _texture2D->bind();

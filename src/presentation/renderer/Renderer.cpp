@@ -38,6 +38,7 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
     addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
     addShader(new Shader("shaders/stone.vert", "shaders/default.frag"), "stone");
+    addShader(new Shader("shaders/board.vert", "shaders/default.frag"), "board");
     // TODO: FIX
     addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
     get_shader("bg")->uniform2fv("u_resolution", glm::vec2(1280, 720));
@@ -249,9 +250,6 @@ void Renderer::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     query_errors("Renderer::render");
-
-    // TODO: FIX
-    get_shader("bg")->uniform1lf("u_time", glfwGetTime());
 
     std::vector<BatchID> emptyBatches;
     for (auto pair : _batches) {

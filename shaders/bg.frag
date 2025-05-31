@@ -1,62 +1,162 @@
 #version 430
 
-uniform float u_time;
-uniform vec2 u_resolution;
+uniform vec2  u_resolution; // Screen Resolution (width, height)
+uniform float u_time;       // Time in Milli Seconds
+uniform float u_duration;
+
+uniform sampler2D u_sampler2d;
 
 layout(location = 0) out vec4 fragColor;
 
-// Pixelation function
-vec2 pixelate(vec2 uv, float pixelSize) {
-    return floor(uv * pixelSize) / pixelSize;
-}
 
-// Random function for stars
 float rand(vec2 co) {
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
-// Stars layer
-float starLayer(vec2 uv, float t, float speed, float density) {
-    uv.x += t * speed;
-    uv = pixelate(uv, 120.0);  // pixelated star grid
-    float r = rand(uv * density);
-    return step(0.995, r);
+// sky() is from: https://www.shadertoy.com/view/fsjXDh
+float hash21(vec2 p)
+{
+    p=fract(p*vec2(123.456,789.01));
+    p+=dot(p,p+45.67);
+    return fract(p.x*p.y);
+}
+float star(vec2 uv,float brightness)
+{
+    float color=0.0;
+    float star=length(uv);
+    float diffraction=abs(uv.x*uv.y);
+    //diffraction *= abs((uv.x + 0.001953125) * (uv.y + 0.001953125));
+    star=brightness/star;
+    diffraction=pow(brightness,2.0)/diffraction;
+    diffraction=min(star,diffraction);
+    diffraction*=sqrt(star);
+    color+=star*sqrt(brightness)*8.0;
+    color+=diffraction*8.0;
+    return color;
+}
+vec3 sky(){
+    vec2 UV=gl_FragCoord.xy/u_resolution.yy;
+    vec3 color=vec3(0.0);
+    float dist=1.0;
+    float brightness=.02;
+    vec2 uv=(floor(UV*256.)/256.)-.51019;
+    uv*=128.;
+    uv+=floor((u_time / 1000)*64.)/3072.0;
+    vec2 gv=fract(uv)-.5;
+    vec2 id;
+    float displacement;
+    for(float y=-dist;y<=dist;y++)
+    {
+        for(float x=-dist;x<=dist;x++)
+        {
+            id=floor(uv);
+            displacement=hash21(id+vec2(x,y));
+            //color+=vec3(star(gv-vec2(x,y)-vec2(displacement,fract(displacement*16.))+.5,(hash21(id+vec2(x,y))/128.)));
+            //color=min(color,.4);
+        }
+    }
+    uv/=2.;
+    gv=fract(uv)-.5;
+    for(float y=-dist;y<=dist;y++)
+    {
+        for(float x=-dist;x<=dist;x++)
+        {
+            id=floor(uv);
+            displacement=hash21(id+vec2(x,y));
+            color+=vec3(star(gv-vec2(x,y)-vec2(displacement,fract(displacement*16.))+.5,(hash21(id+vec2(x,y))/128.)));
+        }
+    }
+    uv/=8.;
+    gv=fract(uv)-.5;
+    for(float y=-dist;y<=dist;y++)
+    {
+        for(float x=-dist;x<=dist;x++)
+        {
+            id=floor(uv);
+            displacement=hash21(id+vec2(x,y));
+            color+=vec3(star(gv-vec2(x,y)-vec2(displacement,fract(displacement*16.))+.5,(hash21(id+vec2(x,y))/256.)));
+        }
+    }
+    uv/=6.;
+    gv=fract(uv)-.5;
+    for(float y=-dist;y<=dist;y++)
+    {
+        for(float x=-dist;x<=dist;x++)
+        {
+            id=floor(uv);
+            displacement=hash21(id+vec2(x,y));
+            color+=vec3(star(gv-vec2(x,y)-vec2(displacement,fract(displacement*16.))+.5,(hash21(id+vec2(x,y))/256.)));
+        }
+    }
+    color*=vec3(.5,.7,1.);
+    return color;
 }
 
-// Wavy cloud layer
-// Generate a cloud layer with different properties
-float cloudLayer(vec2 uv, float t, float speed, float freq, float amp, float pixelSize) {
+vec3 stone(vec2 uv, float t, float speed, float tile_count, float threshold, float scale) {
     uv.x += t * speed;
-    uv.y += sin(uv.x * freq + t) * amp;
-    uv = pixelate(uv, pixelSize);
-    return smoothstep(0.4, 0.5, sin(uv.y * 10.0 + t));
+
+    vec2 tileID = floor(uv * tile_count);
+    vec2 local_uv = fract(uv * tile_count);
+
+    // randomly skip most tiles
+    float r = rand(tileID);
+    if (r > threshold) return vec3(0.0);
+
+    vec2 centered_uv = (local_uv - 0.5) / scale + 0.5;
+    centered_uv.y = 1 - centered_uv.y;
+
+    // discard out of bounds samples
+    if (any(lessThan(centered_uv, vec2(0.0))) || any(greaterThan(centered_uv, vec2(1.0)))) {
+        return vec3(0.0);
+    }
+
+    return texture2D(u_sampler2d, centered_uv).rgb;
+}
+
+vec3 base_color = vec3(0.01, 0.01, 0.08);
+
+vec3 sky2(){
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+
+    vec3 color = base_color;
+
+    float t = u_time / 10;
+
+    float gridSize = 8.0;
+    vec2 gridUV = floor(gl_FragCoord.xy / gridSize);
+    float r = rand(gridUV);
+
+    if (r > 0.995) {
+        vec2 localUV = fract(gl_FragCoord.xy / gridSize) - 0.5;
+
+        float dist = length(localUV);
+        float radius = 0.3;
+        float alpha = smoothstep(radius, radius - 0.15, dist);
+
+        float flicker = 0.5 + 0.5 * sin(t * 5.0 + r * 100.0 * uv.x);
+        vec3 dotColor = vec3(1.0) * flicker;
+
+        color = mix(color, dotColor, alpha);
+    }
+    return color;
 }
 
 void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    uv.y = 1.0 - uv.y;
-
+    uv = (uv - 0.5) * vec2(u_resolution.x / u_resolution.y, 1.0) + 0.5;
     float t = u_time / 2;
-    //t /= 1000.;
 
-    // Background color
-    vec3 col = vec3(0.1, 0.1, 0.2);
+    vec3 col = base_color;
 
-    // Stars
-    float stars1 = starLayer(uv, t, 0.02, 20.0);
-    float stars2 = starLayer(uv, t, 0.04, 40.0);
-    col += vec3(1.0) * stars1 * 0.5;
-    col += vec3(1.0) * stars2 * 0.5;
+    vec3 stone_a = stone(uv, t, 0.01, 20.0, 0.02, 1.5);
+    vec3 stone_b = stone(uv + vec2(0.2), t, 0.02, 25.0, 0.04, 1.2);
+    vec3 stone_c = stone(uv + vec2(-0.1, 0.1), t, 0.04, 30.0, 0.03, 1.0);
 
-    // Cloud layers with varying speeds/frequencies/pixelation
-    float c1 = cloudLayer(uv, t, 0.01, 4.0, 0.03, 90.0);
-    float c2 = cloudLayer(uv + vec2(0.2, 0.1), t, 0.02, 6.0, 0.04, 70.0);
-    float c3 = cloudLayer(uv + vec2(-0.1, 0.15), t, 0.035, 8.0, 0.05, 50.0);
+    col = mix(col, stone_c, stone_c.x != 0);
+    col = mix(col, stone_b, stone_b.x != 0);
+    col = mix(col, stone_a, stone_a.x != 0);
 
-    // Blend clouds with depth feeling
-    col = mix(col, vec3(0.8, 0.8, 0.9), c1 * 0.2); // back layer (light)
-    col = mix(col, vec3(0.7, 0.7, 0.85), c2 * 0.3); // mid layer
-    col = mix(col, vec3(0.6, 0.6, 0.8), c3 * 0.4); // front layer (dark, faster)
+    col = mix(col, sky2(), col == base_color);
 
     fragColor = vec4(col, 1.0);
 }

@@ -30,11 +30,13 @@ BoardView::~BoardView() {
 }
 
 void BoardView::initializeSprites() {
+    auto* boardAnimator = new Animator(.3, 0, "board");
     _backgroundBoard = new Sprite(AssetManager::GameTextures::BOARD_BACKGROUND,
                                  AssetManager::GameTextures::BOARD_BACKGROUND,
                                  glm::vec2(0, 0), glm::vec2(1, 1));
     _backgroundBoard->setLayer(0);
     _backgroundBoard->setVisible(true);
+    _backgroundBoard->setAnimator(boardAnimator);
     addViewable(_backgroundBoard);
 
     _boardGrid = new Sprite(AssetManager::GameTextures::BOARD_GRID,
@@ -42,6 +44,7 @@ void BoardView::initializeSprites() {
                            glm::vec2(0.06f, 0.06f), glm::vec2(0.88f, 0.88f));
     _boardGrid->setLayer(1);
     _boardGrid->setVisible(true);
+    _boardGrid->setAnimator(boardAnimator);
     addViewable(_boardGrid);
 
     const float stoneSize = calculateStoneSize();
@@ -105,8 +108,12 @@ void BoardView::addStoneSprite(const StoneViewDTO stone, const BoardViewDTO &boa
     _stoneSprites[stone.pos.y][stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
-    stoneSprite->getAnimator()->setDuration(.3);
+    auto* animator = new Animator(.3, stoneSprite->getLayer() + 1, "stone");
+    stoneSprite->setAnimator(animator);
     addViewable(stoneSprite);
+
+    _backgroundBoard->getAnimator()->reset();
+    animator->reset();
 }
 
 void BoardView::updateHoverPreview(const ViewColor previewColor, const ViewPosition hoverPosition) const {
