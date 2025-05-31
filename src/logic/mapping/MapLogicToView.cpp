@@ -1,10 +1,12 @@
 #include "logic/mapping/MapLogicToView.h"
 
-BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine) {
+#include "logic/player/IPlayer.h"
+
+BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const BoardState& state, const std::vector<GridPosition>& winningLine) {
     BoardViewDTO view;
     view.boardSize = Board::SIZE;
-    view.currentTurn = mapToViewColor(state.currentPlayerTurn);
-    view.currentPlayerName = (state.currentPlayerTurn == BLACK) ? "Black Player" : "White Player";
+    view.currentTurn = mapToViewColor(state.currentPlayer->getColor());
+    view.currentPlayerName = (state.currentPlayer->getColor() == BLACK) ? "Black Player" : "White Player";
     view.gameStatus = state.status;
     view.moveNumber = state.moveNumber;
 

@@ -7,7 +7,7 @@
 
 class MapLogicToView {
 public:
-    static BoardViewDTO mapToBoardViewDTO(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine);
+    static BoardViewDTO mapToBoardViewDTO(const Board& board, const BoardState& state, const std::vector<GridPosition>& winningLine);
 
     static StoneViewDTO createStoneViewDTO(bool isValid, GridPosition gridPosition, StoneColor stoneColor);
 

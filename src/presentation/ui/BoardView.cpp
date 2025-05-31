@@ -9,8 +9,8 @@
 
 BoardView::BoardView(std::string name, IGameService* gameService) : View(std::move(name)) {
     _gameService = gameService;
-    const auto boardState = getCurrentBoardState();
-    _stoneSprites.resize(boardState.boardSize, std::vector<Sprite*>(boardState.boardSize, nullptr));
+    const int size = _gameService->getBoardSize();
+    _stoneSprites.resize(size, std::vector<Sprite*>(size, nullptr));
     _showHoverPreview = false;
     _mousePressed = false;
     _prevMousePressed = false;
@@ -21,10 +21,10 @@ BoardView::~BoardView() {
     delete _backgroundBoard;
     delete _boardGrid;
     delete _hoverPreviewSprite;
-    const auto boardState = getCurrentBoardState();
+    const int size = _gameService->getBoardSize();
 
-    for (int y = 0; y < boardState.boardSize; ++y) {
-        for (int x = 0; x < boardState.boardSize; ++x) {
+    for (int y = 0; y < size; ++y) {
+        for (int x = 0; x < size; ++x) {
             delete _stoneSprites[y][x];
         }
     }
@@ -72,7 +72,7 @@ void BoardView::handleMouseInput(Renderer* renderer) {
 }
 
 void BoardView::handleMouseHover(const glm::vec2 relativeMousePos) {
-    const StoneViewDTO mouseHoverDTO = _gameService->processMouseHover(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos));
+    const StoneViewDTO mouseHoverDTO = _gameService->processMouseHover(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
     if (!mouseHoverDTO.isValidPosition) {
         _showHoverPreview = false;
         _hoverPreviewSprite->setVisible(false);
@@ -87,7 +87,7 @@ void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
     _mousePressed = Input::get()->mousePressed(BUTTON_LEFT);
 
     if (_mousePressed && !_prevMousePressed) {
-        const MoveViewDTO clickResult = _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos));
+        const MoveViewDTO clickResult = _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
         if (clickResult.success) {
             addStoneSprite(clickResult.stone, clickResult.boardView);
             _showHoverPreview = false;
@@ -142,7 +142,7 @@ std::string BoardView::getStoneTexture(const ViewColor color, const bool isHover
 }
 
 float BoardView::calculateStoneSize() const {
-    const float gridSpacing = 1.0f / (float)(getCurrentBoardState().boardSize - 1);
+    const float gridSpacing = 1.0f / (float)(_gameService->getBoardSize() - 1);
     return gridSpacing * _boardGrid->getDim().x;
 }
 

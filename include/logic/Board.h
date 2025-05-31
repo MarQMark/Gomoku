@@ -2,12 +2,12 @@
 #define BOARD_H
 
 #include <array>
-#include <iostream>
 #include <ostream>
 #include <vector>
 
 #include "common/Common.h"
 
+class IPlayer;
 struct Move;
 struct LineInfo;
 struct GridPosition;
@@ -111,18 +111,12 @@ struct Move {
     }
 };
 
-struct GameState {
+struct BoardState {
     Board board;
-    StoneColor currentPlayerTurn;
+    IPlayer* currentPlayer;
     int moveNumber;
     GameStatus status;
-    GridPosition lastMove;
-
-    GameState()
-        : currentPlayerTurn(StoneColor::BLACK)
-        , moveNumber(0)
-        , status(GameStatus::NOT_STARTED)
-        , lastMove(-1, -1) {}
+    GridPosition latestMove;
 };
 
 

@@ -6,8 +6,8 @@
 
 class MapPresentationToCommand {
 public:
-    static MouseCommandDTO toMouseCommandDTO(glm::vec2 relativePosition);
-    static GridPosition relativeToGrid(glm::vec2 relativePos);
+    static MouseCommandDTO toMouseCommandDTO(glm::vec2 relativePosition, int boardSize);
+    static GridPosition relativeToGrid(glm::vec2 relativePos, int boardSize);
 
 };
 
