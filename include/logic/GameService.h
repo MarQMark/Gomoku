@@ -18,7 +18,7 @@ public:
     ~GameService() override = default;
 
     // MENU
-    void startNewGame(const GameSetupCommandDTO& setupCommand);
+    void startNewGame(const GameSetupCommandDTO& setupCommand) override;
 
     void resetGameState();
 

@@ -13,9 +13,12 @@ enum GameMode {
 
 struct GameSetupCommandDTO {
     GameMode gameMode;
-    std::string player1Name = "Player 1";
-    std::string player2Name = "Player 2";
-    int aiDifficulty = 3;
+    std::string player1Name;
+    std::string player2Name;
+    int aiDifficulty;
+
+    explicit GameSetupCommandDTO(const GameMode game_mode)
+        : gameMode(game_mode), player1Name("Player 1"), player2Name("Player 2"), aiDifficulty(3) {}
 };
 
 struct MouseCommandDTO {

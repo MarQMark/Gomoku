@@ -15,6 +15,7 @@ BoardView::BoardView(std::string name, IGameService* gameService) : View(std::mo
     _mousePressed = false;
     _prevMousePressed = false;
     initializeSprites();
+    _gameService->startNewGame(GameSetupCommandDTO(GameMode::HUMAN_VS_HUMAN));
 }
 
 BoardView::~BoardView() {

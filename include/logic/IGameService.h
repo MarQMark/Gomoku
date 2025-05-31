@@ -9,6 +9,7 @@ class IGameService {
 public:
     virtual ~IGameService() = default;
 
+    virtual void startNewGame(const GameSetupCommandDTO& setupCommand) = 0;
     virtual StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const = 0;
     virtual MoveViewDTO processMouseClick(const MouseCommandDTO& click_command_dto) = 0;
     virtual BoardViewDTO getBoardState() const = 0;

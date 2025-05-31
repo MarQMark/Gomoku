@@ -20,7 +20,6 @@ int main() {
     // Init Assets
     AssetManager::initialize(&renderer);
     AssetManager::instance()->loadGameAssets();
-    auto* assets = AssetManager::instance();
 
     Sprite bg("background", AssetManager::getName(Textures::black_stone), glm::vec2(), glm::vec2(1));
     auto* bgAnimator = new BackgroundAnimator(0, 0, "bg");
