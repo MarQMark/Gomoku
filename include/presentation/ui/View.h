@@ -6,13 +6,13 @@
 
 class View : public IViewable{
 public:
-    View(std::string name);
-
+    explicit View(std::string name);
+    View(std::string name, glm::vec2 pos, glm::vec2 dim);
     virtual ~View() = default;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
-    void addViewable(IViewable* viewable);
+    virtual void addViewable(IViewable* viewable);
 
     template<class T = IViewable>
     T* getViewable(const std::string& name) {
@@ -33,7 +33,6 @@ public:
     };
 
     std::vector<IViewable*> getViewables();
-
 
 private:
     std::vector<IViewable*> _viewables{};

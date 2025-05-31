@@ -6,6 +6,9 @@
 View::View(std::string name) : IViewable(std::move(name)) {
 }
 
+View::View(std::string name, glm::vec2 pos, glm::vec2 dim) : IViewable(std::move(name), pos, dim) {
+}
+
 void View::addViewable(IViewable *viewable) {
     _viewables.push_back(viewable);
 }

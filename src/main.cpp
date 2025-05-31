@@ -6,6 +6,7 @@
 #include "presentation/ui/Label.h"
 #include "presentation/ui/BoardView.h"
 #include "animator/BackgroundAnimator.h"
+#include "presentation/ui/DrawerView.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
     std::cout << "New Game Started!" << std::endl;
@@ -28,6 +29,25 @@ int main() {
     bg.setAnimator(bgAnimator);
     bg.setLayer(-1);
     ui.getViewable<View>("root")->addViewable(&bg);
+
+    DrawerView drawerView("drawerView", glm::vec2(0), glm::vec2(.25, .8));
+    drawerView.setMargin(glm::vec4(0.15, 0, 0, 0));
+    drawerView.setAlignV(IViewable::Align::LEFT);
+    drawerView.setAlignH(IViewable::Align::TOP);
+    ui.getViewable<View>("root")->addViewable(&drawerView);
+
+    Button testBtn1("testBtn1", glm::vec2(.05, 0), glm::vec2(.95, .15));
+    testBtn1.setText("Start");
+    drawerView.addViewable(&testBtn1);
+    Button testBtn2("testBtn2", glm::vec2(.05, .25), glm::vec2(.95, .15));
+    testBtn2.setText("Load");
+    drawerView.addViewable(&testBtn2);
+    Button testBtn3("testBtn3", glm::vec2(.05, .5), glm::vec2(.95, .15));
+    testBtn3.setText("Henk");
+    drawerView.addViewable(&testBtn3);
+    Button testBtn4("testBtn4", glm::vec2(.05, .75), glm::vec2(.95, .15));
+    testBtn4.setText("Exit");
+    drawerView.addViewable(&testBtn4);
 
     // Create the main game board (centered, square aspect ratio)
     auto* boardView = new BoardView("game_board", &gameService);

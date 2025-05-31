@@ -17,7 +17,7 @@ public:
         RIGHT = 3,
     };
 
-    bool isVisible(){return _visible;}
+    bool isVisible() const {return _visible;}
     void setVisible(bool visible) {_visible = visible;}
 
     std::string getName(){return _name;}

@@ -20,6 +20,7 @@ add_executable(Gomoku
         presentation/ui/UI.cpp
         presentation/ui/Viewable.cpp
         presentation/ui/View.cpp
+        presentation/ui/DrawerView.cpp
         presentation/ui/Label.cpp
         presentation/ui/Sprite.cpp
         presentation/ui/ShaderSprite.cpp
