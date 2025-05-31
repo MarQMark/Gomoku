@@ -18,20 +18,14 @@ int main() {
     UI ui(&renderer);
 
     // Init Assets
-    AssetManager::initialize();
+    AssetManager::initialize(&renderer);
     AssetManager::instance()->loadGameAssets();
     auto* assets = AssetManager::instance();
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BOARD_BACKGROUND), AssetManager::GameTextures::BOARD_BACKGROUND);
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BOARD_GRID), AssetManager::GameTextures::BOARD_GRID);
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE), AssetManager::GameTextures::BLACK_STONE);
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE), AssetManager::GameTextures::WHITE_STONE);
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::BLACK_STONE_HOVER), AssetManager::GameTextures::BLACK_STONE_HOVER);
-    renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
-    Sprite bg("background", AssetManager::GameTextures::BLACK_STONE, glm::vec2(), glm::vec2(1));
+    Sprite bg("background", AssetManager::getName(Textures::black_stone), glm::vec2(), glm::vec2(1));
     auto* bgAnimator = new BackgroundAnimator(0, 0, "bg");
     bgAnimator->setRenderer(&renderer);
-    bgAnimator->setTexture2(AssetManager::GameTextures::BLACK_STONE);
+    bgAnimator->setTexture2(AssetManager::getName(Textures::black_stone));
     bg.setAnimator(bgAnimator);
     ui.getViewable<View>("root")->addViewable(&bg);
 
@@ -43,7 +37,6 @@ int main() {
     boardView->setPos(glm::vec2(0.1f, 0.1f));
     boardView->setDim(glm::vec2(0.8f));
     ui.getViewable<View>("root")->addViewable(boardView);
-
 
     // Create game status label
     auto* statusLabel = new Label("statusLabel", "Black Player's Turn");
@@ -72,12 +65,12 @@ int main() {
         switch(boardState.gameStatus) {
             case IN_PROGRESS:{
                 statusText = boardState.currentPlayerName + "'s Turn";
-                tex1 = boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE;
+                tex1 = boardState.currentPlayerName == "Black Player" ? AssetManager::getName(Textures::black_stone) : AssetManager::getName(Textures::white_stone);
                 if(tex1 == tex2){
                     bgAnimator->reset();
                 }
                 bg.setTexture(tex1);
-                tex2 = boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::WHITE_STONE : AssetManager::GameTextures::BLACK_STONE;
+                tex2 = boardState.currentPlayerName == "Black Player" ? AssetManager::getName(Textures::white_stone) : AssetManager::getName(Textures::black_stone);
                 bgAnimator->setTexture2(tex2);
                 break;}
             case BLACK_WINS:

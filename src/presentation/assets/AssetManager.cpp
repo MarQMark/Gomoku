@@ -1,13 +1,19 @@
 #include "presentation/assets/AssetManager.h"
 #include <iostream>
+
+#include "Renderer.h"
 #include "presentation/renderer/stb_image/stb_image.h"
 
 AssetManager* AssetManager::s_instance = nullptr;
 
-void AssetManager::initialize() {
+void AssetManager::initialize(Renderer* renderer) {
     if (!s_instance) {
-        s_instance = new AssetManager();
+        s_instance = new AssetManager(renderer);
     }
+}
+
+AssetManager::AssetManager(Renderer* _renderer) {
+    renderer = _renderer;
 }
 
 AssetManager* AssetManager::instance() {
@@ -26,18 +32,22 @@ void AssetManager::loadGameAssets() {
     loadTexturesFromFiles();
 }
 
-Texture2D* AssetManager::getTexture(const std::string& name) {
+std::string AssetManager::getName(const Textures texture) {
+    return std::string(magic_enum::enum_name(texture));
+}
+
+Texture2D* AssetManager::getTexture(Textures texture) {
+    auto name = std::string(magic_enum::enum_name(texture));
     const auto it = _textures.find(name);
     return (it != _textures.end()) ? it->second.get() : nullptr;
 }
 
 void AssetManager::loadTexturesFromFiles() {
-    _textures[GameTextures::BOARD_GRID] = loadTextureFromFile("res/", GameTextures::BOARD_GRID, ".png");
-    _textures[GameTextures::BOARD_BACKGROUND] = loadTextureFromFile("res/", GameTextures::BOARD_BACKGROUND, ".png");
-    _textures[GameTextures::BLACK_STONE] = loadTextureFromFile("res/", GameTextures::BLACK_STONE, ".png");
-    _textures[GameTextures::WHITE_STONE] = loadTextureFromFile("res/", GameTextures::WHITE_STONE, ".png");
-    _textures[GameTextures::BLACK_STONE_HOVER] = loadTextureFromFile("res/", GameTextures::BLACK_STONE_HOVER, ".png");
-    _textures[GameTextures::WHITE_STONE_HOVER] = loadTextureFromFile("res/", GameTextures::WHITE_STONE_HOVER, ".png");
+    for (const auto texture : magic_enum::enum_values<Textures>()) {
+        auto filename = std::string(magic_enum::enum_name(texture));
+        _textures[filename] = loadTextureFromFile("res/", filename, ".png");
+        renderer->addTexture(_textures[filename].get(), filename);
+    }
 }
 
 std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding) {

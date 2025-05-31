@@ -4,30 +4,34 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+
+#include "MagicEnum.h"
+#include "Renderer.h"
 #include "presentation/renderer/buffer/Texture2D.h"
+
+enum class Textures {
+    board_background,
+    board_grid,
+    black_stone,
+    white_stone,
+    black_stone_hover,
+    white_stone_hover,
+};
 
 class AssetManager {
 public:
-    static void initialize();
+    static void initialize(Renderer *renderer);
     static AssetManager* instance();
     static void cleanup();
     
-    // Core functionality
     void loadGameAssets();
-    Texture2D* getTexture(const std::string& name);
 
-    // Game-specific asset names
-    struct GameTextures {
-        static constexpr auto BOARD_BACKGROUND = "board_background";
-        static constexpr auto BOARD_GRID = "board_grid";
-        static constexpr auto BLACK_STONE = "black_stone";
-        static constexpr auto WHITE_STONE = "white_stone";
-        static constexpr auto BLACK_STONE_HOVER = "black_stone_hover";
-        static constexpr auto WHITE_STONE_HOVER = "white_stone_hover";
-    };
+    static std::string getName(Textures texture);
+    Texture2D* getTexture(Textures texture);
 
 private:
-    AssetManager() = default;
+    Renderer *renderer;
+    explicit AssetManager(Renderer* _renderer);
     static AssetManager* s_instance;
 
     std::unordered_map<std::string, std::unique_ptr<Texture2D>> _textures;

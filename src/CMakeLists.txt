@@ -35,11 +35,8 @@ add_executable(Gomoku
         logic/GameService.cpp
 
         main.cpp
-        ../include/logic/player/IPlayer.h
         logic/player/HumanPlayer.cpp
-        ../include/logic/player/HumanPlayer.h
         logic/player/AIPlayer.cpp
-        ../include/logic/player/AIPlayer.h
 )
 
 target_include_directories(Gomoku

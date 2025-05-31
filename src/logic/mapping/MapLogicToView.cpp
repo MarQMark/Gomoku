@@ -19,8 +19,9 @@ BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const BoardSt
     // Add winning line if game is won
     if (!winningLine.empty()) {
         std::vector<ViewPosition> winningViewLines;
+        winningViewLines.reserve(winningLine.size());
         for (const GridPosition& line : winningLine) {
-            winningViewLines.push_back(ViewPosition(line.x, line.y));
+            winningViewLines.emplace_back(line.x, line.y);
         }
         view.winningLine = winningViewLines;
     }

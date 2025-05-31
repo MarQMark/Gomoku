@@ -32,16 +32,16 @@ BoardView::~BoardView() {
 
 void BoardView::initializeSprites() {
     auto* boardAnimator = new SimpleAnimator(.3, 0, "board");
-    _backgroundBoard = new Sprite(AssetManager::GameTextures::BOARD_BACKGROUND,
-                                 AssetManager::GameTextures::BOARD_BACKGROUND,
+    _backgroundBoard = new Sprite(AssetManager::getName(Textures::board_background),
+                                 AssetManager::getName(Textures::board_background),
                                  glm::vec2(0, 0), glm::vec2(1, 1));
     _backgroundBoard->setLayer(0);
     _backgroundBoard->setVisible(true);
     _backgroundBoard->setAnimator(boardAnimator);
     addViewable(_backgroundBoard);
 
-    _boardGrid = new Sprite(AssetManager::GameTextures::BOARD_GRID,
-                           AssetManager::GameTextures::BOARD_GRID,
+    _boardGrid = new Sprite(AssetManager::getName(Textures::board_grid),
+                           AssetManager::getName(Textures::board_grid),
                            glm::vec2(0.06f, 0.06f), glm::vec2(0.88f, 0.88f));
     _boardGrid->setLayer(1);
     _boardGrid->setVisible(true);
@@ -50,7 +50,7 @@ void BoardView::initializeSprites() {
 
     const float stoneSize = calculateStoneSize();
 
-    _hoverPreviewSprite = new Sprite("hover_preview", AssetManager::GameTextures::BLACK_STONE_HOVER, glm::vec2(0, 0), glm::vec2(stoneSize, stoneSize));
+    _hoverPreviewSprite = new Sprite("hover_preview", AssetManager::getName(Textures::black_stone_hover), glm::vec2(0, 0), glm::vec2(stoneSize, stoneSize));
     _hoverPreviewSprite->setLayer(8);
     _hoverPreviewSprite->setVisible(false);
     addViewable(_hoverPreviewSprite);
@@ -136,9 +136,9 @@ void BoardView::updateHoverPreview(const ViewColor previewColor, const ViewPosit
 
 std::string BoardView::getStoneTexture(const ViewColor color, const bool isHover) {
     if (isHover) {
-        return (color == ViewColor::BLACK) ? AssetManager::GameTextures::BLACK_STONE_HOVER : AssetManager::GameTextures::WHITE_STONE_HOVER;
+        return (color == ViewColor::BLACK) ? AssetManager::getName(Textures::black_stone_hover) : AssetManager::getName(Textures::white_stone_hover);
     }
-    return (color == ViewColor::BLACK) ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE;
+    return (color == ViewColor::BLACK) ? AssetManager::getName(Textures::black_stone) : AssetManager::getName(Textures::white_stone);
 }
 
 float BoardView::calculateStoneSize() const {
