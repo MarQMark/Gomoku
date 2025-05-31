@@ -12,10 +12,12 @@ public:
 
     void update(Shader *shader) override;
 
-    void addRenderer(Renderer* renderer);
+    void setRenderer(Renderer* renderer);
+    void setTexture2(std::string texture2);
 
 private:
     Renderer* _renderer{};
+    std::string _texture2{};
 };
 
 

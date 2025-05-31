@@ -3,8 +3,10 @@
 uniform vec2  u_resolution; // Screen Resolution (width, height)
 uniform float u_time;       // Time in Milli Seconds
 uniform float u_duration;
+uniform float u_total_time;
 
 uniform sampler2D u_sampler2d;
+uniform sampler2D u_sampler2d2;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -44,7 +46,7 @@ vec3 sky(){
     float brightness=.02;
     vec2 uv=(floor(UV*256.)/256.)-.51019;
     uv*=128.;
-    uv+=floor((u_time / 1000)*64.)/3072.0;
+    uv+=floor((u_total_time / 1000)*64.)/3072.0;
     vec2 gv=fract(uv)-.5;
     vec2 id;
     float displacement;
@@ -121,7 +123,7 @@ vec3 base_color = vec3(0.01, 0.01, 0.08);
 vec3 sky2(){
     vec2 uv = gl_FragCoord.xy / u_resolution;
     vec3 color = base_color;
-    float t = u_time / 10;
+    float t = u_total_time / 10;
 
     float gridSize = 8.0;
     vec2 gridUV = floor(gl_FragCoord.xy / gridSize);
@@ -146,7 +148,7 @@ vec3 ball(){
     vec2 uv = gl_FragCoord.xy / u_resolution;
     uv = (uv - 0.5) * vec2(u_resolution.x / u_resolution.y, 1.0) + 0.5;
     vec2 center = vec2(0.5, 0.5);
-    float time = u_time;
+    float time = u_total_time;
 
     vec3 color = base_color;
 
@@ -172,7 +174,7 @@ vec3 ball(){
         texUV.y = 1 - texUV.y;
 
         if (all(greaterThanEqual(texUV, vec2(0.0))) && all(lessThanEqual(texUV, vec2(1.0)))) {
-            vec4 tex = texture2D(u_sampler2d, texUV);
+            vec4 tex = mix(texture2D(u_sampler2d2, texUV), texture2D(u_sampler2d, texUV), min(u_time / .3, 1));
             color = mix(color, tex.rgb, tex.a);
         }
     }
@@ -182,7 +184,7 @@ vec3 ball(){
 void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution.xy;
     uv = (uv - 0.5) * vec2(u_resolution.x / u_resolution.y, 1.0) + 0.5;
-    float t = u_time / 2;
+    float t = u_total_time / 2;
 
     vec3 col = base_color;
 

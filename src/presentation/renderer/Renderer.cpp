@@ -38,9 +38,7 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
     addShader(new Shader("shaders/stone.vert", "shaders/default.frag"), "stone");
     addShader(new Shader("shaders/board.vert", "shaders/default.frag"), "board");
-    // TODO: FIX
     addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
-    get_shader("bg")->uniform2fv("u_resolution", glm::vec2(1280, 720));
 
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);

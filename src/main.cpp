@@ -30,7 +30,8 @@ int main() {
 
     Sprite bg("background", AssetManager::GameTextures::BLACK_STONE, glm::vec2(), glm::vec2(1));
     auto* bgAnimator = new BackgroundAnimator(0, 0, "bg");
-    bgAnimator->addRenderer(&renderer);
+    bgAnimator->setRenderer(&renderer);
+    bgAnimator->setTexture2(AssetManager::GameTextures::BLACK_STONE);
     bg.setAnimator(bgAnimator);
     ui.getViewable<View>("root")->addViewable(&bg);
 
@@ -62,15 +63,23 @@ int main() {
     newGameLabel->setDim(glm::vec2(0.18f, 0.04f));
     ui.getViewable<View>("root")->addViewable(newGameLabel);
 
+    std::string tex1;
+    std::string tex2;
     while(renderer.shouldRun()) {
         const auto& boardState = boardView->getCurrentBoardState();
         std::string statusText;
 
         switch(boardState.gameStatus) {
-            case IN_PROGRESS:
+            case IN_PROGRESS:{
                 statusText = boardState.currentPlayerName + "'s Turn";
-                bg.setTexture(boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE);
-                break;
+                tex1 = boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::BLACK_STONE : AssetManager::GameTextures::WHITE_STONE;
+                if(tex1 == tex2){
+                    bgAnimator->reset();
+                }
+                bg.setTexture(tex1);
+                tex2 = boardState.currentPlayerName == "Black Player" ? AssetManager::GameTextures::WHITE_STONE : AssetManager::GameTextures::BLACK_STONE;
+                bgAnimator->setTexture2(tex2);
+                break;}
             case BLACK_WINS:
                 statusText = "Black Wins!";
                 break;
