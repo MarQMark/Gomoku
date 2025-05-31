@@ -6,8 +6,8 @@
 #include "glm/glm.hpp"
 #include "Window.h"
 #include "Batch.h"
-#include "Font.h"
-#include "Animator.h"
+#include "presentation/renderer/font/Font.h"
+#include "presentation/renderer/animator/Animator.h"
 
 class Renderer {
 public:

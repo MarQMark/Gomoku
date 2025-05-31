@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include "presentation/renderer/Texture2D.h"
+#include "presentation/renderer/buffer/Texture2D.h"
 
 class AssetManager {
 public:

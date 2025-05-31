@@ -3,11 +3,10 @@
 #include <cstring>
 #include <sstream>
 #include "presentation/renderer/Renderer.h"
-#include "Vertex.h"
-#include "Shaders.h"
+#include "presentation/renderer/buffer/Vertex.h"
 #include "presentation/input/Input.h"
-#include "presentation/renderer/KikanFont.h"
-#include "presentation/renderer/GomokuFont.h"
+#include "presentation/renderer/font/KikanFont.h"
+#include "presentation/renderer/font/GomokuFont.h"
 
 #if defined(__MSC_VER)
 #include <intrin.h>

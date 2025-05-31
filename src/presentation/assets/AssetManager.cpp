@@ -1,7 +1,5 @@
 #include "presentation/assets/AssetManager.h"
 #include <iostream>
-
-#define STB_IMAGE_IMPLEMENTATION
 #include "presentation/renderer/stb_image/stb_image.h"
 
 AssetManager* AssetManager::s_instance = nullptr;

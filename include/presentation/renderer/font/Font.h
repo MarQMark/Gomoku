@@ -1,7 +1,7 @@
 #ifndef GOMOKU_FONT_H
 #define GOMOKU_FONT_H
 
-#include "presentation/renderer/Texture2D.h"
+#include "presentation/renderer/buffer/Texture2D.h"
 #include "glm/glm.hpp"
 #include <map>
 

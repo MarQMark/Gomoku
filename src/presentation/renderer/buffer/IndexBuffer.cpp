@@ -1,4 +1,4 @@
-#include "presentation/renderer/IndexBuffer.h"
+#include "presentation/renderer/buffer/IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(std::vector<GLuint> &indices) {
     glGenBuffers(1, &_id);

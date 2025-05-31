@@ -1,5 +1,5 @@
 #include "presentation/renderer/Batch.h"
-#include "Vertex.h"
+#include "presentation/renderer/buffer/Vertex.h"
 #include <iostream>
 #include <cstring>
 

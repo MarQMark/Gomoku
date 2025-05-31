@@ -1,4 +1,4 @@
-#include "presentation/renderer/VertexBuffer.h"
+#include "presentation/renderer/buffer/VertexBuffer.h"
 
 VertexBuffer::VertexBuffer(VertexBufferLayout *vbl, unsigned int vertexSize) {
     _vbl = vbl;

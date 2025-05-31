@@ -5,6 +5,7 @@
 #include "logic/GameService.h"
 #include "presentation/assets/AssetManager.h"
 #include "presentation/mapping/MapPresentationToCommand.h"
+#include "animator/SimpleAnimator.h"
 
 BoardView::BoardView(std::string name, IGameService* gameService) : View(std::move(name)) {
     _gameService = gameService;
@@ -30,7 +31,7 @@ BoardView::~BoardView() {
 }
 
 void BoardView::initializeSprites() {
-    auto* boardAnimator = new Animator(.3, 0, "board");
+    auto* boardAnimator = new SimpleAnimator(.3, 0, "board");
     _backgroundBoard = new Sprite(AssetManager::GameTextures::BOARD_BACKGROUND,
                                  AssetManager::GameTextures::BOARD_BACKGROUND,
                                  glm::vec2(0, 0), glm::vec2(1, 1));
@@ -108,11 +109,12 @@ void BoardView::addStoneSprite(const StoneViewDTO stone, const BoardViewDTO &boa
     _stoneSprites[stone.pos.y][stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
-    auto* animator = new Animator(.3, stoneSprite->getLayer() + 1, "stone");
+    auto* animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone");
     stoneSprite->setAnimator(animator);
     addViewable(stoneSprite);
 
-    _backgroundBoard->getAnimator()->reset();
+    if(!_backgroundBoard->getAnimator()->isActive())
+        _backgroundBoard->getAnimator()->reset();
     animator->reset();
 }
 

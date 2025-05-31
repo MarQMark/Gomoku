@@ -5,13 +5,15 @@ add_executable(Gomoku
 
         presentation/renderer/Window.cpp
         presentation/renderer/Renderer.cpp
-        presentation/renderer/VertexBuffer.cpp
-        presentation/renderer/IndexBuffer.cpp
-        presentation/renderer/Texture2D.cpp
         presentation/renderer/Shader.cpp
         presentation/renderer/Batch.cpp
         presentation/renderer/Font.cpp
-        presentation/renderer/Animator.cpp
+        presentation/renderer/buffer/VertexBuffer.cpp
+        presentation/renderer/buffer/IndexBuffer.cpp
+        presentation/renderer/buffer/Texture2D.cpp
+        presentation/renderer/animator/Animator.cpp
+        presentation/renderer/animator/SimpleAnimator.cpp
+        presentation/renderer/animator/BackgroundAnimator.cpp
 
         presentation/input/Input.cpp
 
@@ -33,7 +35,6 @@ add_executable(Gomoku
         logic/GameService.cpp
 
         main.cpp
-        ../include/logic/IGameService.h
 )
 
 target_include_directories(Gomoku
@@ -48,6 +49,7 @@ target_link_directories(${PROJECT_NAME} PRIVATE external/glfw/src)
 target_link_libraries(Gomoku glfw)
 
 add_compile_definitions(GLEW_STATIC)
+add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
 
 add_custom_target(copy_shaders ALL
         COMMAND  ${CMAKE_COMMAND} -E copy_directory

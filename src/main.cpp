@@ -1,12 +1,11 @@
-#include "presentation/renderer/Renderer.h"
-
-#define STB_IMAGE_IMPLEMENTATION
 #include "logic/GameService.h"
+#include "presentation/renderer/Renderer.h"
 #include "presentation/assets/AssetManager.h"
 #include "presentation/ui/UI.h"
 #include "presentation/ui/Button.h"
 #include "presentation/ui/Label.h"
 #include "presentation/ui/BoardView.h"
+#include "animator/BackgroundAnimator.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
     std::cout << "New Game Started!" << std::endl;
@@ -30,7 +29,9 @@ int main() {
     renderer.addTexture(assets->getTexture(AssetManager::GameTextures::WHITE_STONE_HOVER), AssetManager::GameTextures::WHITE_STONE_HOVER);
 
     Sprite bg("background", AssetManager::GameTextures::BLACK_STONE, glm::vec2(), glm::vec2(1));
-    bg.setAnimator(new Animator(0, 0, "bg"));
+    auto* bgAnimator = new BackgroundAnimator(0, 0, "bg");
+    bgAnimator->addRenderer(&renderer);
+    bg.setAnimator(bgAnimator);
     ui.getViewable<View>("root")->addViewable(&bg);
 
     // Create the main game board (centered, square aspect ratio)

@@ -1,4 +1,4 @@
-#include "presentation/renderer/Texture2D.h"
+#include "presentation/renderer/buffer/Texture2D.h"
 
 Texture2D::Texture2D(GLsizei width, GLsizei height, uint8_t *data, Texture2D::Options *opt) : _width(width), _height(height){
     bool freeOpt = false;

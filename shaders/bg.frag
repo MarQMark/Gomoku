@@ -12,6 +12,9 @@ layout(location = 0) out vec4 fragColor;
 float rand(vec2 co) {
     return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453123);
 }
+vec2 hash2(float i) {
+    return fract(sin(vec2(i, i + 1.0) * vec2(12.9898, 78.233)) * 43758.5453);
+}
 
 // sky() is from: https://www.shadertoy.com/view/fsjXDh
 float hash21(vec2 p)
@@ -117,9 +120,7 @@ vec3 base_color = vec3(0.01, 0.01, 0.08);
 
 vec3 sky2(){
     vec2 uv = gl_FragCoord.xy / u_resolution;
-
     vec3 color = base_color;
-
     float t = u_time / 10;
 
     float gridSize = 8.0;
@@ -141,6 +142,43 @@ vec3 sky2(){
     return color;
 }
 
+vec3 ball(){
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    uv = (uv - 0.5) * vec2(u_resolution.x / u_resolution.y, 1.0) + 0.5;
+    vec2 center = vec2(0.5, 0.5);
+    float time = u_time;
+
+    vec3 color = base_color;
+
+    const int numBalls = 100;
+    float maxAge = 15.0;
+
+    for (int i = 0; i < numBalls; i++) {
+        float fi = float(i);
+        vec2 seed = hash2(fi);
+
+        float launchTime = seed.x * maxAge;
+        float age = mod(time - launchTime, maxAge);
+
+        float angle = seed.y * 6.2831;
+        float speed = mix(0.6, 1.3, rand(seed));
+        float dist = (age / maxAge) * speed;
+        vec2 dir = vec2(cos(angle), sin(angle));
+        vec2 pos = center + dir * dist * 1.5;
+
+        float size = mix(0.01, 0.08, dist); // scale: min, max
+
+        vec2 texUV = (uv - pos) / size + 0.5;
+        texUV.y = 1 - texUV.y;
+
+        if (all(greaterThanEqual(texUV, vec2(0.0))) && all(lessThanEqual(texUV, vec2(1.0)))) {
+            vec4 tex = texture2D(u_sampler2d, texUV);
+            color = mix(color, tex.rgb, tex.a);
+        }
+    }
+    return color;
+}
+
 void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution.xy;
     uv = (uv - 0.5) * vec2(u_resolution.x / u_resolution.y, 1.0) + 0.5;
@@ -152,9 +190,10 @@ void main() {
     vec3 stone_b = stone(uv + vec2(0.2), t, 0.02, 25.0, 0.04, 1.2);
     vec3 stone_c = stone(uv + vec2(-0.1, 0.1), t, 0.04, 30.0, 0.03, 1.0);
 
-    col = mix(col, stone_c, stone_c.x != 0);
-    col = mix(col, stone_b, stone_b.x != 0);
-    col = mix(col, stone_a, stone_a.x != 0);
+    //col = mix(col, stone_c, stone_c.x != 0);
+    //col = mix(col, stone_b, stone_b.x != 0);
+    //col = mix(col, stone_a, stone_a.x != 0);
+    col = ball();
 
     col = mix(col, sky2(), col == base_color);
 

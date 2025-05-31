@@ -2,10 +2,10 @@
 #define GOMOKU_BATCH_H
 
 #include "Shader.h"
-#include "Texture2D.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "Animator.h"
+#include "presentation/renderer/buffer/Texture2D.h"
+#include "presentation/renderer/buffer/VertexBuffer.h"
+#include "presentation/renderer/buffer/IndexBuffer.h"
+#include "presentation/renderer/animator/Animator.h"
 
 class Batch {
 public:

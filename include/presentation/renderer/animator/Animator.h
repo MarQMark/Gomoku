@@ -29,7 +29,7 @@ public:
     void addInstance();
     void removeInstance();
 
-private:
+protected:
     double _duration = 0;
     double _curr_time = 0;
     double _last_time = 0;
@@ -37,6 +37,7 @@ private:
     float _layer = 0;
     std::string _shader{};
 
+private:
     uint32_t _instance_counter = 0;
 };
 

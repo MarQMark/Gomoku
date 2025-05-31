@@ -1,4 +1,4 @@
-#include "presentation/renderer/Animator.h"
+#include "presentation/renderer/animator/Animator.h"
 
 Animator::Animator(double duration) : _duration(duration) {
     _last_time = glfwGetTime();
@@ -13,11 +13,6 @@ Animator::Animator(double duration, float layer, std::string shader) : _duration
 void Animator::update(Shader* shader) {
     if(!isActive())
         return;
-
-    shader->uniform1lf("u_time", (float)_curr_time);
-
-    if(_duration != 0)
-        shader->uniform1lf("u_duration", (float)_duration);
 
     _curr_time += glfwGetTime() - _last_time;
     _last_time = glfwGetTime();
