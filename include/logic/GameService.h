@@ -5,14 +5,10 @@
 #include "Board.h"
 
 class GameService final : public IGameService {
-private:
     GameState _state;
     std::vector<Move> _moveHistory;
     std::string _player1Id;
     std::string _player2Id;
-
-    StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
-    static bool isPlayerValid(const std::string &playerId);
 
 public:
     GameService();
@@ -28,6 +24,8 @@ public:
     const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
 
 private:
+    StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
+    static bool isPlayerValid(const std::string &playerId);
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
     void pauseGame();

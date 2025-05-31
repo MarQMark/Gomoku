@@ -5,7 +5,6 @@
 #include "presentation/DTO/ViewModelDTOs.h"
 #include <vector>
 
-// Maps from the Logic to the Presentation Layer
 class MapLogicToView {
 public:
     static BoardViewDTO mapToBoardViewDTO(const Board& board, const GameState& state, const std::vector<GridPosition>& winningLine);
