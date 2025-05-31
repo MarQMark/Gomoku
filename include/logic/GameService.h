@@ -1,14 +1,10 @@
 #ifndef GAMESERVICE_H
 #define GAMESERVICE_H
-#include <string>
-#include <vector>
 
+#include "IGameService.h"
 #include "Board.h"
-#include "DTO/CommandDTOs.h"
-#include "presentation/DTO/ViewModelDTOs.h"
 
-
-class GameService {
+class GameService final : public IGameService {
 private:
     GameState _state;
     std::vector<Move> _moveHistory;
@@ -16,38 +12,29 @@ private:
     std::string _player2Id;
 
     StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
-
     static bool isPlayerValid(const std::string &playerId);
 
 public:
     GameService();
-    ~GameService() = default;
+    ~GameService() override = default;
 
-    GameService(const GameService&) = default;
-    GameService& operator=(const GameService&) = default;
-    GameService(GameService&&) = default;
-    GameService& operator=(GameService&&) = default;
+    StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const override;
+    MoveViewDTO processMouseClick(const MouseCommandDTO& click_command_dto) override;
+    BoardViewDTO getBoardState() const override;
+    int getBoardSize() const override { return Board::SIZE; }
 
-    // Handle move command from presentation layer
+    void newGame() override;
+    bool undoLastMove() override;
+    const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
+
+private:
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
-    StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const;
-    MoveViewDTO processMouseClick(const MouseCommandDTO& hover_command_dto);
-    BoardViewDTO getBoardState() const;
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
-    const std::vector<Move>& getMoveHistory() const { return _moveHistory; }
-    static int getBoardSize() { return Board::SIZE; }
-
-    // Game control methods
-    void newGame();
-    bool undoLastMove();
     void pauseGame();
     void resumeGame();
-
-    // Player management
     void setPlayerIds(const std::string& player1Id, const std::string& player2Id);
     std::string getCurrentPlayerId() const;
 
-private:
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;
     static constexpr int WINNING_LENGTH = 5;

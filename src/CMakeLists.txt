@@ -32,6 +32,7 @@ add_executable(Gomoku
         logic/GameService.cpp
 
         main.cpp
+        ../include/logic/IGameService.h
 )
 
 target_include_directories(Gomoku

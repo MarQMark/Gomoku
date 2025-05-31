@@ -6,7 +6,7 @@
 #include "presentation/assets/AssetManager.h"
 #include "presentation/mapping/MapPresentationToCommand.h"
 
-BoardView::BoardView(std::string name, GameService* gameService) : View(std::move(name)) {
+BoardView::BoardView(std::string name, IGameService* gameService) : View(std::move(name)) {
     _gameService = gameService;
     const auto boardState = getCurrentBoardState();
     _stoneSprites.resize(boardState.boardSize, std::vector<Sprite*>(boardState.boardSize, nullptr));
@@ -111,7 +111,7 @@ void BoardView::addStoneSprite(const StoneViewDTO stone, const BoardViewDTO &boa
 
 void BoardView::updateHoverPreview(const ViewColor previewColor, const ViewPosition hoverPosition) const {
     if (_showHoverPreview) {
-        const int gridSize = GameService::getBoardSize();
+        const int gridSize = _gameService->getBoardSize();
         const float stoneSize = calculateStoneSize();
         const glm::vec2 intersectionPos = gridToViewPosition(hoverPosition, _boardGrid->getPos(), _boardGrid->getDim(), gridSize);
         const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);

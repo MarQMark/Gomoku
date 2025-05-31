@@ -5,11 +5,11 @@
 #include "presentation/ui/Sprite.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 
-class GameService;
+class IGameService;
 
 class BoardView final : public View {
 private:
-    GameService* _gameService;
+    IGameService* _gameService;
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};
 
@@ -21,8 +21,7 @@ private:
     bool _prevMousePressed;
 
 public:
-
-    explicit BoardView(std::string name, GameService* gameService);
+    explicit BoardView(std::string name, IGameService* gameService);
     ~BoardView() override;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
