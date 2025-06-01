@@ -2,6 +2,8 @@
 #include "presentation/ui/MenuButton.h"
 #include <utility>
 
+#include "presentation/assets/AssetManager.h"
+
 void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
 }
@@ -28,6 +30,8 @@ GameMenuView::GameMenuView(std::string name, MenuController *menuController) : M
     _drawer_view->setAlignV(IViewable::Align::LEFT);
     _drawer_view->setAlignH(IViewable::Align::TOP);
     _drawer_view->setExpanded(false);
+    _drawer_view->setNavToggleTexture(AssetManager::getName(Textures::nav_toggle));
+    _drawer_view->setNavToggleDim(glm::vec2(1.0/3.0, 0.5/3.0));
     MenuView::addViewable(_drawer_view);
 
     auto* pauseBtn = new MenuButton("pauseBtn", glm::vec2(.05, 0));
