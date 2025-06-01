@@ -52,6 +52,13 @@ GameMenuView::GameMenuView(std::string name, MenuController *menuController) : M
     _drawer_view->addViewable(exitGameBtn);
 }
 
+GameMenuView::~GameMenuView() {
+    deleteViewable<MenuButton>("pauseBtn");
+    deleteViewable<MenuButton>("mainMenuBtn");
+    deleteViewable<MenuButton>("exitGameBtn");
+    deleteViewable<MenuButton>("drawerView");
+}
+
 void GameMenuView::setHidden(bool hidden) {
     MenuView::setHidden(hidden);
     _drawer_view->setExpanded(false);

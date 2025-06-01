@@ -65,10 +65,9 @@ ModeMenuView::ModeMenuView(std::string name, MenuController* menuController) : M
 }
 
 ModeMenuView::~ModeMenuView() {
-    // TODO fix
-    //delete MenuView::getViewable<Button>("hvhBtn");
-    //delete MenuView::getViewable<Button>("hvaiBtn");
-    //delete MenuView::getViewable<Button>("aivhBtn");
-    //delete MenuView::getViewable<Button>("aivaiBtn");
-    //delete MenuView::getViewable<Button>("backMainBtn");
+    deleteViewable<MenuButton>("hvhBtn");
+    deleteViewable<MenuButton>("hvaiBtn");
+    deleteViewable<MenuButton>("aivhBtn");
+    deleteViewable<MenuButton>("aivaiBtn");
+    deleteViewable<MenuButton>("backMainBtn");
 }

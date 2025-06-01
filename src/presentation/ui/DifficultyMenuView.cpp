@@ -47,7 +47,7 @@ DifficultyMenuView::DifficultyMenuView(std::string name, MenuController *menuCon
     easyBtn->registerCallback(easyModeBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(easyBtn);
 
-    auto* mediumBtn = new MenuButton("mediumBtn", glm::vec2(0, .3 + 0.125));
+    auto* mediumBtn = new MenuButton("mediumDifficultyBtn", glm::vec2(0, .3 + 0.125));
     mediumBtn->setText("Medium");
     mediumBtn->registerCallback(mediumModeBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(mediumBtn);
@@ -65,5 +65,9 @@ DifficultyMenuView::DifficultyMenuView(std::string name, MenuController *menuCon
 }
 
 DifficultyMenuView::~DifficultyMenuView() {
-
+    deleteViewable<MenuButton>("randomDifficultyBtn");
+    deleteViewable<MenuButton>("easyDifficultyBtn");
+    deleteViewable<MenuButton>("mediumDifficultyBtn");
+    deleteViewable<MenuButton>("hardDifficultyBtn");
+    deleteViewable<MenuButton>("backModeBtn");
 }

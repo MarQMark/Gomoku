@@ -338,3 +338,7 @@ Font *Renderer::getFont(const std::string& name) {
 
     return _fonts[name];
 }
+
+void Renderer::setWindowIcon(int width, int height, unsigned char *data) {
+    _window->setIcon(width, height, data);
+}

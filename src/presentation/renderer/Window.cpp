@@ -2,6 +2,7 @@
 #include "presentation/renderer/Window.h"
 #include "GLFW/glfw3.h"
 #include "presentation/input/Input.h"
+#include "common/Time.h"
 
 void window_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -45,6 +46,21 @@ void Window::getCursorPos(double *x, double *y) {
 }
 
 void Window::update() {
+    _icon_cooldown = std::max(_icon_cooldown - Time::get()->getDeltaTime(), 0.);
+
     glfwSwapBuffers(_window);
     glfwPollEvents();
+}
+
+void Window::setIcon(int width, int height, unsigned char *data) {
+    if(!data || _icon_cooldown != 0)
+        return;
+
+    _icon_cooldown = .05;
+
+    GLFWimage icon;
+    icon.width = width;
+    icon.height = height;
+    icon.pixels = data;
+    glfwSetWindowIcon(_window, 1, &icon);
 }

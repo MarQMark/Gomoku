@@ -45,8 +45,7 @@ MainMenuView::MainMenuView(std::string name, MenuController* menuController) : M
 }
 
 MainMenuView::~MainMenuView() {
-    // TODO fix
-    //delete MenuView::getViewable<Button>("newGameBtn");
-    //delete MenuView::getViewable<Button>("continueBtn");
-    //delete MenuView::getViewable<Button>("exitBtn");
+    deleteViewable<MenuButton>("newGameBtn");
+    deleteViewable<MenuButton>("continueBtn");
+    deleteViewable<MenuButton>("exitBtn");
 }

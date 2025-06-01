@@ -64,3 +64,9 @@ std::unique_ptr<Texture2D> AssetManager::loadTextureFromFile(const std::string& 
     
     return texture;
 }
+
+unsigned char *AssetManager::loadPixelsFromFile(std::string fileName, int *width, int *height) {
+    std::string path = "res/" + fileName + ".png";
+    int c;
+    return stbi_load(path.c_str(), width, height, &c, 4);
+}

@@ -32,6 +32,27 @@ public:
         return nullptr;
     };
 
+    template<class T = IViewable>
+    void deleteViewable(std::string name){
+        T* removeable = nullptr;
+        for(auto* viewable : _viewables){
+            if(viewable->getName() == name){
+                if(T* retVal =  dynamic_cast<T*>(viewable)){
+                    removeable = retVal;
+                    break;
+                }
+            }
+
+            if(View* view = dynamic_cast<View*>(viewable)){
+                view->deleteViewable<T>(name);
+            }
+        }
+        if(removeable){
+            _viewables.erase(std::remove(_viewables.begin(), _viewables.end(), removeable), _viewables.end());
+            delete removeable;
+        }
+    }
+
     std::vector<IViewable*> getViewables();
     void getChildViewables(std::vector<IViewable*>& viewables);
 

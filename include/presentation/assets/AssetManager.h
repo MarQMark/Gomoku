@@ -30,6 +30,8 @@ public:
     static std::string getName(Textures texture);
     Texture2D* getTexture(Textures texture);
 
+    unsigned char* loadPixelsFromFile(std::string fileName, int* width, int* height);
+
 private:
     Renderer *renderer;
     explicit AssetManager(Renderer* _renderer);

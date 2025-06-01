@@ -24,6 +24,11 @@ int main() {
     AssetManager::initialize(&renderer);
     AssetManager::instance()->loadGameAssets();
 
+    int iconWidth, iconHeight;
+    unsigned char* iconBlack = AssetManager::instance()->loadPixelsFromFile("black_stone", &iconWidth, &iconHeight);
+    unsigned char* iconWhite = AssetManager::instance()->loadPixelsFromFile("white_stone", &iconWidth, &iconHeight);
+    renderer.setWindowIcon(iconWidth, iconHeight, iconBlack);
+
     Sprite bg("background", AssetManager::getName(Textures::black_stone), glm::vec2(), glm::vec2(1));
     auto* bgAnimator = new BackgroundAnimator(0, 0, "bg");
     bgAnimator->setRenderer(&renderer);
@@ -69,6 +74,10 @@ int main() {
             case IN_PROGRESS:{
                 statusText = boardState.currentPlayerName + "'s Turn";
                 tex1 = boardState.currentPlayerName == "Black Player" ? AssetManager::getName(Textures::black_stone) : AssetManager::getName(Textures::white_stone);
+                if(boardState.currentPlayerName == "Black Player")
+                    renderer.setWindowIcon(iconWidth, iconHeight, iconBlack);
+                else
+                    renderer.setWindowIcon(iconWidth, iconHeight, iconWhite);
                 if(tex1 == tex2){
                     bgAnimator->reset();
                 }

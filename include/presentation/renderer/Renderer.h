@@ -61,6 +61,7 @@ public:
 
     glm::vec2 getViewportSize();
     glm::vec2 getCursorPos();
+    void setWindowIcon(int width, int height, unsigned char* data);
 
     void setEnforceLayer(bool enforceLayer);
 

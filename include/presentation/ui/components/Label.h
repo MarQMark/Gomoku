@@ -7,6 +7,7 @@
 class Label : public IViewable {
 public:
     Label(std::string name, std::string text);
+    virtual ~Label() = default;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

@@ -16,10 +16,13 @@ public:
     void getSize(int* width, int* height);
     void getCursorPos(double* x, double* y);
 
+    void setIcon(int width, int height, unsigned char* data);
+
     void update();
 
 private:
     GLFWwindow* _window {};
+    double _icon_cooldown = 0;
 };
 
 
