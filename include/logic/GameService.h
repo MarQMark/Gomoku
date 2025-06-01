@@ -16,7 +16,7 @@ class GameService final : public IGameService {
     std::vector<IGameEventListener*> _listeners;
     GameMode _activeGameMode;
     double _aiMoveTimer = 0.0f;
-    double _aiMoveDelay = 1.0f;
+    double _aiMoveDelay = 0.25f;
 
 public:
     GameService();

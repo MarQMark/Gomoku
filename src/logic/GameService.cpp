@@ -76,31 +76,36 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
 
     if (!isValidGridPosition(pos)) {
         return MapLogicToView::createMoveViewDTO(
-            false, getBoardState(), MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid command"
+            false, getBoardState(),
+            MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid command"
         );
     }
 
     if (_state.status != IN_PROGRESS) {
         return MapLogicToView::createMoveViewDTO(
-            false, getBoardState(), MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Game is not in progress"
+            false, getBoardState(),
+            MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Game is not in progress"
         );
     }
 
     if (!pos.isValid()) {
         return MapLogicToView::createMoveViewDTO(
-            false, getBoardState(), MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid board position"
+            false, getBoardState(),
+            MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid board position"
         );
     }
 
     if (_state.board.getColor(pos) != STONE_NONE) {
         return MapLogicToView::createMoveViewDTO(
-            false, getBoardState(), MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Position already occupied"
+            false, getBoardState(),
+            MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Position already occupied"
         );
     }
 
     if (!_state.board.placeStone(pos, _state.currentPlayer->getColor())) {
         return MapLogicToView::createMoveViewDTO(
-            false, getBoardState(), MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Failed to place stone"
+            false, getBoardState(),
+            MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Failed to place stone"
         );
     }
 
@@ -121,7 +126,8 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
 
     if (_state.board.isFull()) {
         _state.status = DRAW;
-        return MapLogicToView::createMoveViewDTO(true, getBoardState(), MapLogicToView::createStoneViewDTO(true, pos,  _state.currentPlayer->getColor()), *_state.currentPlayer, "");
+        return MapLogicToView::createMoveViewDTO(true,
+            getBoardState(), MapLogicToView::createStoneViewDTO(true, pos,  _state.currentPlayer->getColor()), *_state.currentPlayer, "");
     }
 
     // Swap turn

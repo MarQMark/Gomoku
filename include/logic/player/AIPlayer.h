@@ -6,14 +6,13 @@
 #define AIPLAYER_H
 #include "IPlayer.h"
 
-
 class AIPlayer final : public IPlayer {
     std::string _name;
     StoneColor _color;
-    int _difficulty;
+    AIDifficulty _difficulty;
 
 public:
-    AIPlayer(std::string name, StoneColor color, int difficulty);
+    AIPlayer(std::string name, StoneColor color, AIDifficulty difficulty);
 
     std::string getName() const override { return _name; }
     StoneColor getColor() const override { return _color; }
@@ -22,11 +21,18 @@ public:
     GridPosition calculateBestMove(const Board& board) const;
 
 private:
-    GridPosition getBestMoveWithRandomness(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
-    static GridPosition findWinningMove(const Board& board, StoneColor color);
-    static GridPosition getRandomMove(const std::vector<GridPosition>& emptyPositions);
-    GridPosition getBestMove(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
-    int evaluatePosition(const Board& board, const GridPosition& pos) const;
+    GridPosition findImmediateBlock(const Board& board) const;
+    static GridPosition findWinningMoveFor(StoneColor color, const Board& board);
+
+    static bool doesMoveWin(const Board& board, const GridPosition& pos, StoneColor color);
+
+    static GridPosition playRandomly(const std::vector<GridPosition>& emptyPositions);
+    static GridPosition playBasic(const Board& board, const std::vector<GridPosition>& emptyPositions);
+    GridPosition playGood(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+    GridPosition playExpert(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+
+    static GridPosition findNearCenterMove(const std::vector<GridPosition>& emptyPositions);
+    static int scorePositionFor(const Board& board, const GridPosition& pos, StoneColor color);
 };
 
 

@@ -2,6 +2,13 @@
 #define IPLAYER_H
 #include "logic/Board.h"
 
+enum AIDifficulty{
+    RANDOM,
+    BASIC,
+    GOOD,
+    EXPERT
+};
+
 class IPlayer {
 public:
     virtual ~IPlayer() = default;
@@ -10,6 +17,4 @@ public:
     virtual bool isAIPlayer() const = 0;
 };
 
-
-
-#endif //IPLAYER_H
+#endif

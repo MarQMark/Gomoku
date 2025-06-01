@@ -2,7 +2,7 @@
 #include <random>
 #include <algorithm>
 
-AIPlayer::AIPlayer(std::string name, const StoneColor color, const int difficulty)
+AIPlayer::AIPlayer(std::string name, const StoneColor color, const AIDifficulty difficulty)
     : _name(std::move(name)), _color(color), _difficulty(difficulty) {}
 
 GridPosition AIPlayer::calculateBestMove(const Board &board) const {
@@ -11,119 +11,163 @@ GridPosition AIPlayer::calculateBestMove(const Board &board) const {
         return GridPosition(-1, -1);
     }
 
-    const auto winMove = findWinningMove(board, _color);
-    if (winMove.isValid()) {
-        return winMove;
+    // Always try to win immediately
+    const auto winningMove = findWinningMoveFor(_color, board);
+    if (winningMove.isValid()) {
+        return winningMove;
     }
 
-    // Always block opponent wins no random!
+    // Always block opponent from winning
+    const auto blockingMove = findImmediateBlock(board);
+    if (blockingMove.isValid()) {
+        return blockingMove;
+    }
+
+    // Otherwise: Choose strategy based on difficulty
+    switch (_difficulty) {
+        case RANDOM:
+            return playRandomly(emptyPositions);
+        case BASIC:
+            return playBasic(board, emptyPositions);
+        case GOOD:
+            return playGood(board, emptyPositions);
+        case EXPERT:
+        default:
+            return playExpert(board, emptyPositions);
+    }
+}
+
+GridPosition AIPlayer::findImmediateBlock(const Board& board) const {
     const StoneColor opponentColor = (_color == BLACK) ? WHITE : BLACK;
-    const auto blockMove = findWinningMove(board, opponentColor);
-    if (blockMove.isValid()) {
-        return blockMove;
-    }
-
-    if (_difficulty <= 2) {
-        return getRandomMove(emptyPositions);
-    } else {
-        return getBestMoveWithRandomness(board, emptyPositions);
-    }
+    return findWinningMoveFor(opponentColor, board);
 }
 
-GridPosition AIPlayer::getBestMoveWithRandomness(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
-    std::vector<std::pair<GridPosition, int>> scoredMoves;
-
-    for (const auto& pos : emptyPositions) {
-        int score = evaluatePosition(board, pos);
-        scoredMoves.emplace_back(pos, score);
-    }
-
-    std::sort(scoredMoves.begin(), scoredMoves.end(),
-              [](const auto& a, const auto& b) { return a.second > b.second; });
-
-    const int bestScore = scoredMoves[0].second;
-    const int tolerance = std::max(5, bestScore / 10);
-
-    std::vector<GridPosition> goodMoves;
-    for (const auto& [pos, score] : scoredMoves) {
-        if (score >= bestScore - tolerance) {
-            goodMoves.push_back(pos);
-        }
-    }
-
-    return getRandomMove(goodMoves);
-}
-
-GridPosition AIPlayer::findWinningMove(const Board& board, StoneColor color) {
+GridPosition AIPlayer::findWinningMoveFor(const StoneColor color, const Board& board) {
     const auto emptyPositions = board.getEmptyPositions();
 
     for (const auto& pos : emptyPositions) {
+        // Try placing a stone here
         Board testBoard = board;
         testBoard.placeStone(pos, color);
 
-        auto line = testBoard.getLineInDirection(pos, color, 1, 0);  // Horizontal
-        if (line.count >= 5) return pos;
-
-        line = testBoard.getLineInDirection(pos, color, 0, 1);  // Vertical
-        if (line.count >= 5) return pos;
-
-        line = testBoard.getLineInDirection(pos, color, 1, 1);  // Diagonal
-        if (line.count >= 5) return pos;
-
-        line = testBoard.getLineInDirection(pos, color, 1, -1); // Diagonal
-        if (line.count >= 5) return pos;
+        if (doesMoveWin(testBoard, pos, color)) {
+            return pos;
+        }
     }
 
     return GridPosition(-1, -1);
 }
 
-GridPosition AIPlayer::getRandomMove(const std::vector<GridPosition>& emptyPositions) {
+bool AIPlayer::doesMoveWin(const Board& board, const GridPosition& pos, const StoneColor color) {
+    for (int i = 0; i < 4; i++) {
+        constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
+        const auto line = board.getLineInDirection(pos, color, directions[i][0], directions[i][1]);
+        if (line.count >= 5) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Picks any random empty spot
+GridPosition AIPlayer::playRandomly(const std::vector<GridPosition>& emptyPositions) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, static_cast<int>(emptyPositions.size()) - 1);
+    std::uniform_int_distribution<> dis(0, emptyPositions.size() - 1);
     return emptyPositions[dis(gen)];
 }
 
-GridPosition AIPlayer::getBestMove(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
+// Try to play near the center of the board or random if invalid
+GridPosition AIPlayer::playBasic(const Board& board, const std::vector<GridPosition>& emptyPositions) {
+
+    const GridPosition centerMove = findNearCenterMove(emptyPositions);
+    if (centerMove.isValid()) {
+        return centerMove;
+    }
+
+    return playRandomly(emptyPositions);
+}
+
+// Just try to move into the center
+GridPosition AIPlayer::findNearCenterMove(const std::vector<GridPosition>& emptyPositions) {
+    constexpr int center = Board::SIZE / 2;
+
+    // Look for empty spots near the center
+    for (const auto& pos : emptyPositions) {
+        const int distanceFromCenter = abs(pos.x - center) + abs(pos.y - center);
+        if (distanceFromCenter <= 3) {
+            return pos;
+        }
+    }
+
+    return GridPosition(-1, -1);
+}
+
+// Find best move without taking enemy into account
+GridPosition AIPlayer::playGood(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
+    // Find the best move by scoring all empty positions
     GridPosition bestMove(-1, -1);
-    int bestScore = -1000;
+    int bestScore = -999;
 
     for (const auto& pos : emptyPositions) {
-        const int score = evaluatePosition(board, pos);
+        const int score = scorePositionFor(board, pos, _color);
         if (score > bestScore) {
             bestScore = score;
             bestMove = pos;
         }
     }
 
-    return bestMove.isValid() ? bestMove : getRandomMove(emptyPositions);
+    return bestMove.isValid() ? bestMove : playRandomly(emptyPositions);
 }
 
-int AIPlayer::evaluatePosition(const Board& board, const GridPosition& pos) const {
-    int score = 0;
+// Find best move while trying to block the enemies best move
+GridPosition AIPlayer::playExpert(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
+    GridPosition bestMove(-1, -1);
+    int bestScore = -999;
 
+    for (const auto& pos : emptyPositions) {
+
+        // Score this position for me
+        const int myScore = scorePositionFor(board, pos, _color);
+
+        // Score this position for opponent
+        // If this scores high, we want to block it, so: Increase the score!
+        const StoneColor opponentColor = (_color == BLACK) ? WHITE : BLACK;
+        const int opponentScore = scorePositionFor(board, pos, opponentColor);
+
+        // Total score = my benefit + blocking opponent
+        const int totalScore = myScore + (opponentScore / 2);
+
+        if (totalScore > bestScore) {
+            bestScore = totalScore;
+            bestMove = pos;
+        }
+    }
+
+    return bestMove.isValid() ? bestMove : playRandomly(emptyPositions);
+}
+
+// Calculate score when a stone would be placed at pos for color
+int AIPlayer::scorePositionFor(const Board& board, const GridPosition& pos, const StoneColor color) {
     Board testBoard = board;
-    testBoard.placeStone(pos, _color);
+    testBoard.placeStone(pos, color);
 
+    int score = 0;
     constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
-
     for (const auto direction : directions) {
-        const auto line = testBoard.getLineInDirection(pos, _color, direction[0], direction[1]);
+        const auto line = testBoard.getLineInDirection(pos, color, direction[0], direction[1]);
 
-        if (line.count >= 4) score += 100;
-        else if (line.count == 3) score += 10;
-        else if (line.count == 2) score += 3;
+        // Points = How many stones are in a row?
+        if (line.count == 4) score += 100;
+        else if (line.count == 3) score += 20;
+        else if (line.count == 2) score += 5;
         else score += 1;
     }
 
+    // Àdd points for distance to center
     constexpr int center = Board::SIZE / 2;
-    const int distanceFromCenter = std::abs(pos.x - center) + std::abs(pos.y - center);
-    score += (Board::SIZE - distanceFromCenter);
-
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> randomBonus(-2, 2);
-    score += randomBonus(gen);
+    const int distanceFromCenter = abs(pos.x - center) + abs(pos.y - center);
+    score += (15 - distanceFromCenter);
 
     return score;
 }
