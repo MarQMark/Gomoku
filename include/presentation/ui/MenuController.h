@@ -1,0 +1,10 @@
+#ifndef GOMOKU_MENUCONTROLLER_H
+#define GOMOKU_MENUCONTROLLER_H
+
+
+class MenuController {
+
+};
+
+
+#endif //GOMOKU_MENUCONTROLLER_H

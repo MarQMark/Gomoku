@@ -9,6 +9,7 @@
 #include "common/Time.h"
 #include "presentation/ui/components/DrawerView.h"
 #include "presentation/ui/components/MenuView.h"
+#include "presentation/ui/MainMenuView.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
     std::cout << "New Game Started!" << std::endl;
@@ -39,7 +40,10 @@ int main() {
     bg.setLayer(-1);
     ui.getViewable<View>("root")->addViewable(&bg);
 
-    MenuView testMenu("drawerView", glm::vec2(0), glm::vec2(.25, .7));
+    MainMenuView mainMenuView("mainMenuView");
+    ui.getViewable<View>("root")->addViewable(&mainMenuView);
+
+    /*MenuView testMenu("drawerView", glm::vec2(0), glm::vec2(.25, .7));
     testMenu.setMargin(glm::vec4(0.15, 0, 0.01, 0));
     testMenu.setAlignH(IViewable::Align::TOP);
     ui.getViewable<View>("root")->addViewable(&testMenu);
@@ -63,7 +67,7 @@ int main() {
     testBtn.setAlignV(IViewable::Align::CENTER);
     testBtn.setAlignH(IViewable::Align::TOP);
     testBtn.registerCallback(testBtnClbk, IInteractable::State::PRESSED, &testMenu);
-    ui.getViewable<View>("root")->addViewable(&testBtn);
+    ui.getViewable<View>("root")->addViewable(&testBtn);*/
 
     /*DrawerView drawerView("drawerView", glm::vec2(0), glm::vec2(.25, .8));
     drawerView.setMargin(glm::vec4(0.15, 0, 0, 0));

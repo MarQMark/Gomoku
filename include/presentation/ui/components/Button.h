@@ -12,6 +12,7 @@ public:
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
     void setText(std::string text);
+    void setTextHeight(float textHeight);
 
     void setTexture(State state, std::string name);
     void setShader(State state, std::string name);
@@ -20,6 +21,7 @@ private:
     void init_maps();
 
     std::string _text{};
+    float _text_height = 0.6;
 
     std::map<State, std::string> _texture_names;
     std::map<State, std::string> _shader_names;

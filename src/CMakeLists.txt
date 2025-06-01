@@ -17,7 +17,6 @@ add_executable(Gomoku
 
         presentation/input/Input.cpp
 
-        presentation/ui/UI.cpp
         presentation/ui/components/Viewable.cpp
         presentation/ui/components/View.cpp
         presentation/ui/components/DrawerView.cpp
@@ -26,7 +25,11 @@ add_executable(Gomoku
         presentation/ui/components/ShaderSprite.cpp
         presentation/ui/components/Button.cpp
         presentation/ui/components/MenuView.cpp
+        presentation/ui/UI.cpp
         presentation/ui/BoardView.cpp
+        presentation/ui/MainMenuView.cpp
+        presentation/ui/ModeMenuView.cpp
+        presentation/ui/MenuController.cpp
 
         presentation/assets/AssetManager.cpp
 
