@@ -2,8 +2,8 @@
 #define GOMOKU_UI_H
 
 #include "Renderer.h"
-#include "View.h"
-#include "IInteractable.h"
+#include "presentation/ui/components/View.h"
+#include "presentation/ui/components/IInteractable.h"
 
 class UI {
 public:

@@ -1,4 +1,5 @@
 #include "presentation/renderer/animator/BackgroundAnimator.h"
+#include "common/Time.h"
 
 BackgroundAnimator::BackgroundAnimator(double duration) : Animator(duration) {
 }
@@ -10,7 +11,7 @@ void BackgroundAnimator::update(Shader *shader) {
     Animator::update(shader);
 
     shader->uniform1lf("u_time", (float)_curr_time);
-    shader->uniform1lf("u_total_time", (float)glfwGetTime());
+    shader->uniform1lf("u_total_time", (float)Time::get()->getTime());
     if(_duration != 0)
         shader->uniform1lf("u_duration", (float)_duration);
 

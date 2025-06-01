@@ -32,7 +32,6 @@ public:
 protected:
     double _duration = 0;
     double _curr_time = 0;
-    double _last_time = 0;
 
     float _layer = 0;
     std::string _shader{};

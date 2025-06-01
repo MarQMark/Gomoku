@@ -2,16 +2,23 @@
 #include "presentation/renderer/Renderer.h"
 #include "presentation/assets/AssetManager.h"
 #include "presentation/ui/UI.h"
-#include "presentation/ui/Button.h"
-#include "presentation/ui/Label.h"
+#include "presentation/ui/components/Button.h"
+#include "presentation/ui/components/Label.h"
 #include "presentation/ui/BoardView.h"
 #include "animator/BackgroundAnimator.h"
 #include "common/Time.h"
-#include "presentation/ui/DrawerView.h"
+#include "presentation/ui/components/DrawerView.h"
+#include "presentation/ui/components/MenuView.h"
 
 void newGameCallback(IInteractable* interactable, IInteractable::State state, void* data) {
     std::cout << "New Game Started!" << std::endl;
     auto* boardView = static_cast<BoardView*>(data);
+}
+
+void testBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuView = (MenuView*)data;
+    menuView->setHidden(!menuView->isHidden());
+    std::cout << interactable->getName() << std::endl;
 }
 
 int main() {
@@ -32,7 +39,33 @@ int main() {
     bg.setLayer(-1);
     ui.getViewable<View>("root")->addViewable(&bg);
 
-    DrawerView drawerView("drawerView", glm::vec2(0), glm::vec2(.25, .8));
+    MenuView testMenu("drawerView", glm::vec2(0), glm::vec2(.25, .7));
+    testMenu.setMargin(glm::vec4(0.15, 0, 0.01, 0));
+    testMenu.setAlignH(IViewable::Align::TOP);
+    ui.getViewable<View>("root")->addViewable(&testMenu);
+
+    Button menuBtn1("MenuBtn1", glm::vec2(), glm::vec2(.95, .2));
+    menuBtn1.setAlignV(IViewable::Align::RIGHT);
+    menuBtn1.setAlignH(IViewable::Align::TOP);
+    menuBtn1.registerCallback(testBtnClbk, IInteractable::State::PRESSED, &testMenu);
+    testMenu.addViewable(&menuBtn1);
+    Button menuBtn2("MenuBtn2", glm::vec2(), glm::vec2(.95, .2));
+    menuBtn2.setAlignV(IViewable::Align::RIGHT);
+    menuBtn2.setAlignH(IViewable::Align::CENTER);
+    testMenu.addViewable(&menuBtn2);
+    Button menuBtn3("MenuBtn3", glm::vec2(), glm::vec2(.95, .2));
+    menuBtn3.setAlignV(IViewable::Align::RIGHT);
+    menuBtn3.setAlignH(IViewable::Align::BOTTOM);
+    testMenu.addViewable(&menuBtn3);
+
+
+    Button testBtn("testBtn", glm::vec2(0), glm::vec2(.2, .1));
+    testBtn.setAlignV(IViewable::Align::CENTER);
+    testBtn.setAlignH(IViewable::Align::TOP);
+    testBtn.registerCallback(testBtnClbk, IInteractable::State::PRESSED, &testMenu);
+    ui.getViewable<View>("root")->addViewable(&testBtn);
+
+    /*DrawerView drawerView("drawerView", glm::vec2(0), glm::vec2(.25, .8));
     drawerView.setMargin(glm::vec4(0.15, 0, 0, 0));
     drawerView.setAlignV(IViewable::Align::LEFT);
     drawerView.setAlignH(IViewable::Align::TOP);
@@ -49,7 +82,7 @@ int main() {
     drawerView.addViewable(&testBtn3);
     Button testBtn4("testBtn4", glm::vec2(.05, .75), glm::vec2(.95, .15));
     testBtn4.setText("Exit");
-    drawerView.addViewable(&testBtn4);
+    drawerView.addViewable(&testBtn4);*/
 
     // Create the main game board (centered, square aspect ratio)
     auto* boardView = new BoardView("game_board", &gameService);

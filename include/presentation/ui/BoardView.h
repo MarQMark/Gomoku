@@ -2,8 +2,8 @@
 #define BOARDVIEW_H
 
 #include "logic/interfaces/IGameEventListener.h"
-#include "presentation/ui/View.h"
-#include "presentation/ui/Sprite.h"
+#include "presentation/ui/components/View.h"
+#include "presentation/ui/components/Sprite.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 
 class IGameService;

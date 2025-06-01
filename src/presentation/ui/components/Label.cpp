@@ -1,4 +1,4 @@
-#include "presentation/ui/Label.h"
+#include "presentation/ui/components/Label.h"
 
 Label::Label(std::string name, std::string text) : IViewable(std::move(name)), _text(std::move(text)){
     _layer = 6;

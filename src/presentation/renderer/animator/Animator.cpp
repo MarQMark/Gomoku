@@ -1,12 +1,11 @@
 #include "presentation/renderer/animator/Animator.h"
+#include "common/Time.h"
 
 Animator::Animator(double duration) : _duration(duration) {
-    _last_time = glfwGetTime();
     _curr_time = _duration;
 }
 
 Animator::Animator(double duration, float layer, std::string shader) : _duration(duration), _layer(layer), _shader(std::move(shader)){
-    _last_time = glfwGetTime();
     _curr_time = _duration;
 }
 
@@ -14,13 +13,11 @@ void Animator::update(Shader* shader) {
     if(!isActive())
         return;
 
-    _curr_time += glfwGetTime() - _last_time;
-    _last_time = glfwGetTime();
+    _curr_time += Time::get()->getDeltaTime();
 }
 
 void Animator::reset() {
     _curr_time = 0;
-    _last_time = glfwGetTime();
 }
 
 void Animator::setDuration(double duration) {

@@ -1,4 +1,5 @@
-#include "presentation/ui/DrawerView.h"
+#include "presentation/ui/components/DrawerView.h"
+#include "common/Time.h"
 #include <utility>
 
 void DrawerViewClbk(IInteractable* interactable, IInteractable::State state, void* data){
@@ -35,14 +36,12 @@ DrawerView::~DrawerView() {
 void DrawerView::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
     View::render(renderer, parentPos, parentDim);
 
-    double dt = glfwGetTime() - _last_time;
-    _last_time = glfwGetTime();
     if(_expanded && _curr_time != _duration){
-        _curr_time += dt;
+        _curr_time += Time::get()->getDeltaTime();
         _curr_time = std::min(_curr_time, _duration);
     }
     else if(!_expanded && _curr_time > 0){
-        _curr_time -= dt;
+        _curr_time -= Time::get()->getDeltaTime();
         _curr_time = std::max(_curr_time, 0.);
     }
 
@@ -69,9 +68,6 @@ void DrawerView::addViewable(IViewable *viewable) {
 }
 
 void DrawerView::setExpanded(bool expanded) {
-    if(_expanded != expanded)
-        _last_time = glfwGetTime();
-
     _expanded = expanded;
     if(_expanded)
         set_interactable_big();

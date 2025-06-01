@@ -18,13 +18,14 @@ add_executable(Gomoku
         presentation/input/Input.cpp
 
         presentation/ui/UI.cpp
-        presentation/ui/Viewable.cpp
-        presentation/ui/View.cpp
-        presentation/ui/DrawerView.cpp
-        presentation/ui/Label.cpp
-        presentation/ui/Sprite.cpp
-        presentation/ui/ShaderSprite.cpp
-        presentation/ui/Button.cpp
+        presentation/ui/components/Viewable.cpp
+        presentation/ui/components/View.cpp
+        presentation/ui/components/DrawerView.cpp
+        presentation/ui/components/Label.cpp
+        presentation/ui/components/Sprite.cpp
+        presentation/ui/components/ShaderSprite.cpp
+        presentation/ui/components/Button.cpp
+        presentation/ui/components/MenuView.cpp
         presentation/ui/BoardView.cpp
 
         presentation/assets/AssetManager.cpp
@@ -34,11 +35,12 @@ add_executable(Gomoku
         logic/mapping/MapLogicToView.cpp
         logic/Board.cpp
         logic/GameService.cpp
-
-        main.cpp
         logic/player/HumanPlayer.cpp
         logic/player/AIPlayer.cpp
+
         common/Time.cpp
+
+        main.cpp
 )
 
 target_include_directories(Gomoku

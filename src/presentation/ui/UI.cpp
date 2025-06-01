@@ -1,5 +1,5 @@
 #include "presentation/ui/UI.h"
-#include "presentation/ui/IInteractable.h"
+#include "presentation/ui/components/IInteractable.h"
 #include "presentation/input/Input.h"
 
 UI::UI(Renderer *renderer) : _renderer(renderer) {

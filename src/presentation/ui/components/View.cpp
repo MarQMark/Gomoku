@@ -1,4 +1,4 @@
-#include "presentation/ui/View.h"
+#include "presentation/ui/components/View.h"
 
 #include <utility>
 #include <iostream>
@@ -25,4 +25,15 @@ void View::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2
 
 std::vector<IViewable *> View::getViewables() {
     return _viewables;
+}
+
+void View::getChildViewables(std::vector<IViewable *> &viewables) {
+    for(auto* viewable : _viewables){
+        viewables.push_back(viewable);
+
+        auto* childView = dynamic_cast<View*>(viewable);
+        if(childView){
+            childView->getChildViewables(viewables);
+        }
+    }
 }

@@ -17,22 +17,22 @@ public:
         RIGHT = 3,
     };
 
-    bool isVisible() const {return _visible;}
-    void setVisible(bool visible) {_visible = visible;}
+    virtual bool isVisible() const {return _visible;}
+    virtual void setVisible(bool visible) {_visible = visible;}
 
-    std::string getName(){return _name;}
+    virtual std::string getName(){return _name;}
 
-    glm::vec2 getPos(){return _pos;}
-    void setPos(glm::vec2 pos){_pos = pos;}
+    virtual glm::vec2 getPos(){return _pos;}
+    virtual void setPos(glm::vec2 pos){_pos = pos;}
 
-    glm::vec2 getDim(){return _dim;}
-    void setDim(glm::vec2 dim){_dim = dim;}
+    virtual glm::vec2 getDim(){return _dim;}
+    virtual void setDim(glm::vec2 dim){_dim = dim;}
 
-    glm::vec2 getAbsPos(){return _abs_pos;}
-    glm::vec2 getAbsDim(){return _abs_dim;}
+    virtual glm::vec2 getAbsPos(){return _abs_pos;}
+    virtual glm::vec2 getAbsDim(){return _abs_dim;}
 
-    void setKeepWidth(bool keep){_keep_width = keep;}
-    void setKeepHeight(bool keep){_keep_height = keep;}
+    virtual void setKeepWidth(bool keep){_keep_width = keep;}
+    virtual void setKeepHeight(bool keep){_keep_height = keep;}
 
     /* void setMargin(glm::vec4)
      *  The components correspond as follows and are applied in the same order:
@@ -41,12 +41,12 @@ public:
      *      z: left
      *      w: right
      */
-    void setMargin(glm::vec4 margin){_margin = margin;}
-    void setAlignV(Align align){_vertical = align;}
-    void setAlignH(Align align){_horizontal = align;}
+    virtual void setMargin(glm::vec4 margin){_margin = margin;}
+    virtual void setAlignV(Align align){_vertical = align;}
+    virtual void setAlignH(Align align){_horizontal = align;}
 
-    void setLayer(float layer){_layer = layer;}
-    float getLayer() const{ return _layer;}
+    virtual void setLayer(float layer){_layer = layer;}
+    virtual float getLayer() const{ return _layer;}
 
     virtual void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) = 0;
 

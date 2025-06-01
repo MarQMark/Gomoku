@@ -2,7 +2,7 @@
 #define GOMOKU_INTERACTABLE_H
 
 #include <iostream>
-#include "presentation/ui/IViewable.h"
+#include "presentation/ui/components/IViewable.h"
 
 class IInteractable : public IViewable {
 public:
@@ -74,6 +74,7 @@ public:
     }
 
     bool isInteractable(){return _interactable;}
+    void setInteractable(bool interactable){_interactable = interactable;}
     bool isFocused(){return _focused;}
     void setFocused(bool focused){_focused = focused;}
 

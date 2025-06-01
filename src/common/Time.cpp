@@ -24,3 +24,7 @@ void Time::update() {
 Time::Time(): _delta_time(0) {
     _last_time = glfwGetTime();
 }
+
+double Time::getTime() {
+    return glfwGetTime();
+}

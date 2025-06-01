@@ -33,6 +33,7 @@ public:
     };
 
     std::vector<IViewable*> getViewables();
+    void getChildViewables(std::vector<IViewable*>& viewables);
 
 private:
     std::vector<IViewable*> _viewables{};

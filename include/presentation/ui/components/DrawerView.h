@@ -57,7 +57,6 @@ private:
     float _max_pos = 0;
     double _duration = .1;
     double _curr_time = 0;
-    double _last_time = 0;
 
     void init();
     void update_visibility();

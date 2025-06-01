@@ -1,4 +1,4 @@
-#include "presentation/ui/Sprite.h"
+#include "presentation/ui/components/Sprite.h"
 
 #include <iostream>
 #include <utility>

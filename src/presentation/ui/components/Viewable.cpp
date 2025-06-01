@@ -1,4 +1,4 @@
-#include "presentation/ui/IViewable.h"
+#include "presentation/ui/components/IViewable.h"
 
 void IViewable::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim){
     _abs_pos = parentPos + _pos * parentDim;
