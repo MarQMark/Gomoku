@@ -52,4 +52,4 @@ struct LoadGameCommandDTO {
         : filename(std::move(file)) {}
 };
 
-#endif // COMMANDDTOS_H
+#endif

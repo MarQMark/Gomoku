@@ -157,17 +157,22 @@ int AIPlayer::scorePositionFor(const Board& board, const GridPosition& pos, cons
     for (const auto direction : directions) {
         const auto line = testBoard.getLineInDirection(pos, color, direction[0], direction[1]);
 
-        // Points = How many stones are in a row?
         if (line.count == 4) score += 100;
         else if (line.count == 3) score += 20;
         else if (line.count == 2) score += 5;
         else score += 1;
     }
 
-    // Àdd points for distance to center
     constexpr int center = Board::SIZE / 2;
     const int distanceFromCenter = abs(pos.x - center) + abs(pos.y - center);
     score += (15 - distanceFromCenter);
+
+    // RANDOMNESS
+    // Small random factor to break ties and add variety
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> randomBonus(0, 1);
+    score += randomBonus(gen);
 
     return score;
 }
