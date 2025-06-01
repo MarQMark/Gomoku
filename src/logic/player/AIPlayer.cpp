@@ -37,6 +37,10 @@ GridPosition AIPlayer::calculateBestMove(const Board &board) const {
     }
 }
 
+AIDifficulty AIPlayer::getDifficulty() const {
+    return _difficulty;
+}
+
 GridPosition AIPlayer::findImmediateBlock(const Board& board) const {
     const StoneColor opponentColor = (_color == BLACK) ? WHITE : BLACK;
     return findWinningMoveFor(opponentColor, board);

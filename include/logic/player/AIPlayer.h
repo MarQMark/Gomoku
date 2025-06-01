@@ -19,6 +19,7 @@ public:
     bool isAIPlayer() const override { return true; }
 
     GridPosition calculateBestMove(const Board& board) const;
+    AIDifficulty getDifficulty() const;
 
 private:
     GridPosition findImmediateBlock(const Board& board) const;

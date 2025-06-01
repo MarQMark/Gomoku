@@ -31,25 +31,11 @@ struct MouseCommandDTO {
         : gridPosition(gridPosition) {}
 };
 
-struct UndoMoveCommandDTO {
-};
-
 struct NewGameCommandDTO {
+    // TODO: GAME MODE
+    // DIFFICULTY
+    // BLACK ALWAYS BEGINS
 
-};
-
-struct SaveGameCommandDTO {
-    std::string filename;
-
-    explicit SaveGameCommandDTO(std::string  file)
-        : filename(std::move(file)) {}
-};
-
-struct LoadGameCommandDTO {
-    std::string filename;
-
-    explicit LoadGameCommandDTO(std::string  file)
-        : filename(std::move(file)) {}
 };
 
 #endif

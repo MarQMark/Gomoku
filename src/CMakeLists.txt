@@ -48,6 +48,8 @@ add_executable(Gomoku
 
         main.cpp
         persistence/FileManager.cpp
+        persistence/mapping/MapPersistenceToLogic.cpp
+        logic/mapping/MapLogicToModel.cpp
 )
 
 target_include_directories(Gomoku

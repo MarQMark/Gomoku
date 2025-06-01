@@ -168,7 +168,7 @@ vec3 ball(){
         vec2 dir = vec2(cos(angle), sin(angle));
         vec2 pos = center + dir * dist * 1.5;
 
-        float size = mix(0.01, 0.08, dist); // scale: min, max
+        float size = mix(0.001, 0.12, dist); // scale: min, max
 
         vec2 texUV = (uv - pos) / size + 0.5;
         texUV.y = 1 - texUV.y;

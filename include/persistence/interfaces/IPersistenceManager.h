@@ -2,14 +2,13 @@
 #define IPERSISTENCEMANAGER_H
 #include <string>
 
-
-struct GameEntity;
+#include "persistence/Models.h"
 
 class IPersistenceManager {
 public:
     virtual ~IPersistenceManager() = default;
 
-    virtual bool saveGame(GameEntity gameData) = 0;
+    virtual bool saveGame(SaveGameModel gameData) = 0;
     virtual bool loadGame(std::string gameId) = 0;
 };
 
