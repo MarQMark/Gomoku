@@ -1,6 +1,7 @@
 #include "presentation/ui/BoardView.h"
 #include "presentation/input/Input.h"
 #include <iostream>
+#include <cstring>
 
 #include "logic/GameService.h"
 #include "presentation/assets/AssetManager.h"
@@ -104,7 +105,11 @@ void BoardView::addStoneSprite(const MoveViewDTO &move) {
     _stoneSprites[move.stone.pos.y][move.stone.pos.x] = stoneSprite;
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
-    auto* animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone");
+    Animator* animator = nullptr;
+    if(std::strncmp(move.currentPlayerName.c_str(), "Player 1", 8) == 0)
+        animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone");
+    else
+        animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone2");
     stoneSprite->setAnimator(animator);
     addViewable(stoneSprite);
 

@@ -37,6 +37,7 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
     addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
     addShader(new Shader("shaders/stone.vert", "shaders/default.frag"), "stone");
+    addShader(new Shader("shaders/stone2.vert", "shaders/default.frag"), "stone2");
     addShader(new Shader("shaders/board.vert", "shaders/default.frag"), "board");
     addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
 
