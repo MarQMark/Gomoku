@@ -5,13 +5,13 @@
 #include "logic/DTO/CommandDTOs.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 
-class IGameEventListener;
+class IBoardEventListener;
 
 class IGameService {
 public:
     virtual ~IGameService() = default;
 
-    virtual void addListener(IGameEventListener* listener) = 0;
+    virtual void addListener(IBoardEventListener* listener) = 0;
     virtual void update(double deltaTime) = 0;
     virtual bool isCurrentPlayerAI() const = 0;
 

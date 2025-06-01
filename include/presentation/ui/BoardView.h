@@ -1,14 +1,14 @@
 #ifndef BOARDVIEW_H
 #define BOARDVIEW_H
 
-#include "logic/interfaces/IGameEventListener.h"
+#include "logic/interfaces/IBoardEventListener.h"
 #include "presentation/ui/components/View.h"
 #include "presentation/ui/components/Sprite.h"
 #include "presentation/DTO/ViewModelDTOs.h"
 
 class IGameService;
 
-class BoardView final : public View, public IGameEventListener {
+class BoardView final : public View, public IBoardEventListener {
     IGameService* _gameService;
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};

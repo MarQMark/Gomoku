@@ -203,7 +203,7 @@ bool GameService::isPositionOccupied(const GridPosition& pos) const {
     return _state.board.getColor(pos) != STONE_NONE;
 }
 
-void GameService::addListener(IGameEventListener* listener) {
+void GameService::addListener(IBoardEventListener* listener) {
     _listeners.push_back(listener);
 }
 

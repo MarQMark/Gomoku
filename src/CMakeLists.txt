@@ -44,6 +44,13 @@ add_executable(Gomoku
         common/Time.cpp
 
         main.cpp
+        persistence/interfaces/IPersistenceManager.h
+        persistence/GameEntity.h
+        persistence/PlayerEntity.h
+        persistence/MoveEntity.h
+        persistence/GameStateEntity.h
+        persistence/FileManager.cpp
+        persistence/FileManager.h
 )
 
 target_include_directories(Gomoku

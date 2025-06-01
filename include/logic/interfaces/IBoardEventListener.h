@@ -1,15 +1,11 @@
-//
-// Created by Henk on 31.05.2025.
-//
-
 #ifndef IGAMEEVENTLISTENER_H
 #define IGAMEEVENTLISTENER_H
 
 struct MoveViewDTO;
 
-class IGameEventListener {
+class IBoardEventListener {
 public:
-    virtual ~IGameEventListener() = default;
+    virtual ~IBoardEventListener() = default;
     virtual void onMoveCompleted(const MoveViewDTO& move) = 0;
 };
 

@@ -5,7 +5,7 @@
 
 #include "interfaces/IGameService.h"
 #include "Board.h"
-#include "interfaces/IGameEventListener.h"
+#include "interfaces/IBoardEventListener.h"
 #include "player/IPlayer.h"
 
 class GameService final : public IGameService {
@@ -13,7 +13,7 @@ class GameService final : public IGameService {
     std::vector<Move> _moveHistory;
     std::unique_ptr<IPlayer> _player1;
     std::unique_ptr<IPlayer> _player2;
-    std::vector<IGameEventListener*> _listeners;
+    std::vector<IBoardEventListener*> _listeners;
     GameMode _activeGameMode;
     double _aiMoveTimer = 0.0f;
     double _aiMoveDelay = 0.05f;
@@ -34,7 +34,7 @@ public:
 
     void initialize() override;
     const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
-    void addListener(IGameEventListener* listener) override;
+    void addListener(IBoardEventListener* listener) override;
     void update(double deltaTime) override;
     bool isCurrentPlayerAI() const override;
 
