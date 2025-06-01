@@ -34,14 +34,7 @@ public:
     virtual void setKeepWidth(bool keep){_keep_width = keep;}
     virtual void setKeepHeight(bool keep){_keep_height = keep;}
 
-    /* void setMargin(glm::vec4)
-     *  The components correspond as follows and are applied in the same order:
-     *      x: top
-     *      y: bottom
-     *      z: left
-     *      w: right
-     */
-    virtual void setMargin(glm::vec4 margin){_margin = margin;}
+    virtual void setMargin(float top, float bottom, float left, float right){_margin = glm::vec4(top, bottom, left, right);}
     virtual void setAlignV(Align align){_vertical = align;}
     virtual void setAlignH(Align align){_horizontal = align;}
 

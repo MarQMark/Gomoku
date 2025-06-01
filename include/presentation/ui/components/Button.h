@@ -13,6 +13,7 @@ public:
 
     void setText(std::string text);
     void setTextHeight(float textHeight);
+    void setTextPos(glm::vec2 textPos);
 
     void setTexture(State state, std::string name);
     void setShader(State state, std::string name);
@@ -22,6 +23,7 @@ private:
 
     std::string _text{};
     float _text_height = 0.6;
+    glm::vec2 _text_pos = glm::vec2(0.05, .2);
 
     std::map<State, std::string> _texture_names;
     std::map<State, std::string> _shader_names;

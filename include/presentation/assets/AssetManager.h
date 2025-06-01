@@ -16,6 +16,7 @@ enum class Textures {
     white_stone,
     black_stone_hover,
     white_stone_hover,
+    button_none,
 };
 
 class AssetManager {

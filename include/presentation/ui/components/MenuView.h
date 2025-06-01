@@ -11,8 +11,9 @@ public:
 
     void render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
-    void setHidden(bool hidden);
+    virtual void setHidden(bool hidden);
     bool isHidden();
+    bool inMotion();
 
     void setPos(glm::vec2 pos) override;
 

@@ -4,11 +4,11 @@
 
 void DrawerViewClbk(IInteractable* interactable, IInteractable::State state, void* data){
     auto* drawerView = (DrawerView*)data;
-    if(state == IInteractable::State::HOVERING){
-        drawerView->setExpanded(true);
-    }
-    else if (state == IInteractable::State::NONE){
+    if (state == IInteractable::State::NONE){
         drawerView->setExpanded(false);
+    }
+    else{
+        drawerView->setExpanded(true);
     }
 }
 
@@ -21,7 +21,7 @@ DrawerView::DrawerView(std::string name, glm::vec2 pos, glm::vec2 dim) : View(st
 }
 
 void DrawerView::init() {
-    _nav_toggle = new DrawerViewInteractable(getName() + "_Button");
+    _nav_toggle = new DrawerViewInteractable(getName() + "_NavToggle");
     _nav_toggle->registerCallback(DrawerViewClbk, IInteractable::State::ALL, this);
     _nav_toggle_pos = glm::vec2(0.1, 0);
     _nav_toggle_dim = glm::vec2(.5 * _dim.y, .5 * _dim.x);

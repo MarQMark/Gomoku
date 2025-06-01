@@ -3,10 +3,14 @@
 
 
 #include "presentation/ui/components/MenuView.h"
+#include "MenuController.h"
 
 class ModeMenuView : public MenuView {
-    ModeMenuView(std::string name);
-    ~ModeMenuView();
+public:
+    ModeMenuView(std::string name, MenuController* menuController);
+    ~ModeMenuView() override;
+
+private:
 };
 
 

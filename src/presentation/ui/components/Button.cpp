@@ -71,8 +71,7 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
         Renderer::Options textOptions;
         textOptions.layer = _layer + 0.02,
         textOptions.shaderName = "font";
-        //float height = _text_height != 0 ? _text_height : _abs_dim.y * 0.6f;
-        glm::vec2 pos = _abs_pos + glm::vec2(_abs_dim.y * 0.05f, _abs_dim.y * ((1 - _text_height) / 2));
+        glm::vec2 pos = _abs_pos + glm::vec2(_abs_dim.y * _text_pos.x, _abs_dim.y * _text_pos.y);
         renderer->drawTextID((uint64_t)this, _text, pos, _abs_dim.y * _text_height, textOptions);
     }
 }
@@ -91,5 +90,9 @@ void Button::setText(std::string text) {
 
 void Button::setTextHeight(float textHeight) {
     _text_height = textHeight;
+}
+
+void Button::setTextPos(glm::vec2 textPos) {
+    _text_pos = textPos;
 }
 

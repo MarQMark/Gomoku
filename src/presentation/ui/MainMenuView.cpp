@@ -1,52 +1,52 @@
 #include "presentation/ui/MainMenuView.h"
-#include "presentation/ui/components/Button.h"
+#include "presentation/ui/MenuButton.h"
+#include <utility>
 
 void newGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
-    auto* menuView = (MainMenuView*)data;
-    menuView->setHidden(!menuView->isHidden());
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Mode);
 }
 
 void continueBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
-    auto* menuView = (MainMenuView*)data;
-    menuView->setHidden(!menuView->isHidden());
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Game);
 }
 
 void exitBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     exit(0);
 }
 
-MainMenuView::MainMenuView(std::string name) : MenuView(name) {
+MainMenuView::MainMenuView(std::string name, MenuController* menuController) : MenuView(std::move(name)) {
+    menuController->addMenuView(MenuController::Main, this);
+
     MenuView::setDim(glm::vec2(.25, .7));
-    MenuView::setMargin(glm::vec4(0.15, 0, 0.01, 0));
+    MenuView::setMargin(0.15, 0, 0.01, 0);
     MenuView::setAlignH(IViewable::Align::TOP);
 
-    auto* newGameBtn = new Button("newGameBtn", glm::vec2(), glm::vec2(.95, .2));
+    auto* newGameBtn = new MenuButton("newGameBtn");
     newGameBtn->setText("New Game");
-    newGameBtn->setTextHeight(.35);
-    newGameBtn->setAlignV(IViewable::Align::RIGHT);
     newGameBtn->setAlignH(IViewable::Align::TOP);
-    newGameBtn->registerCallback(newGameBtnClbk, IInteractable::State::PRESSED, this);
+    newGameBtn->setMargin(0.15, 0, 0, 0);
+    newGameBtn->registerCallback(newGameBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(newGameBtn);
 
-    auto* continueBtn = new Button("continueBtn", glm::vec2(), glm::vec2(.95, .2));
+    auto* continueBtn = new MenuButton("continueBtn");
     continueBtn->setText("Continue");
-    continueBtn->setTextHeight(.35);
-    continueBtn->setAlignV(IViewable::Align::RIGHT);
     continueBtn->setAlignH(IViewable::Align::CENTER);
-    continueBtn->registerCallback(continueBtnClbk, IInteractable::State::PRESSED, this);
+    continueBtn->registerCallback(continueBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(continueBtn);
 
-    auto* exitBtn = new Button("exitBtn", glm::vec2(), glm::vec2(.95, .2));
+    auto* exitBtn = new MenuButton("exitBtn");
     exitBtn->setText("Exit");
-    exitBtn->setTextHeight(.35);
-    exitBtn->setAlignV(IViewable::Align::RIGHT);
     exitBtn->setAlignH(IViewable::Align::BOTTOM);
-    exitBtn->registerCallback(exitBtnClbk, IInteractable::State::PRESSED, this);
+    exitBtn->setMargin(0, 0.15, 0, 0);
+    exitBtn->registerCallback(exitBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(exitBtn);
 }
 
 MainMenuView::~MainMenuView() {
-    delete MenuView::getViewable<Button>("newGameBtn");
-    delete MenuView::getViewable<Button>("continueBtn");
-    delete MenuView::getViewable<Button>("exitBtn");
+    // TODO fix
+    //delete MenuView::getViewable<Button>("newGameBtn");
+    //delete MenuView::getViewable<Button>("continueBtn");
+    //delete MenuView::getViewable<Button>("exitBtn");
 }

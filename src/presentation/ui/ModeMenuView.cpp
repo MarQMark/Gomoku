@@ -1,55 +1,74 @@
 #include "presentation/ui/ModeMenuView.h"
-#include "presentation/ui/components/Button.h"
+#include "presentation/ui/MenuButton.h"
+#include <utility>
 
-ModeMenuView::ModeMenuView(std::string name) : MenuView(name) {
+void hvhBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Difficulty);
+}
+
+void hvaiBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Difficulty);
+}
+
+void aivhBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Difficulty);
+}
+
+void aivaiBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Difficulty);
+}
+
+void backMainBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+    auto* menuController = (MenuController*)data;
+    menuController->changeMenu(MenuController::Main);
+}
+
+ModeMenuView::ModeMenuView(std::string name, MenuController* menuController) : MenuView(std::move(name)) {
+    menuController->addMenuView(MenuController::Mode, this);
+
     MenuView::setVisible(false);
     MenuView::setHidden(true);
     MenuView::setDim(glm::vec2(.25, .7));
-    MenuView::setMargin(glm::vec4(0.15, 0, 0.01, 0));
+    MenuView::setMargin(0.15, 0, 0.01, 0);
     MenuView::setAlignH(IViewable::Align::TOP);
 
-    auto* hvhBtn = new Button("hvhBtn", glm::vec2(), glm::vec2(.95, .15));
-    hvhBtn->setText("Human vs Human");
-    hvhBtn->setTextHeight(.35);
-    hvhBtn->setAlignV(IViewable::Align::RIGHT);
+    auto* hvhBtn = new MenuButton("hvhBtn");
+    hvhBtn->setText("Human VS Human");
     hvhBtn->setAlignH(IViewable::Align::TOP);
-    //hvhBtn->registerCallback(newGameBtnClbk, IInteractable::State::PRESSED, this);
+    hvhBtn->registerCallback(hvhBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(hvhBtn);
 
-    auto* hvaiBtn = new Button("hvaiBtn", glm::vec2(0, .15 + 0.0625), glm::vec2(.95, .15));
-    hvaiBtn->setText("Human vs AI");
-    hvaiBtn->setTextHeight(.35);
-    hvaiBtn->setAlignV(IViewable::Align::RIGHT);
-    //hvaiBtn->registerCallback(continueBtnClbk, IInteractable::State::PRESSED, this);
+    auto* hvaiBtn = new MenuButton("hvaiBtn", glm::vec2(0, .15 + 0.0625));
+    hvaiBtn->setText("Human VS AI");
+    hvaiBtn->registerCallback(hvaiBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(hvaiBtn);
 
-    auto* aivhBtn = new Button("aivhBtn", glm::vec2(0, .3 + 0.125), glm::vec2(.95, .15));
-    aivhBtn->setText("AI vs Human");
-    aivhBtn->setTextHeight(.35);
-    aivhBtn->setAlignV(IViewable::Align::RIGHT);
-    //aivhBtn->registerCallback(exitBtnClbk, IInteractable::State::PRESSED, this);
+    auto* aivhBtn = new MenuButton("aivhBtn", glm::vec2(0, .3 + 0.125));
+    aivhBtn->setText("AI VS Human");
+    aivhBtn->registerCallback(aivhBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(aivhBtn);
 
-    auto* aivaiBtn = new Button("aivaiBtn", glm::vec2(0, .45 + 0.1875), glm::vec2(.95, .15));
-    aivaiBtn->setText("AI vs AI");
-    aivaiBtn->setTextHeight(.35);
-    aivaiBtn->setAlignV(IViewable::Align::RIGHT);
-    //aivaiBtn->registerCallback(exitBtnClbk, IInteractable::State::PRESSED, this);
+    auto* aivaiBtn = new MenuButton("aivaiBtn", glm::vec2(0, .45 + 0.1875));
+    aivaiBtn->setText("AI VS AI");
+    aivaiBtn->registerCallback(aivaiBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(aivaiBtn);
 
-    auto* backMainBtn = new Button("backMainBtn", glm::vec2(), glm::vec2(.95, .15));
-    backMainBtn->setText("AI vs AI");
-    backMainBtn->setTextHeight(.35);
-    backMainBtn->setAlignV(IViewable::Align::RIGHT);
+    auto* backMainBtn = new MenuButton("backMainBtn");
+    backMainBtn->setText("Back");
     backMainBtn->setAlignH(IViewable::Align::BOTTOM);
-    //backMainBtn->registerCallback(exitBtnClbk, IInteractable::State::PRESSED, this);
+    backMainBtn->registerCallback(backMainBtnClbk, IInteractable::State::PRESSED, menuController);
     MenuView::addViewable(backMainBtn);
 }
 
 ModeMenuView::~ModeMenuView() {
-    delete MenuView::getViewable<Button>("hvhBtn");
-    delete MenuView::getViewable<Button>("hvaiBtn");
-    delete MenuView::getViewable<Button>("aivhBtn");
-    delete MenuView::getViewable<Button>("aivaiBtn");
-    delete MenuView::getViewable<Button>("backMainBtn");
+    // TODO fix
+    //delete MenuView::getViewable<Button>("hvhBtn");
+    //delete MenuView::getViewable<Button>("hvaiBtn");
+    //delete MenuView::getViewable<Button>("aivhBtn");
+    //delete MenuView::getViewable<Button>("aivaiBtn");
+    //delete MenuView::getViewable<Button>("backMainBtn");
 }

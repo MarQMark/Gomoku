@@ -4,7 +4,7 @@
 
 Time* Time::s_instance = nullptr;
 
-Time * Time::get() {
+Time* Time::get() {
     return s_instance;
 }
 

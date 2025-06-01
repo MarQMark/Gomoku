@@ -54,3 +54,13 @@ void MenuView::set_interactable(bool isInteractable) {
         }
     }
 }
+
+bool MenuView::inMotion() {
+    if(!_hidden && _curr_time != _duration)
+        return true;
+
+    if(_hidden && _curr_time > 0)
+        return true;
+
+    return false;
+}

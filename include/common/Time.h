@@ -5,7 +5,7 @@
 class Time {
 public:
     double getDeltaTime() const;
-    double getTime();
+    static double getTime();
 
     void update();
 
