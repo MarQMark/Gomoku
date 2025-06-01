@@ -39,28 +39,28 @@ DifficultyMenuView::DifficultyMenuView(std::string name, MenuController *menuCon
     auto* randomBtn = new MenuButton("randomDifficultyBtn");
     randomBtn->setText("Journalist");
     randomBtn->setAlignH(IViewable::Align::TOP);
-    randomBtn->registerCallback(randomModeBtnClbk, IInteractable::State::PRESSED, menuController);
+    randomBtn->registerCallback(randomModeBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(randomBtn);
 
     auto* easyBtn = new MenuButton("easyDifficultyBtn", glm::vec2(0, .15 + 0.0625));
     easyBtn->setText("Easy");
-    easyBtn->registerCallback(easyModeBtnClbk, IInteractable::State::PRESSED, menuController);
+    easyBtn->registerCallback(easyModeBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(easyBtn);
 
     auto* mediumBtn = new MenuButton("mediumDifficultyBtn", glm::vec2(0, .3 + 0.125));
     mediumBtn->setText("Medium");
-    mediumBtn->registerCallback(mediumModeBtnClbk, IInteractable::State::PRESSED, menuController);
+    mediumBtn->registerCallback(mediumModeBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(mediumBtn);
 
     auto* hardBtn = new MenuButton("hardDifficultyBtn", glm::vec2(0, .45 + 0.1875));
     hardBtn->setText("Hard");
-    hardBtn->registerCallback(hardModeBtnClbk, IInteractable::State::PRESSED, menuController);
+    hardBtn->registerCallback(hardModeBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(hardBtn);
 
     auto* backModeBtn = new MenuButton("backModeBtn");
     backModeBtn->setText("Back");
     backModeBtn->setAlignH(IViewable::Align::BOTTOM);
-    backModeBtn->registerCallback(backModeBtnClbk, IInteractable::State::PRESSED, menuController);
+    backModeBtn->registerCallback(backModeBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(backModeBtn);
 }
 

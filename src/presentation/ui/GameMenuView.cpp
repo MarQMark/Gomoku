@@ -39,20 +39,20 @@ GameMenuView::GameMenuView(std::string name, MenuController *menuController) : M
     pauseBtn->setAlignH(IViewable::Align::TOP);
     pauseBtn->setAlignV(IViewable::Align::NONE);
     pauseBtn->setMargin(0.15, 0, 0, 0);
-    pauseBtn->registerCallback(pauseBtnClbk, IInteractable::PRESSED, menuController);
+    pauseBtn->registerCallback(pauseBtnClbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(pauseBtn);
     auto* mainMenuBtn = new MenuButton("mainMenuBtn", glm::vec2(.05, .25));
     mainMenuBtn->setText("Main Menu");
     mainMenuBtn->setAlignH(IViewable::Align::CENTER);
     mainMenuBtn->setAlignV(IViewable::Align::NONE);
-    mainMenuBtn->registerCallback(mainMenuBtnClbk, IInteractable::PRESSED, menuController);
+    mainMenuBtn->registerCallback(mainMenuBtnClbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(mainMenuBtn);
     auto* exitGameBtn = new MenuButton("exitGameBtn", glm::vec2(.05, .75));
     exitGameBtn->setText("Exit");
     exitGameBtn->setMargin(0, 0.15, 0, 0);
     exitGameBtn->setAlignH(IViewable::Align::BOTTOM);
     exitGameBtn->setAlignV(IViewable::Align::NONE);
-    exitGameBtn->registerCallback(exitGameBtnClbk, IInteractable::PRESSED, menuController);
+    exitGameBtn->registerCallback(exitGameBtnClbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(exitGameBtn);
 }
 

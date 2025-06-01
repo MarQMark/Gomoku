@@ -39,28 +39,28 @@ ModeMenuView::ModeMenuView(std::string name, MenuController* menuController) : M
     auto* hvhBtn = new MenuButton("hvhBtn");
     hvhBtn->setText("Player VS Player");
     hvhBtn->setAlignH(IViewable::Align::TOP);
-    hvhBtn->registerCallback(hvhBtnClbk, IInteractable::State::PRESSED, menuController);
+    hvhBtn->registerCallback(hvhBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(hvhBtn);
 
     auto* hvaiBtn = new MenuButton("hvaiBtn", glm::vec2(0, .15 + 0.0625));
     hvaiBtn->setText("Player VS AI");
-    hvaiBtn->registerCallback(hvaiBtnClbk, IInteractable::State::PRESSED, menuController);
+    hvaiBtn->registerCallback(hvaiBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(hvaiBtn);
 
     auto* aivhBtn = new MenuButton("aivhBtn", glm::vec2(0, .3 + 0.125));
     aivhBtn->setText("AI VS Player");
-    aivhBtn->registerCallback(aivhBtnClbk, IInteractable::State::PRESSED, menuController);
+    aivhBtn->registerCallback(aivhBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(aivhBtn);
 
     auto* aivaiBtn = new MenuButton("aivaiBtn", glm::vec2(0, .45 + 0.1875));
     aivaiBtn->setText("AI VS AI");
-    aivaiBtn->registerCallback(aivaiBtnClbk, IInteractable::State::PRESSED, menuController);
+    aivaiBtn->registerCallback(aivaiBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(aivaiBtn);
 
     auto* backMainBtn = new MenuButton("backMainBtn");
     backMainBtn->setText("Back");
     backMainBtn->setAlignH(IViewable::Align::BOTTOM);
-    backMainBtn->registerCallback(backMainBtnClbk, IInteractable::State::PRESSED, menuController);
+    backMainBtn->registerCallback(backMainBtnClbk, IInteractable::State::RELEASED, menuController);
     MenuView::addViewable(backMainBtn);
 }
 
