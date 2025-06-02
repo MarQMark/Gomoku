@@ -27,7 +27,10 @@ void MenuView::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentD
         set_interactable(true);
     }
 
-    View::setPos(_original_pos - glm::vec2(_original_pos.x + _dim.x * (1 - (_curr_time / _duration)), 0));
+    if(_left)
+        View::setPos(_original_pos - glm::vec2(_original_pos.x + _dim.x * (1 - (_curr_time / _duration)), 0));
+    else
+        View::setPos(_original_pos + glm::vec2((1 - _original_pos.x) * (1 - (_curr_time / _duration)), 0));
     setVisible(!(_hidden && _curr_time == 0));
 }
 
@@ -63,4 +66,8 @@ bool MenuView::inMotion() {
         return true;
 
     return false;
+}
+
+void MenuView::setLeft(bool left) {
+    _left = left;
 }

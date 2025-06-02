@@ -20,5 +20,14 @@ void Label::render(Renderer *renderer, const glm::vec2 parentPos, const glm::vec
     Renderer::Options options;
     options.layer = _layer;
     options.shaderName = "font";
-    renderer->drawTextID((uint64_t)this, _text, _abs_pos, _abs_dim.y, options);
+
+    Font::Options fontOptions;
+    fontOptions.font = renderer->getFont("default");
+    fontOptions.color = _font_color;
+
+    renderer->drawTextID((uint64_t)this, _text, _abs_pos, _abs_dim.y, options, fontOptions);
+}
+
+void Label::setFontColor(glm::vec4 color) {
+    _font_color = color;
 }

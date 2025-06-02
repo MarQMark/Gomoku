@@ -14,8 +14,11 @@ public:
     void setText(std::string text);
     std::string getText();
 
+    void setFontColor(glm::vec4 color);
+
 private:
     std::string _text{};
+    glm::vec4 _font_color = glm::vec4(1);
 };
 
 

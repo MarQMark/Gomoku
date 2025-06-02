@@ -32,6 +32,7 @@ add_executable(Gomoku
         presentation/ui/MainMenuView.cpp
         presentation/ui/ModeMenuView.cpp
         presentation/ui/DifficultyMenuView.cpp
+        presentation/ui/StatsMenuView.cpp
         presentation/ui/BoardView.cpp
 
         presentation/assets/AssetManager.cpp

@@ -11,6 +11,7 @@
 #include "presentation/assets/AssetManager.h"
 #include "common/Time.h"
 #include "common/RunManager.h"
+#include "presentation/ui/StatsMenuView.h"
 
 /* TODO:
  *  - Handle Cleanup correctly
@@ -52,6 +53,9 @@ int main() {
     ui.getViewable<View>("root")->addViewable(&difficultyMenuView);
     GameMenuView gameMenuView("gameMenuView", &menuController);
     ui.getViewable<View>("root")->addViewable(&gameMenuView);
+    StatsMenuView statsMenuView("statsMenuView", &menuController);
+    ui.getViewable<View>("root")->addViewable(&statsMenuView);
+
 
     // Create the main game board (centered, square aspect ratio)
     auto* boardView = new BoardView("game_board", &gameService);

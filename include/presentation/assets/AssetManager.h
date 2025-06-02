@@ -21,6 +21,7 @@ enum class Textures {
     button_pressed,
     button_select,
     nav_toggle,
+    stats_background,
 };
 
 class AssetManager {
