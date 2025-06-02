@@ -11,7 +11,11 @@ public:
     StatsMenuView(std::string name, MenuController* menuController);
     ~StatsMenuView();
 
-    void render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
+    void setBlackPlayer(std::string player);
+    void setWhitePlayer(std::string player);
+    void setGameTine(double gameTime);
+    void setTurn(int turn);
+    void setMove(int row, int column);
 
 private:
     Label* _text_lbl{};

@@ -3,7 +3,6 @@
 #include "presentation/ui/StatsMenuView.h"
 #include "presentation/ui/components/Sprite.h"
 #include "presentation/assets/AssetManager.h"
-#include "presentation/ui/components/Label.h"
 
 StatsMenuView::StatsMenuView(std::string name, MenuController *menuController) : MenuView(std::move(name)){
     menuController->addMenuView(MenuController::Game, this);
@@ -34,7 +33,6 @@ StatsMenuView::StatsMenuView(std::string name, MenuController *menuController) :
     MenuView::addViewable(_shadow_lbl);
 
     update_text();
-    _game_time = glfwGetTime();
 }
 
 StatsMenuView::~StatsMenuView() {
@@ -59,16 +57,37 @@ void StatsMenuView::update_text() {
     _shadow_lbl->setText(ss.str());
 }
 
-void StatsMenuView::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
-    MenuView::render(renderer, parentPos, parentDim);
-    update_text();
-    _game_time = glfwGetTime();
+std::string StatsMenuView::format_time() {
+    std::stringstream ss;
+    int min = _game_time / 60;
+    if(min > 0)
+        ss << min << "m ";
+    ss<< (int)_game_time % 60 << "s";
+    return ss.str();
 }
 
-std::string StatsMenuView::format_time() {
-    int min = _game_time / 60;
-    int sec = (int)_game_time % 60;
-    std::stringstream ss;
-    ss << min << "m " << sec << "s";
-    return ss.str();
+void StatsMenuView::setBlackPlayer(std::string player) {
+    _black_player = player;
+    update_text();
+}
+
+void StatsMenuView::setWhitePlayer(std::string player) {
+    _white_player = player;
+    update_text();
+}
+
+void StatsMenuView::setGameTine(double gameTime) {
+    _game_time = gameTime;
+    update_text();
+}
+
+void StatsMenuView::setTurn(int turn) {
+    _turn = turn;
+    update_text();
+}
+
+void StatsMenuView::setMove(int row, int column) {
+    _move_row = row;
+    _move_col = column;
+    update_text();
 }
