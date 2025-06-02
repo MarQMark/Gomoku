@@ -166,12 +166,6 @@ void BoardView::onMoveCompleted(const MoveViewDTO& move) {
 glm::vec2 BoardView::relativeInsideGridView(const glm::vec2 boardPos, const glm::vec2 boardSize,
                                             const glm::vec2 mousePos, const glm::vec2 viewportSize) {
     const glm::vec2 normalizedMouse = mousePos / viewportSize;
-
-    if (normalizedMouse.x < boardPos.x || normalizedMouse.x > boardPos.x + boardSize.x ||
-        normalizedMouse.y < boardPos.y || normalizedMouse.y > boardPos.y + boardSize.y) {
-        return {-1.0f, -1.0f};
-    }
-
     const glm::vec2 relativeMouse = (normalizedMouse - boardPos) / boardSize;
 
     return relativeMouse;

@@ -38,6 +38,7 @@ public:
     void addViewable(IViewable *viewable) override;
 
     void setExpanded(bool expanded);
+    void setLeft(bool left);
 
     void setNavTogglePos(glm::vec2 pos);
     void setNavToggleDim(glm::vec2 dim);
@@ -53,6 +54,7 @@ private:
     std::vector<IViewable*> _viewables{};
     std::map<std::string, glm::vec2> _original_positions{};
 
+    bool _left = true;
     bool _expanded = false;
     float _max_pos = 0;
     double _duration = .1;

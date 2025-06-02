@@ -46,8 +46,12 @@ void DrawerView::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 paren
     }
 
     //update position
-    for (auto* viewable : _viewables)
-        viewable->setPos(_original_positions[viewable->getName()] - glm::vec2(_max_pos * (1 - (_curr_time / _duration)), 0));
+    for (auto* viewable : _viewables){
+        if(_left)
+            viewable->setPos(_original_positions[viewable->getName()] - glm::vec2(_max_pos * (1 - (_curr_time / _duration)), 0));
+        else
+            viewable->setPos(_original_positions[viewable->getName()] + glm::vec2((1 - _original_positions[viewable->getName()].x) * (1 - (_curr_time / _duration)), 0));
+    }
 
     update_visibility();
 }
@@ -115,6 +119,10 @@ void DrawerView::setNavTogglePos(glm::vec2 pos) {
 
 void DrawerView::setNavToggleDim(glm::vec2 dim) {
     _nav_toggle_dim = dim;
+}
+
+void DrawerView::setLeft(bool left) {
+    _left = left;
 }
 
 
