@@ -23,7 +23,7 @@ public:
     void changeMenu(Menu);
 
 private:
-    std::map<Menu, MenuView*> _menu_views;
+    std::map<Menu, std::vector<MenuView*>> _menu_views;
     Menu _curr_menu = Main;
     Menu _last_menu = Main;
 };
