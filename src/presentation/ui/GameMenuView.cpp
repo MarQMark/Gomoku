@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "presentation/assets/AssetManager.h"
+#include "common/RunManager.h"
 
 void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
@@ -14,7 +15,7 @@ void mainMenuBtnClbk(IInteractable* interactable, IInteractable::State state, vo
 }
 
 void exitGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
-    exit(0);
+    RunManager::get()->stop();
 }
 
 GameMenuView::GameMenuView(std::string name, MenuController *menuController) : MenuView(std::move(name)) {

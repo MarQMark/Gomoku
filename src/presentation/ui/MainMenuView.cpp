@@ -1,5 +1,6 @@
 #include "presentation/ui/MainMenuView.h"
 #include "presentation/ui/MenuButton.h"
+#include "common/RunManager.h"
 #include <utility>
 
 void newGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
@@ -13,7 +14,7 @@ void continueBtnClbk(IInteractable* interactable, IInteractable::State state, vo
 }
 
 void exitBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
-    exit(0);
+    RunManager::get()->stop();
 }
 
 MainMenuView::MainMenuView(std::string name, MenuController* menuController) : MenuView(std::move(name)) {

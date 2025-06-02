@@ -1,24 +1,29 @@
 #include "logic/GameService.h"
-#include "presentation/renderer/Renderer.h"
-#include "presentation/assets/AssetManager.h"
+#include "animator/BackgroundAnimator.h"
 #include "presentation/ui/UI.h"
 #include "presentation/ui/components/Label.h"
 #include "presentation/ui/BoardView.h"
-#include "animator/BackgroundAnimator.h"
-#include "common/Time.h"
-#include "presentation/ui/components/DrawerView.h"
-#include "presentation/ui/components/MenuView.h"
 #include "presentation/ui/MenuController.h"
 #include "presentation/ui/MainMenuView.h"
 #include "presentation/ui/ModeMenuView.h"
 #include "presentation/ui/DifficultyMenuView.h"
 #include "presentation/ui/GameMenuView.h"
+#include "presentation/assets/AssetManager.h"
+#include "common/Time.h"
+#include "common/RunManager.h"
+
+/* TODO:
+ *  - Handle Cleanup correctly
+ *  - Cleanup main.cpp
+*/
 
 int main() {
     Time::init();
     GameService gameService;
     Renderer renderer;
     UI ui(&renderer);
+
+    RunManager::create(&renderer);
 
     // Init Assets
     AssetManager::initialize(&renderer);
@@ -65,8 +70,7 @@ int main() {
 
     std::string tex1;
     std::string tex2;
-    // TODO: put into singleton
-    while(renderer.shouldRun()) {
+    while(RunManager::get()->shouldRun()) {
         const auto& boardState = boardView->getCurrentBoardState();
         std::string statusText;
 
@@ -110,5 +114,6 @@ int main() {
     // Cleanup
     delete boardView;
     delete statusLabel;
+    RunManager::destroy();
     return 0;
 }

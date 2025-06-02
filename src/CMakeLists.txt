@@ -38,18 +38,20 @@ add_executable(Gomoku
 
         presentation/mapping/MapPresentationToCommand.cpp
 
-        logic/mapping/MapLogicToView.cpp
         logic/Board.cpp
         logic/GameService.cpp
         logic/player/HumanPlayer.cpp
         logic/player/AIPlayer.cpp
+        logic/mapping/MapLogicToView.cpp
+        logic/mapping/MapLogicToModel.cpp
 
         common/Time.cpp
+        common/RunManager.cpp
 
-        main.cpp
         persistence/FileManager.cpp
         persistence/mapping/MapPersistenceToLogic.cpp
-        logic/mapping/MapLogicToModel.cpp
+
+        main.cpp
 )
 
 target_include_directories(Gomoku
