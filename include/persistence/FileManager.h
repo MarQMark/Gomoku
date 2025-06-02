@@ -4,7 +4,15 @@
 
 
 class FileManager : public IPersistenceManager {
+public:
+    FileManager();
 
+    bool saveGame(SaveGameModel gameData) override;
+    LoadGameResultDTO* loadGame(std::string gameId) override;
+
+private:
+    const std::string _file_name = "gameData.json";
+    std::string _file_path = "./";
 };
 
 

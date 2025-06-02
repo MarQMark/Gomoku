@@ -23,7 +23,7 @@ struct GameReconstructionResult {
 
 class MapPersistenceToLogic {
 public:
-    static GameReconstructionResult reconstructGame(const LoadGameResultDTO& loadResult);
+    static GameReconstructionResult reconstructGame(LoadGameResultDTO* loadResult);
 
     static std::unique_ptr<IPlayer> createPlayer(const PlayerModel& playerDto);
     static Move createMove(const MoveModel& moveDto);

@@ -4,8 +4,9 @@
 #include "logic/mapping/MapLogicToView.h"
 #include "logic/player/AIPlayer.h"
 #include "logic/player/HumanPlayer.h"
+#include "logic/mapping/MapLogicToModel.h"
 
-GameService::GameService() {
+GameService::GameService(IPersistenceManager* persistenceManager) : _persistence_manager(persistenceManager) {
     initialize();
 }
 
@@ -137,6 +138,17 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
     if (_state.status == IN_PROGRESS) {
         _state.currentPlayer = (_state.currentPlayer == _player1.get()) ? _player2.get() : _player1.get();
     }
+
+    // TODO: add MapToPersistence
+    _persistence_manager->saveGame(MapLogicToModel::mapToSave(
+                "GameID",
+                _state,
+                _moveHistory,
+                _player1.get(),
+                _player2.get(),
+                _activeGameMode,
+                0
+            ));
 
     return MapLogicToView::createMoveViewDTO(
         true, getBoardState(), MapLogicToView::createStoneViewDTO(true, pos, prevPlayerTurn), *_state.currentPlayer, ""

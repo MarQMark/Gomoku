@@ -13,13 +13,13 @@ public:
         const std::string &gameId,
         const BoardState &boardState,
         const std::vector<Move> &moveHistory,
-        const IPlayer &player1,
-        const IPlayer &player2,
+        const IPlayer* player1,
+        const IPlayer* player2,
         const GameMode &gameMode,
         double elapsedTime = 0.0
     );
 
-    static PlayerModel mapPlayer(const IPlayer& player);
+    static PlayerModel mapPlayer(const IPlayer* player);
     static MoveModel mapMove(const Move& move, int moveNumber);
     static GameStateModel mapGameState(
         const BoardState& boardState,
@@ -37,7 +37,7 @@ public:
 
 private:
     // Utility
-    static AIDifficulty extractAIDifficulty(const IPlayer& player);
+    static AIDifficulty extractAIDifficulty(const IPlayer* player);
     static bool isPlayerAI(const IPlayer& player);
 };
 

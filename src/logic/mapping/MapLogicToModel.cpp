@@ -6,8 +6,8 @@ SaveGameModel MapLogicToModel::mapToSave(
     const std::string &gameId,
     const BoardState &boardState,
     const std::vector<Move> &moveHistory,
-    const IPlayer &player1,
-    const IPlayer &player2,
+    const IPlayer* player1,
+    const IPlayer* player2,
     const GameMode &gameMode,
     const double elapsedTime) {
 
@@ -25,11 +25,11 @@ SaveGameModel MapLogicToModel::mapToSave(
     return model;
 }
 
-PlayerModel MapLogicToModel::mapPlayer(const IPlayer& player) {
+PlayerModel MapLogicToModel::mapPlayer(const IPlayer* player) {
     PlayerModel model;
-    model.name = player.getName();
-    model.color = mapStoneColorToString(player.getColor());
-    model.isAI = player.isAIPlayer();
+    model.name = player->getName();
+    model.color = mapStoneColorToString(player->getColor());
+    model.isAI = player->isAIPlayer();
 
     if (model.isAI) {
         model.difficulty = mapAIDifficultyToInt(extractAIDifficulty(player));
@@ -78,8 +78,8 @@ GameStateModel MapLogicToModel::mapGameState(
     return stateModel;
 }
 
-AIDifficulty MapLogicToModel::extractAIDifficulty(const IPlayer& player) {
-    const auto aiPlayer = dynamic_cast<const AIPlayer*>(&player);
+AIDifficulty MapLogicToModel::extractAIDifficulty(const IPlayer* player) {
+    const auto aiPlayer = dynamic_cast<const AIPlayer*>(player);
     if (aiPlayer != nullptr) {
         return aiPlayer->getDifficulty();
     }

@@ -4,14 +4,19 @@
 #include "logic/player/AIPlayer.h"
 #include "logic/player/HumanPlayer.h"
 
-GameReconstructionResult MapPersistenceToLogic::reconstructGame(const LoadGameResultDTO& loadResult) {
+GameReconstructionResult MapPersistenceToLogic::reconstructGame(LoadGameResultDTO* loadResult) {
     GameReconstructionResult result;
     result.success = false;
-    result.elapsedTime = loadResult.gameState.elapsedTime;
+    if(!loadResult) {
+        result.errorMessage = "Failed to create players from loaded data";
+        return result;
+    }
+
+    result.elapsedTime = loadResult->gameState.elapsedTime;
 
     // Create players
-    result.player1 = createPlayer(loadResult.player1);
-    result.player2 = createPlayer(loadResult.player2);
+    result.player1 = createPlayer(loadResult->player1);
+    result.player2 = createPlayer(loadResult->player2);
 
     if (!result.player1 || !result.player2) {
         result.errorMessage = "Failed to create players from loaded data";
@@ -19,23 +24,24 @@ GameReconstructionResult MapPersistenceToLogic::reconstructGame(const LoadGameRe
     }
 
     // Create move history
-    result.moveHistory.reserve(loadResult.moveHistory.size());
-    for (const auto& moveDto : loadResult.moveHistory) {
+    result.moveHistory.reserve(loadResult->moveHistory.size());
+    for (const auto& moveDto : loadResult->moveHistory) {
         result.moveHistory.push_back(createMove(moveDto));
     }
 
     // Create board state
     result.boardState = createBoardState(
-        loadResult.gameState,
+        loadResult->gameState,
         result.moveHistory,
         result.player1.get(),
         result.player2.get()
     );
 
     // Set game mode
-    result.gameMode = mapStringToGameMode(loadResult.gameState.gameType);
+    result.gameMode = mapStringToGameMode(loadResult->gameState.gameType);
     result.success = true;
 
+    delete loadResult;
     return result;
 }
 

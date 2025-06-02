@@ -4,7 +4,7 @@
 
 void hvhBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
-    menuController->changeMenu(MenuController::Difficulty);
+    menuController->changeMenu(MenuController::Game);
     menuController->setSelectedGameMode(HUMAN_VS_HUMAN);
 }
 

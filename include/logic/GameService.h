@@ -8,6 +8,7 @@
 #include "interfaces/IBoardEventListener.h"
 #include "interfaces/IMenuEventListener.h"
 #include "player/IPlayer.h"
+#include "persistence/interfaces/IPersistenceManager.h"
 
 class GameService final : public IGameService {
     BoardState _state;
@@ -20,9 +21,10 @@ class GameService final : public IGameService {
     double _elapsedTime = 0.0;
     double _aiMoveTimer = 0.0f;
     double _aiMoveDelay = 0.05f;
+    IPersistenceManager* _persistence_manager{};
 
 public:
-    GameService();
+    GameService(IPersistenceManager* persistenceManager);
     ~GameService() override = default;
 
     void startGame(const GameSetupCommandDTO& setupCommand) override;

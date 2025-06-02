@@ -12,6 +12,7 @@
 #include "common/Time.h"
 #include "common/RunManager.h"
 #include "presentation/ui/StatsMenuView.h"
+#include "persistence/FileManager.h"
 
 /* TODO:
  *  - Handle Cleanup correctly
@@ -20,7 +21,8 @@
 
 int main() {
     Time::init();
-    GameService gameService;
+    FileManager fileManager;
+    GameService gameService(&fileManager);
     Renderer renderer;
     UI ui(&renderer);
 
