@@ -43,8 +43,7 @@ int main() {
     bg.setLayer(-1);
     ui.getViewable<View>("root")->addViewable(&bg);
 
-    MenuController menuController;
-
+    MenuController menuController(&gameService);
     MainMenuView mainMenuView("mainMenuView", &menuController);
     ui.getViewable<View>("root")->addViewable(&mainMenuView);
     ModeMenuView modeMenuView("modeMenuView", &menuController);
@@ -66,21 +65,13 @@ int main() {
     boardView->setDim(glm::vec2(0.8f));
     ui.getViewable<View>("root")->addViewable(boardView);
 
-    // Create game status label
-    auto* statusLabel = new Label("statusLabel", "Black Player's Turn");
-    statusLabel->setPos(glm::vec2(0.75f, 0.85f));
-    statusLabel->setDim(glm::vec2(0.2f, 0.05f));
-    ui.getViewable<View>("root")->addViewable(statusLabel);
-
     std::string tex1;
     std::string tex2;
     while(RunManager::get()->shouldRun()) {
         const auto& boardState = boardView->getCurrentBoardState();
-        std::string statusText;
 
         switch(boardState.gameStatus) {
             case IN_PROGRESS:{
-                statusText = boardState.currentPlayerName + "'s Turn";
                 tex1 = boardState.currentPlayerName == "Black Player" ? AssetManager::getName(Textures::black_stone) : AssetManager::getName(Textures::white_stone);
                 if(boardState.currentPlayerName == "Black Player")
                     renderer.setWindowIcon(iconWidth, iconHeight, iconBlack);
@@ -94,20 +85,14 @@ int main() {
                 bgAnimator->setTexture2(tex2);
                 break;}
             case BLACK_WINS:
-                statusText = "Black Wins!";
                 break;
             case WHITE_WINS:
-                statusText = "White Wins!";
                 break;
             case DRAW:
-                statusText = "Draw Game!";
                 break;
             default:
-                statusText = "Game Not Started";
                 break;
         }
-
-        statusLabel->setText(statusText);
 
         menuController.update();
         ui.update();
@@ -117,7 +102,6 @@ int main() {
 
     // Cleanup
     delete boardView;
-    delete statusLabel;
     RunManager::destroy();
     return 0;
 }

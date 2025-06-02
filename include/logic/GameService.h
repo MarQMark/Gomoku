@@ -6,6 +6,7 @@
 #include "interfaces/IGameService.h"
 #include "Board.h"
 #include "interfaces/IBoardEventListener.h"
+#include "interfaces/IMenuEventListener.h"
 #include "player/IPlayer.h"
 
 class GameService final : public IGameService {
@@ -13,8 +14,10 @@ class GameService final : public IGameService {
     std::vector<Move> _moveHistory;
     std::unique_ptr<IPlayer> _player1;
     std::unique_ptr<IPlayer> _player2;
-    std::vector<IBoardEventListener*> _listeners;
+    std::vector<IBoardEventListener*> _boardListeners;
+    std::vector<IMenuEventListener*> _menuListeners;
     GameMode _activeGameMode;
+    double _elapsedTime = 0.0;
     double _aiMoveTimer = 0.0f;
     double _aiMoveDelay = 0.05f;
 
@@ -22,7 +25,7 @@ public:
     GameService();
     ~GameService() override = default;
 
-    void startNewGame(const GameSetupCommandDTO& setupCommand) override;
+    void startGame(const GameSetupCommandDTO& setupCommand) override;
     void resetGameState();
     void createPlayers(const GameSetupCommandDTO &setupCommand);
 
@@ -35,19 +38,22 @@ public:
     void initialize() override;
     const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
     void addListener(IBoardEventListener* listener) override;
+    void addMenuListener(IMenuEventListener* listener) override;
     void update(double deltaTime) override;
     bool isCurrentPlayerAI() const override;
 
 private:
+    void notifyGameStarted() const;
+    void notifyStatsChanged() const;
     void notifyMoveCompleted(const MoveViewDTO& move) const;
+    void notifyGameCompleted(const GameCompleteViewDTO &completeView) const;
     MoveViewDTO executeAIMove();
 
     StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
     static bool isPlayerValid(const std::string &playerId);
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
-    void pauseGame();
-    void resumeGame();
+    GameStatus pauseGame() override;
 
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;

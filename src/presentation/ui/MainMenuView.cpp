@@ -3,6 +3,9 @@
 #include "common/RunManager.h"
 #include <utility>
 
+#include "logic/interfaces/IGameService.h"
+#include "presentation/mapping/MapViewToCommand.h"
+
 void newGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Mode);

@@ -8,11 +8,18 @@
 
 class IGameService;
 
+enum WinningLineOrientation {
+    HORIZONTAL,
+    VERTICAL,
+    DIAGONAL_TOP_LEFT_TO_BOTTOM_RIGHT,
+    DIAGONAL_BOTTOM_LEFT_TO_TOP_RIGHT
+};
+
 class BoardView final : public View, public IBoardEventListener {
     IGameService* _gameService;
     Sprite* _backgroundBoard{};
     Sprite* _boardGrid{};
-
+    Sprite* _winningLine{};
     std::vector<std::vector<Sprite*>> _stoneSprites;
     Sprite* _hoverPreviewSprite{};
 
@@ -30,7 +37,9 @@ public:
 
 private:
     void initializeSprites();
-    void updateHoverPreview(ViewColor previewColor, ViewPosition hoverPosition) const;
+
+    void clearBoard();
+    void updateHoverPreview(ViewColor previewColor, GridViewPosition hoverGridPosition) const;
     void handleMouseInput(Renderer* renderer);
     void handleMouseHover(glm::vec2 relativeMousePos);
     void addStoneSprite(const MoveViewDTO &move);
@@ -41,10 +50,16 @@ private:
     static glm::vec2 relativeInsideGridView(glm::vec2 boardPos, glm::vec2 boardSize,
                                              glm::vec2 mousePos, glm::vec2 viewportSize);
 
-    static glm::vec2 gridToViewPosition(ViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
+    static glm::vec2 gridToViewPosition(GridViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
+
+    static WinningLineOrientation determineWinningLineOrientation(const std::vector<GridViewPosition> &winningLine);
 
 public:
+    void onGameStarted() override;
     void onMoveCompleted(const MoveViewDTO &move) override;
+    void onGameCompleted(GameCompleteViewDTO completeView) override;
 };
+
+
 
 #endif

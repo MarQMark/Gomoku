@@ -2,24 +2,31 @@
 #include "presentation/ui/MenuButton.h"
 #include <utility>
 
+#include "logic/interfaces/IGameService.h"
+#include "presentation/mapping/MapViewToCommand.h"
+
 void easyModeBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Game);
+    menuController->getGameService()->startGame(MapViewToCommand::toGameSetupCommandDTO(menuController->getSelectedGameMode(), BASIC));
 }
 
 void mediumModeBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Game);
+    menuController->getGameService()->startGame(MapViewToCommand::toGameSetupCommandDTO(menuController->getSelectedGameMode(), GOOD));
 }
 
 void hardModeBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Game);
+    menuController->getGameService()->startGame(MapViewToCommand::toGameSetupCommandDTO(menuController->getSelectedGameMode(), EXPERT));
 }
 
 void randomModeBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Game);
+    menuController->getGameService()->startGame(MapViewToCommand::toGameSetupCommandDTO(menuController->getSelectedGameMode(), RANDOM));
 }
 
 void backModeBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {

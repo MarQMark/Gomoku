@@ -40,7 +40,7 @@ PlayerModel MapLogicToModel::mapPlayer(const IPlayer& player) {
     return model;
 }
 
-MoveModel MapLogicToModel::mapMove(const Move& move, int moveNumber) {
+MoveModel MapLogicToModel::mapMove(const Move& move, const int moveNumber) {
     MoveModel model;
     model.x = move.position.x;
     model.y = move.position.y;
@@ -53,7 +53,7 @@ GameStateModel MapLogicToModel::mapGameState(
     const BoardState& boardState,
     const std::vector<Move>& moveHistory,
     const GameMode& gameMode,
-    double elapsedTime) {
+    const double elapsedTime) {
 
     GameStateModel stateModel;
     stateModel.moveCount = static_cast<int>(moveHistory.size());
@@ -92,7 +92,7 @@ bool MapLogicToModel::isPlayerAI(const IPlayer& player) {
 }
 
 // HELPERS
-std::string MapLogicToModel::mapStoneColorToString(StoneColor color) {
+std::string MapLogicToModel::mapStoneColorToString(const StoneColor color) {
     switch (color) {
         case StoneColor::BLACK: return "BLACK";
         case StoneColor::WHITE: return "WHITE";
@@ -101,7 +101,7 @@ std::string MapLogicToModel::mapStoneColorToString(StoneColor color) {
     }
 }
 
-std::string MapLogicToModel::mapGameStatusToString(GameStatus status) {
+std::string MapLogicToModel::mapGameStatusToString(const GameStatus status) {
     switch (status) {
         case GameStatus::NOT_STARTED: return "NOT_STARTED";
         case GameStatus::IN_PROGRESS: return "IN_PROGRESS";
@@ -113,7 +113,7 @@ std::string MapLogicToModel::mapGameStatusToString(GameStatus status) {
     }
 }
 
-std::string MapLogicToModel::mapGameModeToString(GameMode mode) {
+std::string MapLogicToModel::mapGameModeToString(const GameMode mode) {
     switch (mode) {
         case GameMode::HUMAN_VS_HUMAN: return "HUMAN_VS_HUMAN";
         case GameMode::HUMAN_VS_AI: return "HUMAN_VS_AI";
@@ -123,7 +123,7 @@ std::string MapLogicToModel::mapGameModeToString(GameMode mode) {
     }
 }
 
-std::string MapLogicToModel::mapAIDifficultyToString(AIDifficulty difficulty) {
+std::string MapLogicToModel::mapAIDifficultyToString(const AIDifficulty difficulty) {
     switch (difficulty) {
         case AIDifficulty::RANDOM: return "RANDOM";
         case AIDifficulty::BASIC: return "BASIC";
@@ -133,6 +133,6 @@ std::string MapLogicToModel::mapAIDifficultyToString(AIDifficulty difficulty) {
     }
 }
 
-int MapLogicToModel::mapAIDifficultyToInt(AIDifficulty difficulty) {
+int MapLogicToModel::mapAIDifficultyToInt(const AIDifficulty difficulty) {
     return static_cast<int>(difficulty);
 }

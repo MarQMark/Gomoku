@@ -18,7 +18,7 @@ BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const BoardSt
 
     // Add winning line if game is won
     if (!winningLine.empty()) {
-        std::vector<ViewPosition> winningViewLines;
+        std::vector<GridViewPosition> winningViewLines;
         winningViewLines.reserve(winningLine.size());
         for (const GridPosition& line : winningLine) {
             winningViewLines.emplace_back(line.x, line.y);
@@ -29,12 +29,49 @@ BoardViewDTO MapLogicToView::mapToBoardViewDTO(const Board& board, const BoardSt
     return view;
 }
 
+StatsViewDTO MapLogicToView::createStatsViewDTO(const IPlayer* player1, const IPlayer* player2, const double elapsedTime, const BoardState &boardState) {
+    StatsViewDTO view;
+    if (player1->getColor() == BLACK) {
+        view.blackPlayer = player1->getName();
+        view.whitePlayer = player2->getName();
+    } else {
+        view.whitePlayer = player1->getName();
+        view.blackPlayer = player2->getName();
+    }
+    view.turn = boardState.moveNumber;
+    view.currentTime = elapsedTime;
+    view.lastPosition = GridViewPosition(boardState.latestMove.x, boardState.latestMove.y);
+    view.gameStatus = boardState.status;
+    view.currentPlayer = boardState.currentPlayer->getName();
+    return view;
+}
+
 StoneViewDTO MapLogicToView::createStoneViewDTO(const bool isValid, const GridPosition gridPosition, const StoneColor stoneColor) {
     StoneViewDTO view;
     view.isValidPosition = isValid;
-    view.pos = ViewPosition(gridPosition.x, gridPosition.y);
+    view.pos = GridViewPosition(gridPosition.x, gridPosition.y);
     view.previewColor = mapToViewColor(stoneColor);
     return view;
+}
+
+GameCompleteViewDTO MapLogicToView::createGameCompletedView(const StoneColor winnerColor, const GameStatus gameStatus,
+                                                             const std::vector<GridPosition> &winningLine) {
+    GameCompleteViewDTO viewDTO;
+    viewDTO.winningLine = mapToViewPositions(winningLine);
+    viewDTO.winnerColor = mapToViewColor(winnerColor);
+    viewDTO.status = gameStatus;
+
+    return viewDTO;
+}
+
+std::vector<GridViewPosition> MapLogicToView::mapToViewPositions(const std::vector<GridPosition>& gridPositions) {
+    std::vector<GridViewPosition> viewPositions;
+    viewPositions.reserve(gridPositions.size());
+
+    for (const GridPosition& pos : gridPositions) {
+        viewPositions.emplace_back(pos.x, pos.y);
+    }
+    return viewPositions;
 }
 
 ViewColor MapLogicToView::mapToViewColor(const StoneColor stoneColor) {

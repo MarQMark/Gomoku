@@ -18,7 +18,6 @@ public:
     bool inMotion();
 
     void setPos(glm::vec2 pos) override;
-
 private:
     bool _hidden = false;
 

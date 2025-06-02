@@ -18,9 +18,6 @@ struct GameSetupCommandDTO {
     std::string player1Name;
     std::string player2Name;
     AIDifficulty aiDifficulty;
-
-    explicit GameSetupCommandDTO(const GameMode game_mode)
-        : gameMode(game_mode), player1Name("Player 1"), player2Name("Player 2"), aiDifficulty(EXPERT) {}
 };
 
 struct MouseCommandDTO {

@@ -88,6 +88,10 @@ void Button::setText(std::string text) {
     _text = text;
 }
 
+std::string Button::getText() {
+    return _text;
+}
+
 void Button::setTextHeight(float textHeight) {
     _text_height = textHeight;
 }

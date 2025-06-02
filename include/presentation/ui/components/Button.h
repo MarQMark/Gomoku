@@ -12,6 +12,7 @@ public:
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
     void setText(std::string text);
+    std::string getText();
     void setTextHeight(float textHeight);
     void setTextPos(glm::vec2 textPos);
 

@@ -21,6 +21,10 @@ enum class Textures {
     button_pressed,
     button_select,
     nav_toggle,
+    line_bottom_left_top_right,
+    line_top_left_bottom_right,
+    line_horizontal,
+    line_vertical,
     stats_background,
 };
 

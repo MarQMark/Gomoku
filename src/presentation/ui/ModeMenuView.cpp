@@ -5,21 +5,25 @@
 void hvhBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Difficulty);
+    menuController->setSelectedGameMode(HUMAN_VS_HUMAN);
 }
 
 void hvaiBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Difficulty);
+    menuController->setSelectedGameMode(HUMAN_VS_AI);
 }
 
 void aivhBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Difficulty);
+    menuController->setSelectedGameMode(AI_VS_HUMAN);
 }
 
 void aivaiBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Difficulty);
+    menuController->setSelectedGameMode(AI_VS_AI);
 }
 
 void backMainBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {

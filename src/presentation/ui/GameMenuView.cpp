@@ -4,9 +4,16 @@
 
 #include "presentation/assets/AssetManager.h"
 #include "common/RunManager.h"
+#include "logic/interfaces/IGameService.h"
 
 void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
-    auto* menuController = (MenuController*)data;
+    const auto* menuController = (MenuController*)data;
+    const GameStatus gameStatus = menuController->getGameService()->pauseGame();
+    if (gameStatus == PAUSED)
+        ((MenuButton*)interactable)->setText("Resume");
+
+    if (gameStatus == IN_PROGRESS)
+        ((MenuButton*)interactable)->setText("Pause");
 }
 
 void mainMenuBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {

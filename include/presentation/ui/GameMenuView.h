@@ -14,7 +14,6 @@ public:
 
 private:
     DrawerView* _drawer_view{};
-
 };
 
 

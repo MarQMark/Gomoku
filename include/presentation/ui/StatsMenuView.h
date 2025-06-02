@@ -16,6 +16,8 @@ public:
     void setGameTine(double gameTime);
     void setTurn(int turn);
     void setMove(int row, int column);
+    void setGameStatus(GameStatus gameStatus);
+    void setCurrentPlayer(const std::string &playerName);
 
 private:
     Label* _text_lbl{};
@@ -23,6 +25,8 @@ private:
 
     std::string _black_player = "Player 1";
     std::string _white_player = "Player 2";
+    std::string _current_player = "";
+    GameStatus _game_status{};
     double _game_time = 0;
     int _turn = 0;
     int _move_row = 0;

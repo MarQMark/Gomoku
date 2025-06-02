@@ -5,7 +5,7 @@
 
 #include "logic/GameService.h"
 #include "presentation/assets/AssetManager.h"
-#include "presentation/mapping/MapPresentationToCommand.h"
+#include "presentation/mapping/MapViewToCommand.h"
 #include "animator/SimpleAnimator.h"
 #include "common/Time.h"
 
@@ -18,7 +18,6 @@ BoardView::BoardView(std::string name, IGameService* gameService) : View(std::mo
     _mousePressed = false;
     _prevMousePressed = false;
     initializeSprites();
-    _gameService->startNewGame(GameSetupCommandDTO(GameMode::AI_VS_AI));
 }
 
 BoardView::~BoardView() {
@@ -58,6 +57,28 @@ void BoardView::initializeSprites() {
     _hoverPreviewSprite->setLayer(8);
     _hoverPreviewSprite->setVisible(false);
     addViewable(_hoverPreviewSprite);
+
+    _winningLine = new Sprite(AssetManager::getName(Textures::line_horizontal), AssetManager::getName(Textures::line_horizontal), glm::vec2(0, 0), glm::vec2(1.0, 1.0));
+    _winningLine->setLayer(10);
+    _winningLine->setDim(glm::vec2(0.88f, 0.88f));
+    _winningLine->setVisible(false);
+    addViewable(_winningLine);
+}
+
+void BoardView::clearBoard() {
+    for (const auto& stoneRow : _stoneSprites) {
+        for (Sprite* stoneSprite : stoneRow) {
+            if (stoneSprite != nullptr) {
+                deleteViewable<Sprite>(stoneSprite->getName());
+            }
+        }
+    }
+    _stoneSprites.clear();
+    _stoneSprites.resize(_gameService->getBoardSize(), std::vector<Sprite*>(_gameService->getBoardSize(), nullptr));
+
+    if (_winningLine != nullptr) {
+        _winningLine->setVisible(false);
+    }
 }
 
 void BoardView::render(Renderer* renderer, const glm::vec2 parentPos, const glm::vec2 parentDim) {
@@ -77,7 +98,7 @@ void BoardView::handleMouseInput(Renderer* renderer) {
 }
 
 void BoardView::handleMouseHover(const glm::vec2 relativeMousePos) {
-    const StoneViewDTO mouseHoverDTO = _gameService->processMouseHover(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
+    const StoneViewDTO mouseHoverDTO = _gameService->processMouseHover(MapViewToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
     if (!mouseHoverDTO.isValidPosition) {
         _showHoverPreview = false;
         _hoverPreviewSprite->setVisible(false);
@@ -92,7 +113,7 @@ void BoardView::handleMouseClick(const glm::vec2 relativeMousePos) {
     _mousePressed = Input::get()->mousePressed(BUTTON_LEFT);
 
     if (_mousePressed && !_prevMousePressed) {
-        _gameService->processMouseClick(MapPresentationToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
+        _gameService->processMouseClick(MapViewToCommand::toMouseCommandDTO(relativeMousePos, _gameService->getBoardSize()));
     }
 }
 
@@ -118,11 +139,11 @@ void BoardView::addStoneSprite(const MoveViewDTO &move) {
     animator->reset();
 }
 
-void BoardView::updateHoverPreview(const ViewColor previewColor, const ViewPosition hoverPosition) const {
+void BoardView::updateHoverPreview(const ViewColor previewColor, const GridViewPosition hoverGridPosition) const {
     if (_showHoverPreview) {
         const int gridSize = _gameService->getBoardSize();
         const float stoneSize = calculateStoneSize();
-        const glm::vec2 intersectionPos = gridToViewPosition(hoverPosition, _boardGrid->getPos(), _boardGrid->getDim(), gridSize);
+        const glm::vec2 intersectionPos = gridToViewPosition(hoverGridPosition, _boardGrid->getPos(), _boardGrid->getDim(), gridSize);
         const glm::vec2 centeredPos = intersectionPos - glm::vec2(stoneSize * 0.5f);
 
         _hoverPreviewSprite->setPos(centeredPos);
@@ -146,7 +167,7 @@ float BoardView::calculateStoneSize() const {
     return gridSpacing * _boardGrid->getDim().x;
 }
 
-glm::vec2 BoardView::gridToViewPosition(const ViewPosition position, const glm::vec2 boardPos, const glm::vec2 boardSize, const int boardSizeGrid) {
+glm::vec2 BoardView::gridToViewPosition(const GridViewPosition position, const glm::vec2 boardPos, const glm::vec2 boardSize, const int boardSizeGrid) {
     const float gridSpacing = 1.0f / (float)(boardSizeGrid - 1);
     const auto relativeIntersection = glm::vec2(
         (float)position.x * gridSpacing,
@@ -169,4 +190,63 @@ glm::vec2 BoardView::relativeInsideGridView(const glm::vec2 boardPos, const glm:
     const glm::vec2 relativeMouse = (normalizedMouse - boardPos) / boardSize;
 
     return relativeMouse;
+}
+
+void BoardView::onGameStarted() {
+    clearBoard();
+}
+
+void BoardView::onGameCompleted(const GameCompleteViewDTO completeView) {
+    const WinningLineOrientation orientation = determineWinningLineOrientation(completeView.winningLine);
+
+    // Find top-left position for positioning
+    GridViewPosition leftest_pos = completeView.winningLine.at(0);
+    for (const GridViewPosition& pos : completeView.winningLine) {
+        leftest_pos.x = std::min(leftest_pos.x, pos.x);
+        leftest_pos.y = std::min(leftest_pos.y, pos.y);
+    }
+
+    // Texture has some kind of offset to be applied correctly (-2, -2)
+    const glm::vec2 viewPos = gridToViewPosition(leftest_pos - GridViewPosition(2, 2),
+                                _boardGrid->getPos(), _boardGrid->getDim(), _gameService->getBoardSize());
+    switch (orientation) {
+        case HORIZONTAL:
+            _winningLine->setTexture(AssetManager::getName(Textures::line_horizontal));
+            break;
+        case VERTICAL:
+            _winningLine->setTexture(AssetManager::getName(Textures::line_vertical));
+            break;
+        case DIAGONAL_TOP_LEFT_TO_BOTTOM_RIGHT:
+            _winningLine->setTexture(AssetManager::getName(Textures::line_top_left_bottom_right));
+            break;
+        case DIAGONAL_BOTTOM_LEFT_TO_TOP_RIGHT:
+            _winningLine->setTexture(AssetManager::getName(Textures::line_bottom_left_top_right));
+            break;
+    }
+
+    _winningLine->setPos(viewPos + glm::vec2(0.061f, 0.061f));
+    _winningLine->setVisible(true);
+}
+
+WinningLineOrientation BoardView::determineWinningLineOrientation(const std::vector<GridViewPosition>& winningLine) {
+    if (winningLine.size() < 2) {
+        // Fallback (invalid)
+        return HORIZONTAL;
+    }
+
+    const GridViewPosition first = winningLine[0];
+    const GridViewPosition second = winningLine[1];
+    const int dx = second.x - first.x;
+    const int dy = second.y - first.y;
+
+    if (dy == 0) return HORIZONTAL;
+
+    if (dx == 0) return VERTICAL;
+
+    if (dx == dy) return DIAGONAL_TOP_LEFT_TO_BOTTOM_RIGHT;
+
+    if (dx == -dy) return DIAGONAL_BOTTOM_LEFT_TO_TOP_RIGHT;
+
+    // Fallback
+    return HORIZONTAL;
 }

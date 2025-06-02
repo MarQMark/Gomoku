@@ -37,8 +37,9 @@ add_executable(Gomoku
 
         presentation/assets/AssetManager.cpp
 
-        presentation/mapping/MapPresentationToCommand.cpp
+        presentation/mapping/MapViewToCommand.cpp
 
+        logic/mapping/MapLogicToView.cpp
         logic/Board.cpp
         logic/GameService.cpp
         logic/player/HumanPlayer.cpp
@@ -53,6 +54,7 @@ add_executable(Gomoku
         persistence/mapping/MapPersistenceToLogic.cpp
 
         main.cpp
+        ../include/logic/interfaces/IMenuEventListener.h
 )
 
 target_include_directories(Gomoku

@@ -22,7 +22,7 @@ struct PlayerModel {
     std::string name;
     std::string color;
     bool isAI;
-    int difficulty; // -1 if not AI
+    int difficulty;
 
     PlayerModel() : name(""), color("NONE"), isAI(false), difficulty(-1) {}
     PlayerModel(std::string name_, std::string color_, const bool isAI_, const int difficulty_ = -1)
