@@ -29,3 +29,26 @@ MenuButton::MenuButton(std::string name, glm::vec2 pos) : Button(std::move(name)
     Button::registerCallback(menuBtnReleasedClbk, IInteractable::NONE);
 }
 
+void MenuButton::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {
+    Button::render(renderer, parentPos, parentDim);
+
+    if(isFocused() && getState() == IInteractable::NONE){
+        Renderer::Options options;
+        options.layer = _layer + 0.01,
+        renderer->drawTexture(_abs_pos, _abs_dim, renderer->getTexture(AssetManager::getName(Textures::button_select)), options);
+    }
+
+    if(!_text.empty()){
+        Renderer::Options textOptions;
+        textOptions.layer = _layer + 0.015,
+        textOptions.shaderName = "font";
+        glm::vec2 pos = _abs_pos + glm::vec2(_abs_dim.y * _text_pos.x, _abs_dim.y * _text_pos.y);
+        pos.y += _abs_dim.y * _text_height * .15;
+
+        Font::Options fontOptions;
+        fontOptions.font = renderer->getFont("default");
+        fontOptions.color = glm::vec4(0.082, 0.114, 0.157, 1);
+        renderer->drawTextID((uint64_t)this + 1, _text, pos, _abs_dim.y * _text_height, textOptions, fontOptions);
+    }
+}
+

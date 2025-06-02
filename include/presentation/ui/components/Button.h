@@ -18,15 +18,16 @@ public:
     void setTexture(State state, std::string name);
     void setShader(State state, std::string name);
 
-private:
-    void init_maps();
-
+protected:
     std::string _text{};
     float _text_height = 0.6;
     glm::vec2 _text_pos = glm::vec2(0.05, .2);
 
     std::map<State, std::string> _texture_names;
     std::map<State, std::string> _shader_names;
+
+private:
+    void init_maps();
 };
 
 

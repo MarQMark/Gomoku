@@ -19,6 +19,7 @@ enum class Textures {
     button_none,
     button_hover,
     button_pressed,
+    button_select,
     nav_toggle,
 };
 
