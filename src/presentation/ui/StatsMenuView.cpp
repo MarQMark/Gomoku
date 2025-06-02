@@ -110,8 +110,10 @@ void StatsMenuView::setMove(const int row, const int column) {
 
 void StatsMenuView::setGameStatus(const GameStatus gameStatus) {
     _game_status = gameStatus;
+    update_text();
 }
 
 void StatsMenuView::setCurrentPlayer(const std::string &playerName) {
     _current_player = playerName;
+    update_text();
 }
