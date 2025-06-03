@@ -97,27 +97,6 @@ vec3 sky(){
     return color;
 }
 
-vec3 stone(vec2 uv, float t, float speed, float tile_count, float threshold, float scale) {
-    uv.x += t * speed;
-
-    vec2 tileID = floor(uv * tile_count);
-    vec2 local_uv = fract(uv * tile_count);
-
-    // randomly skip most tiles
-    float r = rand(tileID);
-    if (r > threshold) return vec3(0.0);
-
-    vec2 centered_uv = (local_uv - 0.5) / scale + 0.5;
-    centered_uv.y = 1 - centered_uv.y;
-
-    // discard out of bounds samples
-    if (any(lessThan(centered_uv, vec2(0.0))) || any(greaterThan(centered_uv, vec2(1.0)))) {
-        return vec3(0.0);
-    }
-
-    return texture2D(u_sampler2d, centered_uv).rgb;
-}
-
 vec3 base_color = vec3(0.01, 0.01, 0.08);
 
 vec3 sky2(){
@@ -174,7 +153,7 @@ vec3 ball(){
         texUV.y = 1 - texUV.y;
 
         if (all(greaterThanEqual(texUV, vec2(0.0))) && all(lessThanEqual(texUV, vec2(1.0)))) {
-            vec4 tex = mix(texture2D(u_sampler2d2, texUV), texture2D(u_sampler2d, texUV), min(u_time / .3, 1));
+            vec4 tex = mix(texture(u_sampler2d2, texUV), texture(u_sampler2d, texUV), min(u_time / .3, 1));
             color = mix(color, tex.rgb, tex.a);
         }
     }
@@ -187,17 +166,8 @@ void main() {
     float t = u_total_time / 2;
 
     vec3 col = base_color;
-
-    vec3 stone_a = stone(uv, t, 0.01, 20.0, 0.02, 1.5);
-    vec3 stone_b = stone(uv + vec2(0.2), t, 0.02, 25.0, 0.04, 1.2);
-    vec3 stone_c = stone(uv + vec2(-0.1, 0.1), t, 0.04, 30.0, 0.03, 1.0);
-
-    //col = mix(col, stone_c, stone_c.x != 0);
-    //col = mix(col, stone_b, stone_b.x != 0);
-    //col = mix(col, stone_a, stone_a.x != 0);
     col = ball();
-
-    col = mix(col, sky2(), col == base_color);
+    col = mix(col, sky2(), int(col == base_color));
 
     fragColor = vec4(col, 1.0);
 }

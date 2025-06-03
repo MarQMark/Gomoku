@@ -74,7 +74,7 @@ vec3 ball(){
         texUV.y = 1 - texUV.y;
 
         if (all(greaterThanEqual(texUV, vec2(0.0))) && all(lessThanEqual(texUV, vec2(1.0)))) {
-            vec4 tex = mix(texture2D(u_sampler2d2, texUV), texture2D(u_sampler2d, texUV), min(u_time / .3, 1));
+            vec4 tex = mix(texture(u_sampler2d2, texUV), texture(u_sampler2d, texUV), min(u_time / .3, 1));
             color = mix(color, tex.rgb, tex.a);
         }
     }
@@ -89,7 +89,7 @@ void main() {
     vec3 col = base_color;
     col = ball();
 
-    col = mix(col, sky(), col == base_color);
+    col = mix(col, sky(), int(col == base_color));
 
     fragColor = vec4(col, 1.0);
 }

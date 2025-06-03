@@ -89,7 +89,7 @@ void main() {
     vec3 col = base_color;
     col = ball();
 
-    col = mix(col, sky(), col == base_color);
+    col = mix(col, sky(), int(col == base_color));
 
     fragColor = vec4(col, 1.0);
 }
