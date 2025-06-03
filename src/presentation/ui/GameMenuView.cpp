@@ -8,7 +8,7 @@
 
 void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     const auto* menuController = (MenuController*)data;
-    const GameStatus gameStatus = menuController->getGameService()->pauseGame();
+    const GameStatus gameStatus = menuController->getGameService()->changeGameStatus();
     if (gameStatus == PAUSED)
         ((MenuButton*)interactable)->setText("Resume");
 

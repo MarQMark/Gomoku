@@ -22,7 +22,16 @@ void GameService::initialize() {
     _moveHistory.clear();
 }
 
-
+void GameService::restartSameGame() {
+    resetGameState();
+    _elapsedTime = 0.0;
+    _state.moveNumber = 0;
+    _state.status = IN_PROGRESS;
+    _state.latestMove = GridPosition(-1, -1);
+    _moveHistory.clear();
+    notifyGameStarted();
+    _state.currentPlayer = _player1.get();
+}
 
 void GameService::startGame(const GameSetupCommandDTO &setupCommand) {
 
@@ -33,6 +42,7 @@ void GameService::startGame(const GameSetupCommandDTO &setupCommand) {
     _activeGameMode = setupCommand.gameMode;
 
     // Initialize game state
+    _elapsedTime = 0.0;
     _state.currentPlayer = _player1.get();
     _state.moveNumber = 0;
     _state.status = IN_PROGRESS;
@@ -129,6 +139,7 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
 
     if (_state.board.isFull()) {
         _state.status = DRAW;
+        notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, std::vector<GridPosition>()));
         return MapLogicToView::createMoveViewDTO(true,
             getBoardState(), MapLogicToView::createStoneViewDTO(true, pos,  _state.currentPlayer->getColor()), *_state.currentPlayer, "");
     }
@@ -192,13 +203,17 @@ StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneCol
     return STONE_NONE;
 }
 
-GameStatus GameService::pauseGame() {
+GameStatus GameService::changeGameStatus() {
     if (_state.status == IN_PROGRESS) {
         _state.status = PAUSED;
     }
     else if (_state.status == PAUSED) {
         _state.status = IN_PROGRESS;
     }
+    else if (_state.status == DRAW || _state.status == WHITE_WINS || _state.status == BLACK_WINS) {
+        restartSameGame();
+    }
+
 
     return _state.status;
 }

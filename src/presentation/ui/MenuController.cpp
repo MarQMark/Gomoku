@@ -43,10 +43,11 @@ void MenuController::onStatsChanged(const StatsViewDTO stats) {
     statsMenu->setBlackPlayer(stats.blackPlayer);
     statsMenu->setWhitePlayer(stats.whitePlayer);
     statsMenu->setGameTine(stats.currentTime);
-    statsMenu->setMove(stats.lastPosition.x, stats.lastPosition.y);
+    statsMenu->setMove(stats.lastPosition.y, stats.lastPosition.x);
     statsMenu->setTurn(stats.turn);
     statsMenu->setGameStatus(stats.gameStatus);
     statsMenu->setCurrentPlayer(stats.currentPlayer);
+    statsMenu->setLastPlayerColor(stats.lastPlayerColor);
 }
 
 GameMode MenuController::getSelectedGameMode() const {

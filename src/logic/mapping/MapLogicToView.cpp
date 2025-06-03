@@ -40,9 +40,21 @@ StatsViewDTO MapLogicToView::createStatsViewDTO(const IPlayer* player1, const IP
     }
     view.turn = boardState.moveNumber;
     view.currentTime = elapsedTime;
-    view.lastPosition = GridViewPosition(boardState.latestMove.x, boardState.latestMove.y);
+    view.lastPosition = GridViewPosition(boardState.latestMove.x + 1, boardState.latestMove.y + 1);
     view.gameStatus = boardState.status;
     view.currentPlayer = boardState.currentPlayer->getName();
+
+    if (boardState.currentPlayer->getColor() == BLACK) {
+        view.lastPlayerColor = ViewColor::WHITE;
+    } else {
+        view.lastPlayerColor = ViewColor::BLACK;
+    }
+
+    if (boardState.status == BLACK_WINS) {
+        view.lastPlayerColor = ViewColor::BLACK;
+    } else if (boardState.status == WHITE_WINS) {
+        view.lastPlayerColor = ViewColor::WHITE;
+    }
     return view;
 }
 

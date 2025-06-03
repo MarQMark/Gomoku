@@ -48,6 +48,7 @@ struct StatsViewDTO {
     std::string currentPlayer;
     double currentTime;
     int turn;
+    ViewColor lastPlayerColor;
     GridViewPosition lastPosition;
     GameStatus gameStatus;
 };

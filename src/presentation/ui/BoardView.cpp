@@ -197,6 +197,9 @@ void BoardView::onGameStarted() {
 }
 
 void BoardView::onGameCompleted(const GameCompleteViewDTO completeView) {
+    if (completeView.status == DRAW)
+        return;
+
     const WinningLineOrientation orientation = determineWinningLineOrientation(completeView.winningLine);
 
     // Find top-left position for positioning

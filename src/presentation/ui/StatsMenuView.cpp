@@ -23,12 +23,12 @@ StatsMenuView::StatsMenuView(std::string name, MenuController *menuController) :
     MenuView::addViewable(background);
 
     _text_lbl = new Label("statsBlack", "");
-    _text_lbl->setPos(glm::vec2(.1, 0));
+    _text_lbl->setPos(glm::vec2(.1, 0.030));
     _text_lbl->setDim(glm::vec2(0, .15 * .22));
     MenuView::addViewable(_text_lbl);
 
     _shadow_lbl = new Label("statsShadow", "");
-    _shadow_lbl->setPos(glm::vec2(.1, .007));
+    _shadow_lbl->setPos(glm::vec2(.1, .037));
     _shadow_lbl->setDim(glm::vec2(0, .15 * .22));
     _shadow_lbl->setFontColor(glm::vec4(0.082, 0.114, 0.157, 1));
     _shadow_lbl->setLayer(_text_lbl->getLayer() - 0.01);
@@ -45,28 +45,27 @@ StatsMenuView::~StatsMenuView() {
 
 void StatsMenuView::update_text() {
     std::stringstream ss;
-    ss << "\n\n\n\nBlack:";
+    ss << "\n\n\nBlack:";
     ss << " " << _black_player << "\n\n";
     ss << "White:";
     ss << " " << _white_player << "\n\n";
     ss << "Time: " << format_time() << "\n\n";
     ss << "Turn: " << _turn << "\n\n";
-    ss << "Last Move:\n";
-    if (_move_col >= 0 && _move_row >= 0) {
-        ss << "   Column: "<< _move_col << "\n";
-        ss << "   Row: " << _move_row << "\n";
+    if (_move_col >= 1 && _move_row >= 1) {
+        ss << "Last Turn: \n" ;
+        ss << " " << _last_player_color << " at: (" << _move_col << "," << _move_row << ")\n";
     }
     ss << "\n";
     if (_game_status == BLACK_WINS)
-        ss << _black_player << " wins!\n";
+        ss << "> " << _black_player << " wins!\n";
     if (_game_status == WHITE_WINS)
-        ss << _black_player << " wins!\n";
+        ss << "> " << _white_player << " wins!\n";
     if (_game_status == DRAW)
-        ss << "Game Draw!\n";
+        ss << "> " << "Game Draw!\n";
     if (_game_status == PAUSED)
-        ss << "Game Paused!\n";
+        ss << "> " << "Game Paused!\n";
     if (_game_status == IN_PROGRESS) {
-        ss << _current_player << " turn!\n";
+        ss << "> " << _current_player << " turn!\n";
     }
 
     _text_lbl->setText(ss.str());
@@ -115,5 +114,13 @@ void StatsMenuView::setGameStatus(const GameStatus gameStatus) {
 
 void StatsMenuView::setCurrentPlayer(const std::string &playerName) {
     _current_player = playerName;
+    update_text();
+}
+
+void StatsMenuView::setLastPlayerColor(const ViewColor view_color) {
+    if (view_color == ViewColor::BLACK)
+        _last_player_color = "Black";
+    else
+        _last_player_color = "White";
     update_text();
 }

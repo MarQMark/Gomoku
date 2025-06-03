@@ -20,7 +20,7 @@ class GameService final : public IGameService {
     GameMode _activeGameMode;
     double _elapsedTime = 0.0;
     double _aiMoveTimer = 0.0f;
-    double _aiMoveDelay = 0.05f;
+    double _aiMoveDelay = 0.001f;
     IPersistenceManager* _persistence_manager{};
 
 public:
@@ -38,6 +38,9 @@ public:
     int getBoardSize() const override { return Board::SIZE; }
 
     void initialize() override;
+
+    void restartSameGame();
+
     const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
     void addListener(IBoardEventListener* listener) override;
     void addMenuListener(IMenuEventListener* listener) override;
@@ -55,7 +58,7 @@ private:
     static bool isPlayerValid(const std::string &playerId);
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
-    GameStatus pauseGame() override;
+    GameStatus changeGameStatus() override;
 
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;
