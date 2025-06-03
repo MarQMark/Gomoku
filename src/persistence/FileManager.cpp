@@ -19,7 +19,7 @@ bool FileManager::saveGame(SaveGameModel gameData) {
     jsonObj[gameData.gameId]["Player2"]["IsAI"] = gameData.player2.isAI;
     jsonObj[gameData.gameId]["Player2"]["Difficulty"] = gameData.player2.difficulty;
 
-    for(int i = 0; i < (int)gameData.moveHistory.size() - 1; i++){
+    for(int i = 0; i < (int)gameData.moveHistory.size(); i++){
         jsonObj[gameData.gameId]["History"]["X"][i] = gameData.moveHistory[i].x;
         jsonObj[gameData.gameId]["History"]["Y"][i] = gameData.moveHistory[i].y;
         jsonObj[gameData.gameId]["History"]["MoveNumber"][i] = gameData.moveHistory[i].moveNumber;

@@ -30,6 +30,7 @@ public:
     void startGame(const GameSetupCommandDTO& setupCommand) override;
     void resetGameState();
     void createPlayers(const GameSetupCommandDTO &setupCommand);
+    void loadGame() override;
 
     // BOARD
     StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const override;
@@ -59,6 +60,7 @@ private:
     MoveViewDTO processMove(const MouseCommandDTO& cmd);
     std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
     GameStatus changeGameStatus() override;
+    void pauseGame() override;
 
     static bool isValidGridPosition(const GridPosition& pos);
     bool isPositionOccupied(const GridPosition& pos) const;

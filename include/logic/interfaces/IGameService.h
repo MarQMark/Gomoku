@@ -12,6 +12,7 @@ class IGameService {
 public:
     virtual ~IGameService() = default;
 
+    virtual void loadGame() = 0;
     virtual void addListener(IBoardEventListener* listener) = 0;
     virtual void addMenuListener(IMenuEventListener* listener) = 0;
     virtual void update(double deltaTime) = 0;
@@ -23,7 +24,7 @@ public:
     virtual MoveViewDTO processMouseClick(const MouseCommandDTO& click_command_dto) = 0;
     virtual BoardViewDTO getBoardState() const = 0;
     virtual int getBoardSize() const = 0;
-
+    virtual void pauseGame() = 0;
 
     virtual void initialize() = 0;
     virtual const std::vector<Move>& getMoveHistory() const = 0;

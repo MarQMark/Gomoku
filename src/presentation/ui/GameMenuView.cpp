@@ -19,6 +19,7 @@ void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void*
 void mainMenuBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Main);
+    menuController->getGameService()->pauseGame();
 }
 
 void exitGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {

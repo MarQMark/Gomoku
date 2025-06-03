@@ -5,6 +5,7 @@
 #include "logic/player/AIPlayer.h"
 #include "logic/player/HumanPlayer.h"
 #include "logic/mapping/MapLogicToModel.h"
+#include "persistence/mapping/MapPersistenceToLogic.h"
 
 GameService::GameService(IPersistenceManager* persistenceManager) : _persistence_manager(persistenceManager) {
     initialize();
@@ -80,6 +81,24 @@ void GameService::createPlayers(const GameSetupCommandDTO &setupCommand) {
     }
 }
 
+void GameService::loadGame() {
+    LoadGameResultDTO* dto = _persistence_manager->loadGame("GameID");
+    GameReconstructionResult result = MapPersistenceToLogic::reconstructGame(dto);
+    resetGameState();
+    _player1 = std::move(result.player1);
+    _player2 = std::move(result.player2);
+    _state = result.boardState;
+    _moveHistory.clear();
+    _moveHistory = result.moveHistory;
+    _activeGameMode = result.gameMode;
+    _elapsedTime = result.elapsedTime;
+    notifyGameStarted();
+    for (const Move move : result.moveHistory) {
+        MoveViewDTO moveViewDTO = MapLogicToView::createMoveViewDTO(true, getBoardState(), MapLogicToView::createStoneViewDTO(true, move.position, move.color), *_state.currentPlayer, "");
+        notifyMoveCompleted(moveViewDTO);
+    }
+}
+
 BoardViewDTO GameService::getBoardState() const {
     return MapLogicToView::mapToBoardViewDTO(_state.board, _state, getWinningLine(_state.latestMove, _state.currentPlayer->getColor()));
 }
@@ -150,7 +169,6 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
         _state.currentPlayer = (_state.currentPlayer == _player1.get()) ? _player2.get() : _player1.get();
     }
 
-    // TODO: add MapToPersistence
     _persistence_manager->saveGame(MapLogicToModel::mapToSave(
                 "GameID",
                 _state,
@@ -158,7 +176,7 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
                 _player1.get(),
                 _player2.get(),
                 _activeGameMode,
-                0
+                _elapsedTime
             ));
 
     return MapLogicToView::createMoveViewDTO(
@@ -216,6 +234,10 @@ GameStatus GameService::changeGameStatus() {
 
 
     return _state.status;
+}
+
+void GameService::pauseGame() {
+    _state.status = PAUSED;
 }
 
 bool GameService::isPlayerValid(const std::string &playerId) {
