@@ -131,7 +131,7 @@ vec3 ball(){
 
     vec3 color = base_color;
 
-    const int numBalls = 100;
+    const int numBalls = 30;
     float maxAge = 15.0;
 
     for (int i = 0; i < numBalls; i++) {
