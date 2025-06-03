@@ -85,12 +85,16 @@ int main() {
                 bg.setTexture(tex1);
                 tex2 = boardState.currentPlayerName == "Black Player" ? AssetManager::getName(Textures::white_stone) : AssetManager::getName(Textures::black_stone);
                 bgAnimator->setTexture2(tex2);
+                bg.getAnimator()->setShader("bg");
                 break;}
             case BLACK_WINS:
+                bg.getAnimator()->setShader("bgWin");
                 break;
             case WHITE_WINS:
+                bg.getAnimator()->setShader("bgWin");
                 break;
             case DRAW:
+                bg.getAnimator()->setShader("bgDraw");
                 break;
             default:
                 break;

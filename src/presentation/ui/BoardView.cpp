@@ -127,7 +127,7 @@ void BoardView::addStoneSprite(const MoveViewDTO &move) {
     stoneSprite->setLayer(8);
     stoneSprite->setVisible(true);
     Animator* animator = nullptr;
-    if(std::strncmp(move.currentPlayerName.c_str(), "Player 1", 8) == 0)
+    if(move.boardView.moveNumber % 2 == 1)
         animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone");
     else
         animator = new SimpleAnimator(.3, stoneSprite->getLayer() + 1, "stone2");

@@ -40,6 +40,8 @@ Renderer::Renderer() {
     addShader(new Shader("shaders/stone2.vert", "shaders/default.frag"), "stone2");
     addShader(new Shader("shaders/board.vert", "shaders/default.frag"), "board");
     addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
+    addShader(new Shader("shaders/default.vert", "shaders/bgWin.frag"), "bgWin");
+    addShader(new Shader("shaders/default.vert", "shaders/bgDraw.frag"), "bgDraw");
 
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);
