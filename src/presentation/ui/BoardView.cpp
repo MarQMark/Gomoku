@@ -204,9 +204,13 @@ void BoardView::onGameCompleted(const GameCompleteViewDTO completeView) {
 
     // Find top-left position for positioning
     GridViewPosition leftest_pos = completeView.winningLine.at(0);
+    int count = 0;
     for (const GridViewPosition& pos : completeView.winningLine) {
+        if (count >= 5)
+            break;
         leftest_pos.x = std::min(leftest_pos.x, pos.x);
         leftest_pos.y = std::min(leftest_pos.y, pos.y);
+        count++;
     }
 
     // Texture has some kind of offset to be applied correctly (-2, -2)
