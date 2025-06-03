@@ -97,60 +97,83 @@ void GameService::loadGame() {
         MoveViewDTO moveViewDTO = MapLogicToView::createMoveViewDTO(true, getBoardState(), MapLogicToView::createStoneViewDTO(true, move.position, move.color), *_state.currentPlayer, "");
         notifyMoveCompleted(moveViewDTO);
     }
+
+    if (_state.status == BLACK_WINS || _state.status == WHITE_WINS) {
+        const StoneColor winner = checkForWin(_state.latestMove, _state.currentPlayer->getColor());
+        const auto winningPositions = getWinningLine(_state.latestMove, _state.currentPlayer->getColor());
+        notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
+    }
+
+    if (_state.status == DRAW) {
+        notifyGameCompleted(MapLogicToView::createGameCompletedView(STONE_NONE, _state.status, std::vector<GridPosition>()));
+    }
 }
 
 BoardViewDTO GameService::getBoardState() const {
     return MapLogicToView::mapToBoardViewDTO(_state.board, _state, getWinningLine(_state.latestMove, _state.currentPlayer->getColor()));
 }
 
-MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
-    GridPosition pos = cmd.gridPosition;
-
+bool GameService::validateMouseCommand(GridPosition pos, MoveViewDTO &moveViewDTO) {
     if (!isValidGridPosition(pos)) {
-        return MapLogicToView::createMoveViewDTO(
+        moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid command"
         );
+        return true;
     }
 
     if (_state.status != IN_PROGRESS) {
-        return MapLogicToView::createMoveViewDTO(
+        moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Game is not in progress"
         );
+        return true;
     }
 
     if (!pos.isValid()) {
-        return MapLogicToView::createMoveViewDTO(
+        moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid board position"
         );
+        return true;
     }
 
     if (_state.board.getColor(pos) != STONE_NONE) {
-        return MapLogicToView::createMoveViewDTO(
+        moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Position already occupied"
         );
+        return true;
     }
 
     if (!_state.board.placeStone(pos, _state.currentPlayer->getColor())) {
-        return MapLogicToView::createMoveViewDTO(
+        moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Failed to place stone"
         );
+        return true;
     }
+    return false;
+}
+
+MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
+    GridPosition pos = cmd.gridPosition;
+
+    MoveViewDTO invalidMoveView;
+    if (validateMouseCommand(pos, invalidMoveView))
+        return invalidMoveView;
 
     _moveHistory.emplace_back(pos, _state.currentPlayer->getColor());
     _state.latestMove = pos;
     _state.moveNumber++;
 
     // Check for win
-    const StoneColor winner = checkForWin(pos, _state.currentPlayer->getColor());
+    const StoneColor winner = checkForWin(_state.latestMove, _state.currentPlayer->getColor());
     if (winner != STONE_NONE) {
         const auto winningPositions = getWinningLine(_state.latestMove, _state.currentPlayer->getColor());
         _state.status = (winner == BLACK) ? BLACK_WINS : WHITE_WINS;
         notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
+        saveGame();
         return MapLogicToView::createMoveViewDTO(true,
                                                  MapLogicToView::mapToBoardViewDTO(_state.board, _state, winningPositions),
                                                  MapLogicToView::createStoneViewDTO(true, pos, _state.currentPlayer->getColor()), *_state.currentPlayer);
@@ -159,9 +182,11 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
     if (_state.board.isFull()) {
         _state.status = DRAW;
         notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, std::vector<GridPosition>()));
+        saveGame();
         return MapLogicToView::createMoveViewDTO(true,
             getBoardState(), MapLogicToView::createStoneViewDTO(true, pos,  _state.currentPlayer->getColor()), *_state.currentPlayer, "");
     }
+
 
     // Swap turn
     const StoneColor prevPlayerTurn = _state.currentPlayer->getColor();
@@ -169,6 +194,14 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
         _state.currentPlayer = (_state.currentPlayer == _player1.get()) ? _player2.get() : _player1.get();
     }
 
+    saveGame();
+
+    return MapLogicToView::createMoveViewDTO(
+        true, getBoardState(), MapLogicToView::createStoneViewDTO(true, pos, prevPlayerTurn), *_state.currentPlayer, ""
+    );
+}
+
+void GameService::saveGame() const {
     _persistence_manager->saveGame(MapLogicToModel::mapToSave(
                 "GameID",
                 _state,
@@ -178,12 +211,7 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
                 _activeGameMode,
                 _elapsedTime
             ));
-
-    return MapLogicToView::createMoveViewDTO(
-        true, getBoardState(), MapLogicToView::createStoneViewDTO(true, pos, prevPlayerTurn), *_state.currentPlayer, ""
-    );
 }
-
 
 StoneViewDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
     if (!hover_command_dto.gridPosition.isValid() || _state.status != IN_PROGRESS) {
