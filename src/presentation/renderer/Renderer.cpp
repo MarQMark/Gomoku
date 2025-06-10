@@ -20,7 +20,7 @@
 #define GET_RED_ADDR (uint64_t)__builtin_return_address(0)
 #endif
 
-#define BATCH_FORCE_STACK volatile int force_stack = 1;
+#define BATCH_FORCE_STACK [[maybe_unused]] volatile int force_stack = 1;
 
 #if !defined(__clang__) && !defined(__GNUC__) && !defined(__MSC_VER)
 #error "Incompatible Compiler"
@@ -192,7 +192,7 @@ void Renderer::drawTextID(uint64_t id, const std::string& text, glm::vec2 pos, f
 
     Vertex* vertices = (Vertex*)malloc(sizeof(Vertex) * 4 * textLen);
     uint32_t* indices = (uint32_t*)malloc(sizeof(uint32_t) * 6 * textLen);
-    memset(vertices, 0, sizeof(Vertex) * 4 * textLen);
+    memset((void*)vertices, 0, sizeof(Vertex) * 4 * textLen);
     memset(indices, 0, sizeof(uint32_t) * 6 * textLen);
 
     uint32_t indexCnt = 0;

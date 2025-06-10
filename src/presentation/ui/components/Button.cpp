@@ -57,6 +57,9 @@ void Button::render(Renderer* renderer, const glm::vec2 parentPos, const glm::ve
             case RELEASED:
                 color = glm::vec3(.8);
                 break;
+            case ALL:
+                std::cout << "[WARNING] Button should never have state ALL\n";
+                break;
         }
 
         renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(color, 1), options);
