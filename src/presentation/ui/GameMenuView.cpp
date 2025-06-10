@@ -69,7 +69,7 @@ GameMenuView::~GameMenuView() {
     deleteViewable<MenuButton>("pauseBtn");
     deleteViewable<MenuButton>("mainMenuBtn");
     deleteViewable<MenuButton>("exitGameBtn");
-    deleteViewable<MenuButton>("drawerView");
+    deleteViewable<DrawerView>("drawerView");
 }
 
 void GameMenuView::setHidden(bool hidden) {

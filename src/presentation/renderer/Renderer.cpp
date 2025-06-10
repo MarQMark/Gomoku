@@ -62,6 +62,9 @@ Renderer::~Renderer() {
     for (const auto& pair : _textures)
         delete pair.second;
 
+    for (const auto& pair : _fonts)
+        delete pair.second;
+
     for (auto pair : _batches)
         delete pair.second;
 
@@ -189,6 +192,8 @@ void Renderer::drawTextID(uint64_t id, const std::string& text, glm::vec2 pos, f
 
     Vertex* vertices = (Vertex*)malloc(sizeof(Vertex) * 4 * textLen);
     uint32_t* indices = (uint32_t*)malloc(sizeof(uint32_t) * 6 * textLen);
+    memset(vertices, 0, sizeof(Vertex) * 4 * textLen);
+    memset(indices, 0, sizeof(uint32_t) * 6 * textLen);
 
     uint32_t indexCnt = 0;
     uint32_t nVertex = 0;

@@ -70,3 +70,7 @@ unsigned char *AssetManager::loadPixelsFromFile(std::string fileName, int *width
     int c;
     return stbi_load(path.c_str(), width, height, &c, 4);
 }
+
+void AssetManager::freeLoadedPixels(unsigned char *data) {
+    stbi_image_free(data);
+}

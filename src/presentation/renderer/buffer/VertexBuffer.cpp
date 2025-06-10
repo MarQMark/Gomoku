@@ -8,6 +8,7 @@ VertexBuffer::VertexBuffer(VertexBufferLayout *vbl, unsigned int vertexSize) {
 }
 
 VertexBuffer::~VertexBuffer() {
+    delete _vbl;
     glDeleteBuffers(1, &_id);
 }
 

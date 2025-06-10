@@ -7,7 +7,8 @@
 
 class UI {
 public:
-    UI(Renderer* renderer);
+    explicit UI(Renderer* renderer);
+    ~UI();
 
     void update();
 

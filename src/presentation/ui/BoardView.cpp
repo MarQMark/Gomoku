@@ -24,10 +24,12 @@ BoardView::~BoardView() {
     delete _backgroundBoard;
     delete _boardGrid;
     delete _hoverPreviewSprite;
-    const int size = _gameService->getBoardSize();
+    delete _winningLine;
 
+    const int size = _gameService->getBoardSize();
     for (int y = 0; y < size; ++y) {
         for (int x = 0; x < size; ++x) {
+            // probably wrong but should work for use case
             delete _stoneSprites[y][x];
         }
     }

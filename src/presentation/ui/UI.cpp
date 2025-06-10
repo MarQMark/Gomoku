@@ -1,9 +1,12 @@
 #include "presentation/ui/UI.h"
-#include "presentation/ui/components/IInteractable.h"
 #include "presentation/input/Input.h"
 
 UI::UI(Renderer *renderer) : _renderer(renderer) {
     _view_root = new View("root");
+}
+
+UI::~UI() {
+    delete _view_root;
 }
 
 void UI::update() {

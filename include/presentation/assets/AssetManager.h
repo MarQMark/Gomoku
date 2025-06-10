@@ -40,6 +40,7 @@ public:
     Texture2D* getTexture(Textures texture);
 
     unsigned char* loadPixelsFromFile(std::string fileName, int* width, int* height);
+    void freeLoadedPixels(unsigned char* data);
 
 private:
     Renderer *renderer;

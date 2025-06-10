@@ -9,10 +9,7 @@ Batch::Batch(Texture2D *texture2D, Shader *shader) :  _texture2D(texture2D), _sh
 
 Batch::~Batch() {
     for(auto pair : _buffers){
-        if(pair.second->vb)
-            free(pair.second->vb);
-        if(pair.second->ib)
-            free(pair.second->ib);
+        delete pair.second;
     }
 
     delete _vb;
@@ -75,26 +72,21 @@ void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, u
     }
 
     Buffer* buffer = _buffers[id];
-    if(vbSize != buffer->vb_size) {
+    bool vbUpdate = false, ibUpdate = false;
+    if(vbSize != buffer->vb_size || memcmp(vb, buffer->vb, vbSize) != 0) {
         update_vb(buffer, vb, vbSize);
-        return;
+        vbUpdate = true;
     }
 
-    if(ibSize != buffer->ib_len) {
+    if(ibSize != buffer->ib_len || memcmp(ib, buffer->ib, ibSize) != 0) {
         update_ib(buffer, ib, ibSize);
-        return;
+        ibUpdate = true;
     }
 
-    if(memcmp(vb, buffer->vb, vbSize) != 0) {
-        update_vb(buffer, vb, vbSize);
-        return;
-    }
-
-    if(memcmp(ib, buffer->ib, ibSize) != 0) {
-        update_ib(buffer, ib, ibSize);
-        return;
-    }
-
+    if(!vbUpdate)
+        free(vb);
+    if(!ibUpdate)
+        free(ib);
     buffer->used = true;
 }
 

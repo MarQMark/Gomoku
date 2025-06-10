@@ -108,6 +108,8 @@ int main() {
 
     // Cleanup
     delete boardView;
+    AssetManager::instance()->freeLoadedPixels(iconBlack);
+    AssetManager::instance()->freeLoadedPixels(iconWhite);
     RunManager::destroy();
     return 0;
 }
