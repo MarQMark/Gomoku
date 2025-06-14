@@ -26,6 +26,7 @@ add_executable(Gomoku
         presentation/ui/components/Button.cpp
         presentation/ui/components/MenuView.cpp
         presentation/ui/UI.cpp
+        presentation/ui/BackgroundView.cpp
         presentation/ui/MenuButton.cpp
         presentation/ui/MenuController.cpp
         presentation/ui/GameMenuView.cpp
@@ -53,8 +54,8 @@ add_executable(Gomoku
         persistence/FileManager.cpp
         persistence/mapping/MapPersistenceToLogic.cpp
 
+        Game.cpp
         main.cpp
-        ../include/logic/interfaces/IMenuEventListener.h
 )
 
 target_include_directories(Gomoku

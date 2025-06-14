@@ -10,6 +10,12 @@
 #include "common/Time.h"
 
 BoardView::BoardView(std::string name, IGameService* gameService) : View(std::move(name)) {
+    View::setKeepHeight(true);
+    View::setAlignH(IViewable::CENTER);
+    View::setAlignV(IViewable::CENTER);
+    View::setPos(glm::vec2(0.1f, 0.1f));
+    View::setDim(glm::vec2(0.8f));
+
     _gameService = gameService;
     _gameService->addListener(this);
     const int size = _gameService->getBoardSize();

@@ -191,3 +191,7 @@ bool UI::is_view_visible(View* parent, View *view) {
 
     return false;
 }
+
+void UI::addViewable(IViewable *viewable) {
+    _view_root->addViewable(viewable);
+}

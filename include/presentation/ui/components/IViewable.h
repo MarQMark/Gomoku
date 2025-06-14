@@ -7,6 +7,7 @@
 
 class IViewable{
 public:
+    ~IViewable() = default;
 
     enum Align{
         NONE = 0,
@@ -46,7 +47,6 @@ public:
 protected:
     explicit IViewable(std::string name) : _name(std::move(name)) {}
     IViewable(std::string name, glm::vec2 pos, glm::vec2 dim) : _pos(pos), _dim(dim), _name(std::move(name)) {}
-    ~IViewable() = default;
 
     glm::vec2 _pos = glm::vec2(0);
     glm::vec2 _dim = glm::vec2(1);

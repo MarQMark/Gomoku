@@ -19,6 +19,11 @@ public:
         return _view_root->getViewable<T>(name);
     }
 
+    void addViewable(IViewable* viewable);
+    template<class T = IViewable>
+    void deleteViewable(std::string name){
+        _view_root->deleteViewable<T>(name);
+    }
 
 private:
     Renderer* _renderer{};
