@@ -15,9 +15,13 @@ public:
     void setRenderer(Renderer* renderer);
     void setTexture2(std::string texture2);
 
+    void setPassResolution(bool passResolution);
+
 private:
     Renderer* _renderer{};
     std::string _texture2{};
+
+    bool _pass_resolution = true;
 };
 
 

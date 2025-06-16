@@ -1,10 +1,12 @@
 #include "presentation/renderer/animator/BackgroundAnimator.h"
+
+#include <utility>
 #include "common/Time.h"
 
 BackgroundAnimator::BackgroundAnimator(double duration) : Animator(duration) {
 }
 
-BackgroundAnimator::BackgroundAnimator(double duration, float layer, std::string shader) : Animator(duration, layer, shader) {
+BackgroundAnimator::BackgroundAnimator(double duration, float layer, std::string shader) : Animator(duration, layer, std::move(shader)) {
 }
 
 void BackgroundAnimator::update(Shader *shader) {
@@ -15,7 +17,8 @@ void BackgroundAnimator::update(Shader *shader) {
     if(_duration != 0)
         shader->uniform1lf("u_duration", (float)_duration);
 
-    shader->uniform2fv("u_resolution", _renderer->getViewportSize());
+    if(_pass_resolution)
+        shader->uniform2fv("u_resolution", _renderer->getViewportSize());
 
     if(!_texture2.empty()){
         _renderer->getTexture(_texture2)->bind(1);
@@ -29,4 +32,8 @@ void BackgroundAnimator::setRenderer(Renderer *renderer) {
 
 void BackgroundAnimator::setTexture2(std::string texture2) {
     _texture2 = std::move(texture2);
+}
+
+void BackgroundAnimator::setPassResolution(bool passResolution) {
+    _pass_resolution = passResolution;
 }

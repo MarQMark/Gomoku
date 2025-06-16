@@ -21,6 +21,7 @@ BackgroundView::BackgroundView(std::string name, Renderer* renderer) : View(std:
     _animator = new BackgroundAnimator(0, 0, "bgStone");
     _animator->setRenderer(renderer);
     _animator->setTexture2(AssetManager::getName(Textures::black_stone));
+    _animator->setPassResolution(false);
     _animator->setLayer(-5);
 
     _icon_black = AssetManager::instance()->loadPixels("black_stone", &_icon_width, &_icon_height);
