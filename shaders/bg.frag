@@ -1,4 +1,4 @@
-#version 430
+#version 420
 
 uniform vec2  u_resolution; // Screen Resolution (width, height)
 uniform float u_time;       // Time in Milli Seconds
