@@ -12,7 +12,7 @@ class IGameService {
 public:
     virtual ~IGameService() = default;
 
-    virtual void loadGame() = 0;
+    virtual bool loadGame() = 0;
     virtual void addListener(IBoardEventListener* listener) = 0;
     virtual void addMenuListener(IMenuEventListener* listener) = 0;
     virtual void update(double deltaTime) = 0;

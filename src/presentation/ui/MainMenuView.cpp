@@ -13,8 +13,8 @@ void newGameBtnClbk(IInteractable* interactable, IInteractable::State state, voi
 
 void continueBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
-    menuController->changeMenu(MenuController::Game);
-    menuController->getGameService()->loadGame();
+    if(menuController->getGameService()->loadGame())
+        menuController->changeMenu(MenuController::Game);
 }
 
 void exitBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {

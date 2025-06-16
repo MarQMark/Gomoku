@@ -30,7 +30,7 @@ public:
     void startGame(const GameSetupCommandDTO& setupCommand) override;
     void resetGameState();
     void createPlayers(const GameSetupCommandDTO &setupCommand);
-    void loadGame() override;
+    bool loadGame() override;
 
     // BOARD
     StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const override;

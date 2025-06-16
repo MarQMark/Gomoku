@@ -81,9 +81,12 @@ void GameService::createPlayers(const GameSetupCommandDTO &setupCommand) {
     }
 }
 
-void GameService::loadGame() {
+bool GameService::loadGame() {
     LoadGameResultDTO* dto = _persistence_manager->loadGame("GameID");
     GameReconstructionResult result = MapPersistenceToLogic::reconstructGame(dto);
+    if(!result.success)
+        return false;
+
     resetGameState();
     _player1 = std::move(result.player1);
     _player2 = std::move(result.player2);
@@ -107,6 +110,8 @@ void GameService::loadGame() {
     if (_state.status == DRAW) {
         notifyGameCompleted(MapLogicToView::createGameCompletedView(STONE_NONE, _state.status, std::vector<GridPosition>()));
     }
+
+    return true;
 }
 
 BoardViewDTO GameService::getBoardState() const {
