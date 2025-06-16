@@ -104,21 +104,22 @@ void BackgroundView::onStatsChanged(StatsViewDTO stats) {
                 _blacks_turn = !_blacks_turn;
             }
 
-            if(_blacks_turn)
-                _renderer->setWindowIcon(_icon_width, _icon_height, _icon_black);
-            else
-                _renderer->setWindowIcon(_icon_width, _icon_height, _icon_white);
-
             break;}
         case DRAW:
             _draw = true;
         case BLACK_WINS:
         case WHITE_WINS:
             _max_stones = WIN_MAX_STONES;
+            _blacks_turn = (stats.lastPlayerColor != ViewColor::WHITE);
             break;
         default:
             break;
     }
+
+    if(_blacks_turn)
+        _renderer->setWindowIcon(_icon_width, _icon_height, _icon_black);
+    else
+        _renderer->setWindowIcon(_icon_width, _icon_height, _icon_white);
 }
 
 bool BackgroundView::spawn_stone(float aspectRatio) {
