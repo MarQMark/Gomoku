@@ -107,6 +107,7 @@ void BackgroundView::onStatsChanged(StatsViewDTO stats) {
             break;}
         case DRAW:
             _draw = true;
+            [[fallthrough]];
         case BLACK_WINS:
         case WHITE_WINS:
             _max_stones = WIN_MAX_STONES;
