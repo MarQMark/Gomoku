@@ -4,7 +4,7 @@
 #include "Renderer.h"
 #include "presentation/renderer/stb_image/stb_image.h"
 
-#ifdef EMBEDDED_RES
+#ifdef USE_EMBEDDED
 // Files get generated with CMake build
 #include "embedded_assets.h"
 #endif
@@ -50,7 +50,7 @@ Texture2D* AssetManager::getTexture(Textures texture) {
 void AssetManager::load_textures() {
     for (const auto texture : magic_enum::enum_values<Textures>()) {
         auto filename = std::string(magic_enum::enum_name(texture));
-#ifndef EMBEDDED_RES
+#ifndef USE_EMBEDDED
         _textures[filename] = load_texture_from_file("res/", filename, ".png");
 #else
         _textures[filename] = load_texture_from_memory(filename);
@@ -59,7 +59,7 @@ void AssetManager::load_textures() {
     }
 }
 
-#ifndef EMBEDDED_RES
+#ifndef USE_EMBEDDED
 std::unique_ptr<Texture2D> AssetManager::load_texture_from_file(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding) {
     const std::string fullPath = folderPath + filepath + fileEnding;
     int w, h, c;
@@ -91,7 +91,7 @@ std::unique_ptr<Texture2D> AssetManager::load_texture_from_memory(std::string na
 unsigned char *AssetManager::loadPixels(std::string name, int *width, int *height) {
     int c;
 
-#ifndef EMBEDDED_RES
+#ifndef USE_EMBEDDED
     std::string path = "res/" + name + ".png";
     return stbi_load(path.c_str(), width, height, &c, 4);
 #else

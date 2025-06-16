@@ -72,14 +72,14 @@ target_link_libraries(Gomoku glfw)
 add_compile_definitions(GLEW_STATIC)
 add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
 
-add_custom_target(copy_shaders ALL
-        COMMAND  ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/../shaders
-        ${PROJECT_BINARY_DIR}/shaders        COMMENT "Copying shaders into binary directory")
-add_dependencies(Gomoku copy_shaders)
-
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG)
+
+    add_custom_target(copy_shaders ALL
+            COMMAND  ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/../shaders
+            ${PROJECT_BINARY_DIR}/shaders        COMMENT "Copying shaders into binary directory")
+    add_dependencies(Gomoku copy_shaders)
 
     add_custom_target(copy_resources ALL
             COMMAND  ${CMAKE_COMMAND} -E copy_directory
@@ -87,9 +87,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
             ${PROJECT_BINARY_DIR}/res        COMMENT "Copying resources into binary directory")
     add_dependencies(Gomoku copy_resources)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_compile_definitions(EMBEDDED_RES)
+    add_compile_definitions(USE_EMBEDDED)
+
     include(embed_res.cmake)
     embed_assets_as_c_arrays(Gomoku "${CMAKE_SOURCE_DIR}/res")
+
+    include(embed_shaders.cmake)
+    embed_shaders_as_c_arrays(Gomoku "${CMAKE_SOURCE_DIR}/shaders")
 endif()
 
 

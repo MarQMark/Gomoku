@@ -33,15 +33,15 @@ Renderer::Renderer() {
     if (glewInit() != GLEW_OK)
         throw std::runtime_error("Error initializing glew\n");
 
-    addShader(new Shader("shaders/default.vert", "shaders/default.frag"), "default");
-    addShader(new Shader("shaders/default.vert", "shaders/grid.frag"), "grid");
-    addShader(new Shader("shaders/default.vert", "shaders/font.frag"), "font");
-    addShader(new Shader("shaders/stone.vert", "shaders/default.frag"), "stone");
-    addShader(new Shader("shaders/stone2.vert", "shaders/default.frag"), "stone2");
-    addShader(new Shader("shaders/board.vert", "shaders/default.frag"), "board");
-    addShader(new Shader("shaders/default.vert", "shaders/bg.frag"), "bg");
-    addShader(new Shader("shaders/default.vert", "shaders/bgWin.frag"), "bgWin");
-    addShader(new Shader("shaders/default.vert", "shaders/bgDraw.frag"), "bgDraw");
+    addShader(new Shader("default.vert", "default.frag"), "default");
+    addShader(new Shader("default.vert", "grid.frag"),    "grid");
+    addShader(new Shader("default.vert", "font.frag"),    "font");
+    addShader(new Shader("stone.vert",   "default.frag"), "stone");
+    addShader(new Shader("stone2.vert",  "default.frag"), "stone2");
+    addShader(new Shader("board.vert",   "default.frag"), "board");
+    addShader(new Shader("default.vert", "bg.frag"),      "bg");
+    addShader(new Shader("default.vert", "bgWin.frag"),   "bgWin");
+    addShader(new Shader("default.vert", "bgDraw.frag"),  "bgDraw");
 
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);

@@ -49,7 +49,7 @@ private:
 
     std::unordered_map<std::string, std::unique_ptr<Texture2D>> _textures;
     void load_textures();
-#ifndef EMBEDDED_RES
+#ifndef USE_EMBEDDED
     static std::unique_ptr<Texture2D> load_texture_from_file(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding);
 #else
     static std::unique_ptr<Texture2D> load_texture_from_memory(std::string name);

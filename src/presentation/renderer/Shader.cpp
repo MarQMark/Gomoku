@@ -3,10 +3,21 @@
 #include <sstream>
 #include "presentation/renderer/Shader.h"
 
+#ifdef USE_EMBEDDED
+#include "shader_assets.h"
+#endif
+
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
 
-    std::string vertexSource = loadShaderSource(vertexPath);
-    std::string fragmentSource = loadShaderSource(fragmentPath);
+#ifndef USE_EMBEDDED
+    std::string vertexSource = loadShaderSource("shaders/" + vertexPath);
+    std::string fragmentSource = loadShaderSource("shaders/" + fragmentPath);
+#else
+    const auto& [vertBuf, vertLen] = shader_assets.at(vertexPath);
+    std::string vertexSource = std::string(reinterpret_cast<const char*>(vertBuf), vertLen);
+    const auto& [fragBuf, fragLen] = shader_assets.at(fragmentPath);
+    std::string fragmentSource =  std::string(reinterpret_cast<const char*>(fragBuf), fragLen);
+#endif
 
     int vs = compileShader(GL_VERTEX_SHADER, vertexSource);
     int fs = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
@@ -64,6 +75,7 @@ int Shader::compileShader(GLenum type, const std::string &source) {
         GLchar log[1024];
         glGetShaderInfoLog(id, 1024, &logLength, log);
         std::cout << log << std::endl;
+        std::cout << source << std::endl;
     }
 
     return id;
