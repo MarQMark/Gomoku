@@ -13,6 +13,8 @@ public:
 private:
     const std::string _file_name = "gameData.json";
     std::string _file_path = "./";
+
+     void get_file_path();
 };
 
 

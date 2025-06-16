@@ -1,11 +1,67 @@
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 #include "persistence/FileManager.h"
 #include "persistence/json/json.hpp"
 
-FileManager::FileManager() {
+#ifdef _WIN32
+    #include <windows.h>
+    #include <shlobj.h> // SHGetFolderPath
+#else
+#include <unistd.h>
+#include <pwd.h>
+#endif
 
+FileManager::FileManager() {
+    get_file_path();
 }
+
+
+void FileManager::get_file_path() {
+#ifdef _WIN32
+    char path[MAX_PATH];
+    if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
+        basePath = std::string(path) + "\\Gomoku\\";
+    } else {
+        std::cout << "[WARNING] Failed to get %LOCALAPPDATA%\n";
+        return;
+    }
+#else
+    const char* home = getenv("HOME");
+    if (!home) {
+        struct passwd* pw = getpwuid(getuid());
+        if (!pw) {
+            std::cout << "[WARNING] Failed to get home directory\n";
+            return;
+        }
+        home = pw->pw_dir;
+    }
+    _file_path = std::string(home) + "/.local/share/Gomoku/";
+#endif
+
+    std::filesystem::create_directories(_file_path);
+
+    std::string testFile = _file_path + "test.tmp";
+    std::ofstream ofs(testFile);
+    if (!ofs) {
+        std::cout << "[WARNING] Save path is not writable: " << _file_path << "\n";
+        return;
+    }
+    ofs << "test";
+    ofs.close();
+
+    std::ifstream ifs(testFile);
+    if (!ifs) {
+        std::cout << "[WARNING] Save path is not readable: " << _file_path << "\n";
+        return;
+    }
+    std::string tmp;
+    ifs >> tmp;
+    ifs.close();
+
+    std::filesystem::remove(testFile);
+}
+
 
 bool FileManager::saveGame(SaveGameModel gameData) {
     nlohmann::json jsonObj;
