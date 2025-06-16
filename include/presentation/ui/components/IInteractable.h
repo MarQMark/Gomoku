@@ -9,7 +9,7 @@ public:
     explicit IInteractable(std::string name) : IViewable(std::move(name)) {}
     IInteractable(std::string name, glm::vec2 pos, glm::vec2 dim) : IViewable(std::move(name), pos, dim) {}
 
-    ~IInteractable(){
+    ~IInteractable() override {
         for(auto* callback : _callbacks)
             delete callback;
     }

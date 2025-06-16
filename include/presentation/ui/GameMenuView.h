@@ -8,7 +8,7 @@
 class GameMenuView : public MenuView {
 public:
     GameMenuView(std::string name, MenuController* menuController);
-    ~GameMenuView();
+    ~GameMenuView() override;
 
     void setHidden(bool hidden) override;
 

@@ -7,7 +7,7 @@ class Button : public IInteractable {
 public:
     explicit Button(std::string name);
     Button(std::string name, glm::vec2 pos, glm::vec2 dim);
-    virtual ~Button() = default;
+    ~Button() override = default;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

@@ -8,7 +8,7 @@
 class DifficultyMenuView : public MenuView {
 public:
     DifficultyMenuView(std::string name, MenuController* menuController);
-    ~DifficultyMenuView();
+    ~DifficultyMenuView() override;
 
 private:
 

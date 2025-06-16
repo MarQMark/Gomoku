@@ -10,7 +10,7 @@
 class StatsMenuView : public MenuView {
 public:
     StatsMenuView(std::string name, MenuController* menuController);
-    ~StatsMenuView();
+    ~StatsMenuView() override;
 
     void setBlackPlayer(std::string player);
     void setWhitePlayer(std::string player);

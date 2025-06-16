@@ -17,7 +17,7 @@ public:
         Game
     };
 
-    ~MenuController() = default;
+    ~MenuController() override = default;
     explicit MenuController(IGameService *gameService);
 
     void update();

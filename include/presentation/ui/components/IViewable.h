@@ -7,7 +7,7 @@
 
 class IViewable{
 public:
-    ~IViewable() = default;
+    virtual ~IViewable() = default;
 
     enum Align{
         NONE = 0,

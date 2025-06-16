@@ -8,7 +8,7 @@ class ShaderSprite : public IViewable{
 public:
     ShaderSprite(std::string name, std::string shaderName);
     ShaderSprite(std::string name, std::string shaderName, glm::vec2 pos, glm::vec2 dim);
-    ~ShaderSprite();
+    ~ShaderSprite() override;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

@@ -13,8 +13,8 @@ BackgroundView::BackgroundView(std::string name, Renderer* renderer) : View(std:
     View::addViewable(bgSprite);
 
 
-    _icon_black = AssetManager::instance()->loadPixelsFromFile("black_stone", &_icon_width, &_icon_height);
-    _icon_white = AssetManager::instance()->loadPixelsFromFile("white_stone", &_icon_width, &_icon_height);
+    _icon_black = AssetManager::instance()->loadPixels("black_stone", &_icon_width, &_icon_height);
+    _icon_white = AssetManager::instance()->loadPixels("white_stone", &_icon_width, &_icon_height);
     _renderer->setWindowIcon(_icon_width, _icon_height, _icon_black);
 }
 

@@ -39,7 +39,7 @@ public:
     static std::string getName(Textures texture);
     Texture2D* getTexture(Textures texture);
 
-    unsigned char* loadPixelsFromFile(std::string fileName, int* width, int* height);
+    unsigned char* loadPixels(std::string name, int* width, int* height);
     void freeLoadedPixels(unsigned char* data);
 
 private:
@@ -48,8 +48,12 @@ private:
     static AssetManager* s_instance;
 
     std::unordered_map<std::string, std::unique_ptr<Texture2D>> _textures;
-    void loadTexturesFromFiles();
-    static std::unique_ptr<Texture2D> loadTextureFromFile(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding);
+    void load_textures();
+#ifndef EMBEDDED_RES
+    static std::unique_ptr<Texture2D> load_texture_from_file(const std::string& folderPath, const std::string& filepath, const std::string& fileEnding);
+#else
+    static std::unique_ptr<Texture2D> load_texture_from_memory(std::string name);
+#endif
 };
 
 #endif

@@ -8,7 +8,7 @@ class Sprite : public IViewable{
 public:
     Sprite(std::string name, std::string textureName);
     Sprite(std::string name, std::string textureName, glm::vec2 pos, glm::vec2 dim);
-    virtual ~Sprite();
+    ~Sprite() override;
 
     void render(Renderer* renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

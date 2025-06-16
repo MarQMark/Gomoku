@@ -6,8 +6,9 @@
 
 class MenuView : public View{
 public:
-    MenuView(std::string name);
+    explicit MenuView(std::string name);
     MenuView(std::string name, glm::vec2 pos, glm::vec2 dim);
+    ~MenuView() override = default;
 
     void render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

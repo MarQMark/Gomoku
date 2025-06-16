@@ -9,9 +9,9 @@ class DrawerView : public View{
 private:
     class DrawerViewInteractable : public IInteractable {
     public:
-        DrawerViewInteractable(std::string name);
+        explicit DrawerViewInteractable(std::string name);
         DrawerViewInteractable(std::string name, glm::vec2 pos, glm::vec2 dim);
-        virtual ~DrawerViewInteractable() = default;
+        ~DrawerViewInteractable() override = default;
 
         void render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 

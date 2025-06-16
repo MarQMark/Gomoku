@@ -13,7 +13,11 @@ Window::Window(int32_t width, int32_t height){
         throw std::runtime_error("Could not initialize GLFW\n");
     }
 
+#ifdef DEBUG
+    _window = glfwCreateWindow(width, height, "Gomoku Debug", nullptr, nullptr);
+#else
     _window = glfwCreateWindow(width, height, "Gomoku", nullptr, nullptr);
+#endif
     if(!_window){
         glfwTerminate();
         throw std::runtime_error("Could not create window\n");

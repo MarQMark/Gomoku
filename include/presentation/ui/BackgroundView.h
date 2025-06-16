@@ -9,7 +9,7 @@
 class BackgroundView : public View, public IMenuEventListener {
 public:
     BackgroundView(std::string name, Renderer* renderer);
-    ~BackgroundView();
+    ~BackgroundView() override;
 
     void render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) override;
 
