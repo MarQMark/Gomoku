@@ -54,8 +54,8 @@ GameMode MenuController::getSelectedGameMode() const {
     return _selected_game_mode;
 }
 
-void MenuController::setSelectedGameMode(const GameMode selected_game_mode) {
-    _selected_game_mode = selected_game_mode;
+void MenuController::setSelectedGameMode(const GameMode selectedGameMode) {
+    _selected_game_mode = selectedGameMode;
 }
 
 void MenuController::onGameCompleted() {

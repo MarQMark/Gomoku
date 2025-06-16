@@ -12,15 +12,15 @@
 
 class GameService final : public IGameService {
     BoardState _state;
-    std::vector<Move> _moveHistory;
+    std::vector<Move> _move_history;
     std::unique_ptr<IPlayer> _player1;
     std::unique_ptr<IPlayer> _player2;
-    std::vector<IBoardEventListener*> _boardListeners;
-    std::vector<IMenuEventListener*> _menuListeners;
-    GameMode _activeGameMode;
-    double _elapsedTime = 0.0;
-    double _aiMoveTimer = 0.0f;
-    double _aiMoveDelay = 0.5f;
+    std::vector<IBoardEventListener*> _board_listeners;
+    std::vector<IMenuEventListener*> _menu_listeners;
+    GameMode _active_game_mode;
+    double _elapsed_time = 0.0;
+    double _ai_move_timer = 0.0f;
+    double _ai_move_delay = 0.5f;
     IPersistenceManager* _persistence_manager{};
 
 public:
@@ -33,8 +33,8 @@ public:
     bool loadGame() override;
 
     // BOARD
-    StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const override;
-    MoveViewDTO processMouseClick(const MouseCommandDTO& click_command_dto) override;
+    StoneViewDTO processMouseHover(const MouseCommandDTO& hoverCommandDTO) const override;
+    MoveViewDTO processMouseClick(const MouseCommandDTO& clickCommandDTO) override;
     BoardViewDTO getBoardState() const override;
 
     bool validateMouseCommand(GridPosition pos, MoveViewDTO &moveViewDTO);
@@ -45,31 +45,31 @@ public:
 
     void restartSameGame();
 
-    const std::vector<Move>& getMoveHistory() const override { return _moveHistory; }
+    const std::vector<Move>& getMoveHistory() const override { return _move_history; }
     void addListener(IBoardEventListener* listener) override;
     void addMenuListener(IMenuEventListener* listener) override;
     void update(double deltaTime) override;
     bool isCurrentPlayerAI() const override;
 
 private:
-    void notifyGameStarted() const;
-    void notifyStatsChanged() const;
-    void notifyMoveCompleted(const MoveViewDTO& move) const;
-    void notifyGameCompleted(const GameCompleteViewDTO &completeView) const;
-    MoveViewDTO executeAIMove();
+    void notify_game_started() const;
+    void notify_stats_changed() const;
+    void notify_move_completed(const MoveViewDTO& move) const;
+    void notify_game_completed(const GameCompleteViewDTO &completeView) const;
+    MoveViewDTO execute_ai_move();
 
-    StoneColor checkForWin(const GridPosition& lastMove, StoneColor color) const;
-    static bool isPlayerValid(const std::string &playerId);
-    MoveViewDTO processMove(const MouseCommandDTO& cmd);
+    StoneColor check_for_win(const GridPosition& lastMove, StoneColor color) const;
+    static bool is_player_valid(const std::string &playerId);
+    MoveViewDTO process_move(const MouseCommandDTO& cmd);
 
-    void saveGame() const;
+    void save_game() const;
 
-    std::vector<GridPosition> getWinningLine(const GridPosition& lastMove, StoneColor color) const;
+    std::vector<GridPosition> get_winning_line(const GridPosition& lastMove, StoneColor color) const;
     GameStatus changeGameStatus() override;
     void pauseGame() override;
 
-    static bool isValidGridPosition(const GridPosition& pos);
-    bool isPositionOccupied(const GridPosition& pos) const;
+    static bool is_valid_grid_position(const GridPosition& pos);
+    bool is_position_occupied(const GridPosition& pos) const;
     static constexpr int WINNING_LENGTH = 5;
 
 };

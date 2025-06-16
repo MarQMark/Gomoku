@@ -16,16 +16,16 @@ enum WinningLineOrientation {
 };
 
 class BoardView final : public View, public IBoardEventListener {
-    IGameService* _gameService;
-    Sprite* _backgroundBoard{};
-    Sprite* _boardGrid{};
-    Sprite* _winningLine{};
-    std::vector<std::vector<Sprite*>> _stoneSprites;
-    Sprite* _hoverPreviewSprite{};
+    IGameService* _game_service{};
+    Sprite* _background_board{};
+    Sprite* _board_grid{};
+    Sprite* _winning_line{};
+    std::vector<std::vector<Sprite*>> _stone_sprites;
+    Sprite* _hover_preview_sprite{};
 
-    bool _showHoverPreview;
-    bool _mousePressed;
-    bool _prevMousePressed;
+    bool _show_hover_preview;
+    bool _mouse_pressed;
+    bool _prev_mouse_pressed;
 
 public:
     explicit BoardView(std::string name, IGameService* gameService);
@@ -36,23 +36,23 @@ public:
     BoardViewDTO getCurrentBoardState() const;
 
 private:
-    void initializeSprites();
+    void initialize_sprites();
 
-    void clearBoard();
-    void updateHoverPreview(ViewColor previewColor, GridViewPosition hoverGridPosition) const;
-    void handleMouseInput(Renderer* renderer);
-    void handleMouseHover(glm::vec2 relativeMousePos);
-    void addStoneSprite(const MoveViewDTO &move);
-    void handleMouseClick(glm::vec2 relativeMousePos);
-    static std::string getStoneTexture(ViewColor color, bool isHover = false);
-    float calculateStoneSize() const;
+    void clear_board();
+    void update_hover_preview(ViewColor previewColor, GridViewPosition hoverGridPosition) const;
+    void handle_mouse_input(Renderer* renderer);
+    void handle_mouse_hover(glm::vec2 relativeMousePos);
+    void add_stone_sprite(const MoveViewDTO &move);
+    void handle_mouse_click(glm::vec2 relativeMousePos);
+    static std::string get_stone_texture(ViewColor color, bool isHover = false);
+    float calculate_stone_size() const;
 
-    static glm::vec2 relativeInsideGridView(glm::vec2 boardPos, glm::vec2 boardSize,
-                                             glm::vec2 mousePos, glm::vec2 viewportSize);
+    static glm::vec2 relative_inside_grid_view(glm::vec2 boardPos, glm::vec2 boardSize,
+                                               glm::vec2 mousePos, glm::vec2 viewportSize);
 
-    static glm::vec2 gridToViewPosition(GridViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
+    static glm::vec2 grid_to_view_position(GridViewPosition position, glm::vec2 boardPos, glm::vec2 boardSize, int boardSizeGrid);
 
-    static WinningLineOrientation determineWinningLineOrientation(const std::vector<GridViewPosition> &winningLine);
+    static WinningLineOrientation determine_winning_line_orientation(const std::vector<GridViewPosition> &winningLine);
 
 public:
     void onGameStarted() override;

@@ -37,8 +37,8 @@ public:
 
 private:
     // Utility
-    static AIDifficulty extractAIDifficulty(const IPlayer* player);
-    static bool isPlayerAI(const IPlayer& player);
+    static AIDifficulty extract_ai_difficulty(const IPlayer* player);
+    static bool is_player_ai(const IPlayer& player);
 };
 
 

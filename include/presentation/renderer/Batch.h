@@ -33,9 +33,9 @@ private:
         }
 
         void* vb{};
-        uint32_t vb_size = 0;
+        uint32_t vbSize = 0;
         uint32_t* ib{};
-        uint32_t ib_len = 0;
+        uint32_t ibLen = 0;
         bool used = true;
     };
 

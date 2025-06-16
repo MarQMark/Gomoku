@@ -20,16 +20,16 @@ Input::Input(GLFWwindow* window) {
     glfwSetWindowUserPointer(_window, this);
 
     // setup Mouse Button callback
-    auto mouse_btn = [](GLFWwindow* w, int b, int a, int m){
+    auto mouseBtn = [](GLFWwindow* w, int b, int a, int m){
         static_cast<Input*>(glfwGetWindowUserPointer(w))->mouse_btn_callback( b, a, m);
     };
-    glfwSetMouseButtonCallback(_window, mouse_btn);
+    glfwSetMouseButtonCallback(_window, mouseBtn);
 
     // setup Mouse Position callback
-    auto mouse_pos = [](GLFWwindow* w, double x, double y){
+    auto mousePos = [](GLFWwindow* w, double x, double y){
         static_cast<Input*>(glfwGetWindowUserPointer(w))->mouse_pos_callback(x, y);
     };
-    glfwSetCursorPosCallback(_window, mouse_pos);
+    glfwSetCursorPosCallback(_window, mousePos);
 
     // setup Key callback
     auto key = [](GLFWwindow* w, int k, int s, int a, int m){

@@ -52,7 +52,7 @@ public:
 
 private:
     std::array<std::array<StoneColor, SIZE>, SIZE> _grid{};
-    int _stoneCount;
+    int _stone_count;
 
     void initialize_empty();
 };
@@ -61,7 +61,7 @@ struct GridPosition {
     int x, y;
 
     GridPosition() : x(-1), y(-1) {}
-    GridPosition(const int x_, const int y_) : x(x_), y(y_) {}
+    GridPosition(const int x, const int y) : x(x), y(y) {}
 
     bool isValid() const {
         return x >= 0 && x < Board::SIZE && y >= 0 && y < Board::SIZE;

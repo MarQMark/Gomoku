@@ -14,8 +14,8 @@ struct MoveModel {
     std::string stoneColor;
 
     MoveModel() : x(0), y(0), moveNumber(0), stoneColor("NONE") {}
-    MoveModel(const int x_, const int y_, const int moveNumber_, std::string stoneColor_)
-        : x(x_), y(y_), moveNumber(moveNumber_), stoneColor(std::move(stoneColor_)) {}
+    MoveModel(const int x, const int y, const int moveNumber, std::string stoneColor)
+        : x(x), y(y), moveNumber(moveNumber), stoneColor(std::move(stoneColor)) {}
 };
 
 struct PlayerModel {
@@ -25,8 +25,8 @@ struct PlayerModel {
     int difficulty;
 
     PlayerModel() : name(""), color("NONE"), isAI(false), difficulty(-1) {}
-    PlayerModel(std::string name_, std::string color_, const bool isAI_, const int difficulty_ = -1)
-        : name(std::move(name_)), color(std::move(color_)), isAI(isAI_), difficulty(difficulty_) {}
+    PlayerModel(std::string name, std::string color, const bool isAI, const int difficulty = -1)
+        : name(std::move(name)), color(std::move(color)), isAI(isAI), difficulty(difficulty) {}
 };
 
 struct GameStateModel {
@@ -49,8 +49,8 @@ struct SaveGameModel {
     std::vector<MoveModel> moveHistory;
     GameStateModel gameState;
 
-    explicit SaveGameModel(std::string gameId_)
-        : gameId(std::move(gameId_)) {}
+    explicit SaveGameModel(std::string gameId)
+        : gameId(std::move(gameId)) {}
 };
 
 #endif

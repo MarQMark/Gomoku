@@ -144,21 +144,21 @@ AIDifficulty MapPersistenceToLogic::mapIntToAIDifficulty(int difficulty) {
     }
 }
 
-bool MapPersistenceToLogic::isValidStoneColor(const std::string& colorString) {
+bool MapPersistenceToLogic::is_valid_stone_color(const std::string& colorString) {
     return colorString == "BLACK" || colorString == "WHITE" || colorString == "NONE";
 }
 
-bool MapPersistenceToLogic::isValidGameStatus(const std::string& statusString) {
+bool MapPersistenceToLogic::is_valid_game_status(const std::string& statusString) {
     return statusString == "NOT_STARTED" || statusString == "IN_PROGRESS" ||
            statusString == "BLACK_WINS" || statusString == "WHITE_WINS" ||
            statusString == "DRAW" || statusString == "PAUSED";
 }
 
-bool MapPersistenceToLogic::isValidGameMode(const std::string& modeString) {
+bool MapPersistenceToLogic::is_valid_game_mode(const std::string& modeString) {
     return modeString == "HUMAN_VS_HUMAN" || modeString == "HUMAN_VS_AI" ||
            modeString == "AI_VS_HUMAN" || modeString == "AI_VS_AI";
 }
 
-bool MapPersistenceToLogic::isValidPosition(int x, int y) {
+bool MapPersistenceToLogic::is_valid_position(int x, int y) {
     return x >= 0 && x < Board::SIZE && y >= 0 && y < Board::SIZE;
 }

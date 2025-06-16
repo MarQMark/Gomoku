@@ -17,8 +17,8 @@ void AssetManager::initialize(Renderer* renderer) {
     }
 }
 
-AssetManager::AssetManager(Renderer* _renderer) {
-    renderer = _renderer;
+AssetManager::AssetManager(Renderer* renderer) {
+    _renderer = renderer;
 }
 
 AssetManager* AssetManager::instance() {
@@ -55,7 +55,7 @@ void AssetManager::load_textures() {
 #else
         _textures[filename] = load_texture_from_memory(filename);
 #endif
-        renderer->addTexture(_textures[filename].get(), filename);
+        _renderer->addTexture(_textures[filename].get(), filename);
     }
 }
 

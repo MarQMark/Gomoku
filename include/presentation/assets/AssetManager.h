@@ -43,8 +43,8 @@ public:
     void freeLoadedPixels(unsigned char* data);
 
 private:
-    Renderer *renderer;
-    explicit AssetManager(Renderer* _renderer);
+    Renderer *_renderer;
+    explicit AssetManager(Renderer* renderer);
     static AssetManager* s_instance;
 
     std::unordered_map<std::string, std::unique_ptr<Texture2D>> _textures;

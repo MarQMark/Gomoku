@@ -19,8 +19,8 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath) {
     std::string fragmentSource =  std::string(reinterpret_cast<const char*>(fragBuf), fragLen);
 #endif
 
-    int vs = compileShader(GL_VERTEX_SHADER, vertexSource);
-    int fs = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
+    int vs = compile_shader(GL_VERTEX_SHADER, vertexSource);
+    int fs = compile_shader(GL_FRAGMENT_SHADER, fragmentSource);
 
     create_program(vs, fs);
 }
@@ -57,10 +57,10 @@ std::string Shader::loadShaderSource(const std::string &path) {
     return ss.str();
 }
 
-int Shader::compileShader(GLenum type, const std::string &source) {
+int Shader::compile_shader(GLenum type, const std::string &source) {
     int id = glCreateShader(type);
-    const char *c_str = source.c_str();
-    glShaderSource(id, 1, &c_str, nullptr);
+    const char *cStr = source.c_str();
+    glShaderSource(id, 1, &cStr, nullptr);
     glCompileShader(id);
 
     GLint status;

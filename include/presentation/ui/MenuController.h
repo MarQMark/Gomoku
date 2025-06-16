@@ -27,7 +27,7 @@ public:
 
     IGameService *getGameService() const;
     GameMode getSelectedGameMode() const;
-    void setSelectedGameMode(GameMode selected_game_mode);
+    void setSelectedGameMode(GameMode selectedGameMode);
 
     void onGameCompleted() override;
     void onStatsChanged(StatsViewDTO stats) override;

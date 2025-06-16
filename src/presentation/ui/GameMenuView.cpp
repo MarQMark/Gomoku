@@ -6,7 +6,7 @@
 #include "common/RunManager.h"
 #include "logic/interfaces/IGameService.h"
 
-void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+void pause_btn_clbk(IInteractable* interactable, IInteractable::State state, void* data) {
     const auto* menuController = (MenuController*)data;
     const GameStatus gameStatus = menuController->getGameService()->changeGameStatus();
     if (gameStatus == PAUSED)
@@ -16,13 +16,13 @@ void pauseBtnClbk(IInteractable* interactable, IInteractable::State state, void*
         ((MenuButton*)interactable)->setText("Pause");
 }
 
-void mainMenuBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+void main_menu_btn_clbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* menuController = (MenuController*)data;
     menuController->changeMenu(MenuController::Main);
     menuController->getGameService()->pauseGame();
 }
 
-void exitGameBtnClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+void exit_game_btn_clbk(IInteractable* interactable, IInteractable::State state, void* data) {
     RunManager::get()->stop();
 }
 
@@ -48,20 +48,20 @@ GameMenuView::GameMenuView(std::string name, MenuController *menuController) : M
     pauseBtn->setAlignH(IViewable::Align::TOP);
     pauseBtn->setAlignV(IViewable::Align::NONE);
     pauseBtn->setMargin(0.15, 0, 0, 0);
-    pauseBtn->registerCallback(pauseBtnClbk, IInteractable::RELEASED, menuController);
+    pauseBtn->registerCallback(pause_btn_clbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(pauseBtn);
     auto* mainMenuBtn = new MenuButton("mainMenuBtn", glm::vec2(.05, .25));
     mainMenuBtn->setText("Main Menu");
     mainMenuBtn->setAlignH(IViewable::Align::CENTER);
     mainMenuBtn->setAlignV(IViewable::Align::NONE);
-    mainMenuBtn->registerCallback(mainMenuBtnClbk, IInteractable::RELEASED, menuController);
+    mainMenuBtn->registerCallback(main_menu_btn_clbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(mainMenuBtn);
     auto* exitGameBtn = new MenuButton("exitGameBtn", glm::vec2(.05, .75));
     exitGameBtn->setText("Exit");
     exitGameBtn->setMargin(0, 0.15, 0, 0);
     exitGameBtn->setAlignH(IViewable::Align::BOTTOM);
     exitGameBtn->setAlignV(IViewable::Align::NONE);
-    exitGameBtn->registerCallback(exitGameBtnClbk, IInteractable::RELEASED, menuController);
+    exitGameBtn->registerCallback(exit_game_btn_clbk, IInteractable::RELEASED, menuController);
     _drawer_view->addViewable(exitGameBtn);
 }
 

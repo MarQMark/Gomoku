@@ -1,6 +1,6 @@
 #include "logic/Board.h"
 
-Board::Board() : _stoneCount(0) {
+Board::Board() : _stone_count(0) {
     initialize_empty();
 }
 
@@ -8,7 +8,7 @@ void Board::initialize_empty() {
     for (auto& row : _grid) {
         row.fill(STONE_NONE);
     }
-    _stoneCount = 0;
+    _stone_count = 0;
 }
 
 bool Board::placeStone(const GridPosition& pos, const StoneColor color) {
@@ -23,7 +23,7 @@ bool Board::placeStone(const GridPosition& pos, const StoneColor color) {
 
     // Place the stone
     _grid[pos.y][pos.x] = color;
-    _stoneCount++;
+    _stone_count++;
 
     return true;
 }
@@ -40,7 +40,7 @@ bool Board::removeStone(const GridPosition& pos) {
 
     // Remove the stone
     _grid[pos.y][pos.x] = STONE_NONE;
-    _stoneCount--;
+    _stone_count--;
 
     return true;
 }
@@ -57,15 +57,15 @@ StoneColor Board::getColor(const GridPosition& pos) const {
 }
 
 bool Board::isEmpty() const {
-    return _stoneCount == 0;
+    return _stone_count == 0;
 }
 
 bool Board::isFull() const {
-    return _stoneCount >= SIZE * SIZE;
+    return _stone_count >= SIZE * SIZE;
 }
 
 int Board::getStoneCount() const {
-    return _stoneCount;
+    return _stone_count;
 }
 
 bool Board::isValidPosition(const GridPosition& pos) {
@@ -74,7 +74,7 @@ bool Board::isValidPosition(const GridPosition& pos) {
 
 std::vector<Move> Board::getOccupiedPositions() const {
     std::vector<Move> moves;
-    moves.reserve(_stoneCount);
+    moves.reserve(_stone_count);
 
     for (int y = 0; y < SIZE; ++y) {
         for (int x = 0; x < SIZE; ++x) {
@@ -89,7 +89,7 @@ std::vector<Move> Board::getOccupiedPositions() const {
 
 std::vector<GridPosition> Board::getEmptyPositions() const {
     std::vector<GridPosition> positions;
-    positions.reserve(SIZE * SIZE - _stoneCount);
+    positions.reserve(SIZE * SIZE - _stone_count);
 
     for (int y = 0; y < SIZE; ++y) {
         for (int x = 0; x < SIZE; ++x) {
@@ -148,7 +148,7 @@ LineInfo Board::getLineInDirection(const GridPosition& pos, const StoneColor col
 
 bool Board::operator==(const Board& other) const {
     // Quick check first
-    if (_stoneCount != other._stoneCount) {
+    if (_stone_count != other._stone_count) {
         return false;
     }
 

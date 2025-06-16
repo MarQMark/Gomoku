@@ -1,12 +1,12 @@
 #include "presentation/ui/MenuButton.h"
 #include "presentation/assets/AssetManager.h"
 
-void menuBtnPressedClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+void menu_btn_pressed_clbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* btn = (MenuButton*)interactable;
     btn->setTextHeight(.25);
     btn->setTextPos(glm::vec2(0.1, 0.315));
 }
-void menuBtnReleasedClbk(IInteractable* interactable, IInteractable::State state, void* data) {
+void menu_btn_released_clbk(IInteractable* interactable, IInteractable::State state, void* data) {
     auto* btn = (MenuButton*)interactable;
     btn->setTextHeight(.28);
     btn->setTextPos(glm::vec2(0.1, 0.3));
@@ -24,9 +24,9 @@ MenuButton::MenuButton(std::string name, glm::vec2 pos) : Button(std::move(name)
     Button::setTexture(IInteractable::PRESSED, AssetManager::getName(Textures::button_pressed));
     Button::setTexture(IInteractable::HOLDING, AssetManager::getName(Textures::button_pressed));
     Button::setTexture(IInteractable::RELEASED, AssetManager::getName(Textures::button_pressed));
-    Button::registerCallback(menuBtnPressedClbk, IInteractable::PRESSED);
-    Button::registerCallback(menuBtnReleasedClbk, IInteractable::RELEASED);
-    Button::registerCallback(menuBtnReleasedClbk, IInteractable::NONE);
+    Button::registerCallback(menu_btn_pressed_clbk, IInteractable::PRESSED);
+    Button::registerCallback(menu_btn_released_clbk, IInteractable::RELEASED);
+    Button::registerCallback(menu_btn_released_clbk, IInteractable::NONE);
 }
 
 void MenuButton::render(Renderer *renderer, glm::vec2 parentPos, glm::vec2 parentDim) {

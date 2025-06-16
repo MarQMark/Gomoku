@@ -12,13 +12,13 @@ GridPosition AIPlayer::calculateBestMove(const Board &board) const {
     }
 
     // Always try to win immediately
-    const auto winningMove = findWinningMoveFor(_color, board);
+    const auto winningMove = find_winning_move_for(_color, board);
     if (winningMove.isValid()) {
         return winningMove;
     }
 
     // Always block opponent from winning
-    const auto blockingMove = findImmediateBlock(board);
+    const auto blockingMove = find_immediate_block(board);
     if (blockingMove.isValid()) {
         return blockingMove;
     }
@@ -26,14 +26,14 @@ GridPosition AIPlayer::calculateBestMove(const Board &board) const {
     // Otherwise: Choose strategy based on difficulty
     switch (_difficulty) {
         case RANDOM:
-            return playRandomly(emptyPositions);
+            return play_randomly(emptyPositions);
         case BASIC:
-            return playBasic(board, emptyPositions);
+            return play_basic(board, emptyPositions);
         case GOOD:
-            return playGood(board, emptyPositions);
+            return play_good(board, emptyPositions);
         case EXPERT:
         default:
-            return playExpert(board, emptyPositions);
+            return play_expert(board, emptyPositions);
     }
 }
 
@@ -41,12 +41,12 @@ AIDifficulty AIPlayer::getDifficulty() const {
     return _difficulty;
 }
 
-GridPosition AIPlayer::findImmediateBlock(const Board& board) const {
+GridPosition AIPlayer::find_immediate_block(const Board& board) const {
     const StoneColor opponentColor = (_color == BLACK) ? WHITE : BLACK;
-    return findWinningMoveFor(opponentColor, board);
+    return find_winning_move_for(opponentColor, board);
 }
 
-GridPosition AIPlayer::findWinningMoveFor(const StoneColor color, const Board& board) {
+GridPosition AIPlayer::find_winning_move_for(StoneColor color, const Board& board) {
     const auto emptyPositions = board.getEmptyPositions();
 
     for (const auto& pos : emptyPositions) {
@@ -54,7 +54,7 @@ GridPosition AIPlayer::findWinningMoveFor(const StoneColor color, const Board& b
         Board testBoard = board;
         testBoard.placeStone(pos, color);
 
-        if (doesMoveWin(testBoard, pos, color)) {
+        if (does_move_win(testBoard, pos, color)) {
             return pos;
         }
     }
@@ -62,7 +62,7 @@ GridPosition AIPlayer::findWinningMoveFor(const StoneColor color, const Board& b
     return GridPosition(-1, -1);
 }
 
-bool AIPlayer::doesMoveWin(const Board& board, const GridPosition& pos, const StoneColor color) {
+bool AIPlayer::does_move_win(const Board& board, const GridPosition& pos, StoneColor color) {
     for (int i = 0; i < 4; i++) {
         constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
         const auto line = board.getLineInDirection(pos, color, directions[i][0], directions[i][1]);
@@ -74,7 +74,7 @@ bool AIPlayer::doesMoveWin(const Board& board, const GridPosition& pos, const St
 }
 
 // Picks any random empty spot
-GridPosition AIPlayer::playRandomly(const std::vector<GridPosition>& emptyPositions) {
+GridPosition AIPlayer::play_randomly(const std::vector<GridPosition>& emptyPositions) {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, emptyPositions.size() - 1);
@@ -82,18 +82,18 @@ GridPosition AIPlayer::playRandomly(const std::vector<GridPosition>& emptyPositi
 }
 
 // Try to play near the center of the board or random if invalid
-GridPosition AIPlayer::playBasic(const Board& board, const std::vector<GridPosition>& emptyPositions) {
+GridPosition AIPlayer::play_basic(const Board& board, const std::vector<GridPosition>& emptyPositions) {
 
-    const GridPosition centerMove = findNearCenterMove(emptyPositions);
+    const GridPosition centerMove = find_near_center_move(emptyPositions);
     if (centerMove.isValid()) {
         return centerMove;
     }
 
-    return playRandomly(emptyPositions);
+    return play_randomly(emptyPositions);
 }
 
 // Just try to move into the center
-GridPosition AIPlayer::findNearCenterMove(const std::vector<GridPosition>& emptyPositions) {
+GridPosition AIPlayer::find_near_center_move(const std::vector<GridPosition>& emptyPositions) {
     constexpr int center = Board::SIZE / 2;
 
     // Look for empty spots near the center
@@ -108,36 +108,36 @@ GridPosition AIPlayer::findNearCenterMove(const std::vector<GridPosition>& empty
 }
 
 // Find best move without taking enemy into account
-GridPosition AIPlayer::playGood(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
+GridPosition AIPlayer::play_good(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
     // Find the best move by scoring all empty positions
     GridPosition bestMove(-1, -1);
     int bestScore = -999;
 
     for (const auto& pos : emptyPositions) {
-        const int score = scorePositionFor(board, pos, _color);
+        const int score = score_position_for(board, pos, _color);
         if (score > bestScore) {
             bestScore = score;
             bestMove = pos;
         }
     }
 
-    return bestMove.isValid() ? bestMove : playRandomly(emptyPositions);
+    return bestMove.isValid() ? bestMove : play_randomly(emptyPositions);
 }
 
 // Find best move while trying to block the enemies best move
-GridPosition AIPlayer::playExpert(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
+GridPosition AIPlayer::play_expert(const Board& board, const std::vector<GridPosition>& emptyPositions) const {
     GridPosition bestMove(-1, -1);
     int bestScore = -999;
 
     for (const auto& pos : emptyPositions) {
 
         // Score this position for me
-        const int myScore = scorePositionFor(board, pos, _color);
+        const int myScore = score_position_for(board, pos, _color);
 
         // Score this position for opponent
         // If this scores high, we want to block it, so: Increase the score!
         const StoneColor opponentColor = (_color == BLACK) ? WHITE : BLACK;
-        const int opponentScore = scorePositionFor(board, pos, opponentColor);
+        const int opponentScore = score_position_for(board, pos, opponentColor);
 
         // Total score = my benefit + blocking opponent
         const int totalScore = myScore + (opponentScore / 2);
@@ -148,11 +148,11 @@ GridPosition AIPlayer::playExpert(const Board& board, const std::vector<GridPosi
         }
     }
 
-    return bestMove.isValid() ? bestMove : playRandomly(emptyPositions);
+    return bestMove.isValid() ? bestMove : play_randomly(emptyPositions);
 }
 
 // Calculate score when a stone would be placed at pos for color
-int AIPlayer::scorePositionFor(const Board& board, const GridPosition& pos, const StoneColor color) {
+int AIPlayer::score_position_for(const Board& board, const GridPosition& pos, StoneColor color) {
     Board testBoard = board;
     testBoard.placeStone(pos, color);
 

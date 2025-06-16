@@ -63,9 +63,9 @@ void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, u
     if(!_buffers.count(id)) {
         _buffers[id] = new Buffer;
         _buffers[id]->vb = vb,
-        _buffers[id]->vb_size = vbSize,
+        _buffers[id]->vbSize = vbSize,
         _buffers[id]->ib = ib,
-        _buffers[id]->ib_len = ibSize,
+        _buffers[id]->ibLen = ibSize,
         _buffers[id]->used = true;
         _dirty = true;
         return;
@@ -73,12 +73,12 @@ void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, u
 
     Buffer* buffer = _buffers[id];
     bool vbUpdate = false, ibUpdate = false;
-    if(vbSize != buffer->vb_size || memcmp(vb, buffer->vb, vbSize) != 0) {
+    if(vbSize != buffer->vbSize || memcmp(vb, buffer->vb, vbSize) != 0) {
         update_vb(buffer, vb, vbSize);
         vbUpdate = true;
     }
 
-    if(ibSize != buffer->ib_len || memcmp(ib, buffer->ib, ibSize) != 0) {
+    if(ibSize != buffer->ibLen || memcmp(ib, buffer->ib, ibSize) != 0) {
         update_ib(buffer, ib, ibSize);
         ibUpdate = true;
     }
@@ -93,7 +93,7 @@ void Batch::updateBuffer(uint64_t id, void *vb, uint32_t vbSize, uint32_t *ib, u
 void Batch::update_vb(Buffer *buffer, void *vb, uint32_t vbSize) {
     free(buffer->vb);
     buffer->vb = vb;
-    buffer->vb_size = vbSize;
+    buffer->vbSize = vbSize;
     buffer->used = true;
     _dirty = true;
 }
@@ -101,7 +101,7 @@ void Batch::update_vb(Buffer *buffer, void *vb, uint32_t vbSize) {
 void Batch::update_ib(Buffer *buffer, uint32_t *ib, uint32_t ibSize) {
     free(buffer->ib);
     buffer->ib = ib;
-    buffer->ib_len = ibSize;
+    buffer->ibLen = ibSize;
     buffer->used = true;
     _dirty = true;
 }
@@ -110,8 +110,8 @@ int Batch::recreate_buffers() {
     uint32_t vbSize = 0;
     uint32_t ibLen = 0;
     for (auto pair : _buffers) {
-        vbSize += pair.second->vb_size;
-        ibLen += pair.second->ib_len;
+        vbSize += pair.second->vbSize;
+        ibLen += pair.second->ibLen;
     }
 
     // Return if all buffers are empty i.e. complete batch is empty => nothing to render
@@ -124,11 +124,11 @@ int Batch::recreate_buffers() {
     uint32_t iPos = 0;
     uint32_t iIdx = 0;
     for (auto pair : _buffers) {
-        memcpy(&vertices[vPos], pair.second->vb, pair.second->vb_size);
-        vPos += pair.second->vb_size;
+        memcpy(&vertices[vPos], pair.second->vb, pair.second->vbSize);
+        vPos += pair.second->vbSize;
 
         uint32_t highestIdx = 0;
-        for(uint32_t i = 0; i < pair.second->ib_len; i++){
+        for(uint32_t i = 0; i < pair.second->ibLen; i++){
             highestIdx = std::max(highestIdx, pair.second->ib[i]);
             indices[iPos] = iIdx + pair.second->ib[i];
             iPos++;

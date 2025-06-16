@@ -11,7 +11,7 @@ class IMenuEventListener {
 public:
     virtual ~IMenuEventListener() {};
     virtual void onGameCompleted() = 0;
-    virtual void onStatsChanged(StatsViewDTO stats) = 0;
+    virtual void onStatsChanged(StatsViewDTO statsViewDTO) = 0;
 };
 
 #endif //IMENUEVENTLISTENER_H

@@ -20,17 +20,17 @@ void GameService::initialize() {
     _player1 = std::make_unique<HumanPlayer>("Player 1", BLACK);;
     _player2 = std::make_unique<HumanPlayer>("Player 2", WHITE);;
     _state.currentPlayer = _player1.get();
-    _moveHistory.clear();
+    _move_history.clear();
 }
 
 void GameService::restartSameGame() {
     resetGameState();
-    _elapsedTime = 0.0;
+    _elapsed_time = 0.0;
     _state.moveNumber = 0;
     _state.status = IN_PROGRESS;
     _state.latestMove = GridPosition(-1, -1);
-    _moveHistory.clear();
-    notifyGameStarted();
+    _move_history.clear();
+    notify_game_started();
     _state.currentPlayer = _player1.get();
 }
 
@@ -40,16 +40,16 @@ void GameService::startGame(const GameSetupCommandDTO &setupCommand) {
     resetGameState();
     createPlayers(setupCommand);
 
-    _activeGameMode = setupCommand.gameMode;
+    _active_game_mode = setupCommand.gameMode;
 
     // Initialize game state
-    _elapsedTime = 0.0;
+    _elapsed_time = 0.0;
     _state.currentPlayer = _player1.get();
     _state.moveNumber = 0;
     _state.status = IN_PROGRESS;
     _state.latestMove = GridPosition(-1, -1);
-    _moveHistory.clear();
-    notifyGameStarted();
+    _move_history.clear();
+    notify_game_started();
 }
 
 void GameService::resetGameState() {
@@ -91,35 +91,37 @@ bool GameService::loadGame() {
     _player1 = std::move(result.player1);
     _player2 = std::move(result.player2);
     _state = result.boardState;
-    _moveHistory.clear();
-    _moveHistory = result.moveHistory;
-    _activeGameMode = result.gameMode;
-    _elapsedTime = result.elapsedTime;
-    notifyGameStarted();
+    _move_history.clear();
+    _move_history = result.moveHistory;
+    _active_game_mode = result.gameMode;
+    _elapsed_time = result.elapsedTime;
+    notify_game_started();
     for (const Move move : result.moveHistory) {
         MoveViewDTO moveViewDTO = MapLogicToView::createMoveViewDTO(true, getBoardState(), MapLogicToView::createStoneViewDTO(true, move.position, move.color), *_state.currentPlayer, "");
-        notifyMoveCompleted(moveViewDTO);
+        notify_move_completed(moveViewDTO);
     }
 
     if (_state.status == BLACK_WINS || _state.status == WHITE_WINS) {
-        const StoneColor winner = checkForWin(_state.latestMove, _state.currentPlayer->getColor());
-        const auto winningPositions = getWinningLine(_state.latestMove, _state.currentPlayer->getColor());
-        notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
+        const StoneColor winner = check_for_win(_state.latestMove, _state.currentPlayer->getColor());
+        const auto winningPositions = get_winning_line(_state.latestMove, _state.currentPlayer->getColor());
+        notify_game_completed(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
     }
 
     if (_state.status == DRAW) {
-        notifyGameCompleted(MapLogicToView::createGameCompletedView(STONE_NONE, _state.status, std::vector<GridPosition>()));
+        notify_game_completed(
+                MapLogicToView::createGameCompletedView(STONE_NONE, _state.status, std::vector<GridPosition>()));
     }
 
     return true;
 }
 
 BoardViewDTO GameService::getBoardState() const {
-    return MapLogicToView::mapToBoardViewDTO(_state.board, _state, getWinningLine(_state.latestMove, _state.currentPlayer->getColor()));
+    return MapLogicToView::mapToBoardViewDTO(_state.board, _state,
+                                             get_winning_line(_state.latestMove, _state.currentPlayer->getColor()));
 }
 
 bool GameService::validateMouseCommand(GridPosition pos, MoveViewDTO &moveViewDTO) {
-    if (!isValidGridPosition(pos)) {
+    if (!is_valid_grid_position(pos)) {
         moveViewDTO = MapLogicToView::createMoveViewDTO(
             false, getBoardState(),
             MapLogicToView::createStoneViewDTO(false, pos, _state.currentPlayer->getColor()), *_state.currentPlayer, "Invalid command"
@@ -161,24 +163,24 @@ bool GameService::validateMouseCommand(GridPosition pos, MoveViewDTO &moveViewDT
     return false;
 }
 
-MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
+MoveViewDTO GameService::process_move(const MouseCommandDTO& cmd) {
     GridPosition pos = cmd.gridPosition;
 
     MoveViewDTO invalidMoveView;
     if (validateMouseCommand(pos, invalidMoveView))
         return invalidMoveView;
 
-    _moveHistory.emplace_back(pos, _state.currentPlayer->getColor());
+    _move_history.emplace_back(pos, _state.currentPlayer->getColor());
     _state.latestMove = pos;
     _state.moveNumber++;
 
     // Check for win
-    const StoneColor winner = checkForWin(_state.latestMove, _state.currentPlayer->getColor());
+    const StoneColor winner = check_for_win(_state.latestMove, _state.currentPlayer->getColor());
     if (winner != STONE_NONE) {
-        const auto winningPositions = getWinningLine(_state.latestMove, _state.currentPlayer->getColor());
+        const auto winningPositions = get_winning_line(_state.latestMove, _state.currentPlayer->getColor());
         _state.status = (winner == BLACK) ? BLACK_WINS : WHITE_WINS;
-        notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
-        saveGame();
+        notify_game_completed(MapLogicToView::createGameCompletedView(winner, _state.status, winningPositions));
+        save_game();
         return MapLogicToView::createMoveViewDTO(true,
                                                  MapLogicToView::mapToBoardViewDTO(_state.board, _state, winningPositions),
                                                  MapLogicToView::createStoneViewDTO(true, pos, _state.currentPlayer->getColor()), *_state.currentPlayer);
@@ -186,8 +188,9 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
 
     if (_state.board.isFull()) {
         _state.status = DRAW;
-        notifyGameCompleted(MapLogicToView::createGameCompletedView(winner, _state.status, std::vector<GridPosition>()));
-        saveGame();
+        notify_game_completed(
+                MapLogicToView::createGameCompletedView(winner, _state.status, std::vector<GridPosition>()));
+        save_game();
         return MapLogicToView::createMoveViewDTO(true,
             getBoardState(), MapLogicToView::createStoneViewDTO(true, pos,  _state.currentPlayer->getColor()), *_state.currentPlayer, "");
     }
@@ -199,38 +202,38 @@ MoveViewDTO GameService::processMove(const MouseCommandDTO& cmd) {
         _state.currentPlayer = (_state.currentPlayer == _player1.get()) ? _player2.get() : _player1.get();
     }
 
-    saveGame();
+    save_game();
 
     return MapLogicToView::createMoveViewDTO(
         true, getBoardState(), MapLogicToView::createStoneViewDTO(true, pos, prevPlayerTurn), *_state.currentPlayer, ""
     );
 }
 
-void GameService::saveGame() const {
+void GameService::save_game() const {
     _persistence_manager->saveGame(MapLogicToModel::mapToSave(
-                "GameID",
-                _state,
-                _moveHistory,
-                _player1.get(),
-                _player2.get(),
-                _activeGameMode,
-                _elapsedTime
+            "GameID",
+            _state,
+            _move_history,
+            _player1.get(),
+            _player2.get(),
+            _active_game_mode,
+            _elapsed_time
             ));
 }
 
-StoneViewDTO GameService::processMouseHover(const MouseCommandDTO& hover_command_dto) const {
-    if (!hover_command_dto.gridPosition.isValid() || _state.status != IN_PROGRESS) {
+StoneViewDTO GameService::processMouseHover(const MouseCommandDTO& hoverCommandDTO) const {
+    if (!hoverCommandDTO.gridPosition.isValid() || _state.status != IN_PROGRESS) {
         return MapLogicToView::createStoneViewDTO(false, GridPosition(-1, -1), STONE_NONE);
     }
 
-    if (isPositionOccupied(hover_command_dto.gridPosition)) {
-        return MapLogicToView::createStoneViewDTO(false, hover_command_dto.gridPosition, STONE_NONE);
+    if (is_position_occupied(hoverCommandDTO.gridPosition)) {
+        return MapLogicToView::createStoneViewDTO(false, hoverCommandDTO.gridPosition, STONE_NONE);
     }
 
-    return MapLogicToView::createStoneViewDTO(true, hover_command_dto.gridPosition, _state.currentPlayer->getColor());
+    return MapLogicToView::createStoneViewDTO(true, hoverCommandDTO.gridPosition, _state.currentPlayer->getColor());
 }
 
-std::vector<GridPosition> GameService::getWinningLine(const GridPosition &lastMove, const StoneColor color) const {
+std::vector<GridPosition> GameService::get_winning_line(const GridPosition &lastMove, StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
         constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
         auto line = _state.board.getLineInDirection(lastMove, color, directions[dir][0], directions[dir][1]);
@@ -242,7 +245,7 @@ std::vector<GridPosition> GameService::getWinningLine(const GridPosition &lastMo
     return {};
 }
 
-StoneColor GameService::checkForWin(const GridPosition& lastMove, const StoneColor color) const {
+StoneColor GameService::check_for_win(const GridPosition& lastMove, StoneColor color) const {
     for (int dir = 0; dir < 4; dir++) {
         constexpr int directions[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
         const auto line = _state.board.getLineInDirection(lastMove, color, directions[dir][0], directions[dir][1]);
@@ -273,48 +276,48 @@ void GameService::pauseGame() {
     _state.status = PAUSED;
 }
 
-bool GameService::isPlayerValid(const std::string &playerId) {
+bool GameService::is_player_valid(const std::string &playerId) {
     return !playerId.empty();
 }
 
-bool GameService::isValidGridPosition(const GridPosition& pos) {
+bool GameService::is_valid_grid_position(const GridPosition& pos) {
     return pos.isValid();
 }
 
-bool GameService::isPositionOccupied(const GridPosition& pos) const {
+bool GameService::is_position_occupied(const GridPosition& pos) const {
     return _state.board.getColor(pos) != STONE_NONE;
 }
 
 void GameService::addListener(IBoardEventListener* listener) {
-    _boardListeners.push_back(listener);
+    _board_listeners.push_back(listener);
 }
 
 void GameService::addMenuListener(IMenuEventListener *listener) {
-    _menuListeners.push_back(listener);
+    _menu_listeners.push_back(listener);
 }
 
 void GameService::update(const double deltaTime) {
     if (_state.status != IN_PROGRESS) return;
 
-    _elapsedTime += deltaTime;
+    _elapsed_time += deltaTime;
     if (isCurrentPlayerAI()) {
-        _aiMoveTimer += deltaTime;
-        if (_aiMoveTimer >= _aiMoveDelay) {
-            const auto result = executeAIMove();
+        _ai_move_timer += deltaTime;
+        if (_ai_move_timer >= _ai_move_delay) {
+            const auto result = execute_ai_move();
             if (result.success) {
-                notifyMoveCompleted(result);
+                notify_move_completed(result);
             }
-            _aiMoveTimer = 0.0f;
+            _ai_move_timer = 0.0f;
         }
     }
-    notifyStatsChanged();
+    notify_stats_changed();
 }
 
 bool GameService::isCurrentPlayerAI() const {
     return _state.currentPlayer->isAIPlayer();
 }
 
-MoveViewDTO GameService::executeAIMove() {
+MoveViewDTO GameService::execute_ai_move() {
     if (!isCurrentPlayerAI()) {
         return MoveViewDTO(false, std::string("Not AI turn"), getBoardState(), MapLogicToView::createStoneViewDTO(false, GridPosition(), STONE_NONE));
     }
@@ -324,48 +327,48 @@ MoveViewDTO GameService::executeAIMove() {
 
     MouseCommandDTO aiCommand;
     aiCommand.gridPosition = aiMove;
-    return processMove(aiCommand);
+    return process_move(aiCommand);
 }
 
-void GameService::notifyGameStarted() const {
-    for (auto* listener : _boardListeners) {
+void GameService::notify_game_started() const {
+    for (auto* listener : _board_listeners) {
         listener->onGameStarted();
     }
 }
 
-void GameService::notifyStatsChanged() const {
-    for (auto* menuListener : _menuListeners) {
-        menuListener->onStatsChanged(MapLogicToView::createStatsViewDTO(_player1.get(), _player2.get(), _elapsedTime, _state));
+void GameService::notify_stats_changed() const {
+    for (auto* menuListener : _menu_listeners) {
+        menuListener->onStatsChanged(MapLogicToView::createStatsViewDTO(_player1.get(), _player2.get(), _elapsed_time, _state));
     }
 }
 
-void GameService::notifyMoveCompleted(const MoveViewDTO& move) const {
-    for (auto* listener : _boardListeners) {
+void GameService::notify_move_completed(const MoveViewDTO& move) const {
+    for (auto* listener : _board_listeners) {
         listener->onMoveCompleted(move);
     }
 }
 
-void GameService::notifyGameCompleted(const GameCompleteViewDTO &completeView) const {
-    for (auto* listener : _boardListeners) {
+void GameService::notify_game_completed(const GameCompleteViewDTO &completeView) const {
+    for (auto* listener : _board_listeners) {
         listener->onGameCompleted(completeView);
     }
 
-    for (auto* menuListener : _menuListeners) {
+    for (auto* menuListener : _menu_listeners) {
         menuListener->onGameCompleted();
-        menuListener->onStatsChanged(MapLogicToView::createStatsViewDTO(_player1.get(), _player2.get(), _elapsedTime, _state));
+        menuListener->onStatsChanged(MapLogicToView::createStatsViewDTO(_player1.get(), _player2.get(), _elapsed_time, _state));
     }
 }
 
-MoveViewDTO GameService::processMouseClick(const MouseCommandDTO& cmd) {
+MoveViewDTO GameService::processMouseClick(const MouseCommandDTO& clickCommandDto) {
     // Don't process if the AI is currently playing!
     if (isCurrentPlayerAI()) {
-        auto result = MapLogicToView::createMoveViewDTO(false, getBoardState(), MapLogicToView::createStoneViewDTO(false, cmd.gridPosition, _state.currentPlayer->getColor()), *_state.currentPlayer, "Can't Move cause AI is Moving!");
+        auto result = MapLogicToView::createMoveViewDTO(false, getBoardState(), MapLogicToView::createStoneViewDTO(false, clickCommandDto.gridPosition, _state.currentPlayer->getColor()), *_state.currentPlayer, "Can't Move cause AI is Moving!");
         return result;
     }
 
-    auto result = processMove(cmd);
+    auto result = process_move(clickCommandDto);
     if (result.success) {
-        notifyMoveCompleted(result);
+        notify_move_completed(result);
     }
     return result;
 }

@@ -117,8 +117,8 @@ void StatsMenuView::setCurrentPlayer(const std::string &playerName) {
     update_text();
 }
 
-void StatsMenuView::setLastPlayerColor(const ViewColor view_color) {
-    if (view_color == ViewColor::BLACK)
+void StatsMenuView::setLastPlayerColor(const ViewColor viewColor) {
+    if (viewColor == ViewColor::BLACK)
         _last_player_color = "Black";
     else
         _last_player_color = "White";

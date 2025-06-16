@@ -45,10 +45,10 @@ public:
     static GridPosition getLastMovePosition(const std::vector<Move>& moveHistory);
 
 private:
-    static bool isValidStoneColor(const std::string& colorString);
-    static bool isValidGameStatus(const std::string& statusString);
-    static bool isValidGameMode(const std::string& modeString);
-    static bool isValidPosition(int x, int y);
+    static bool is_valid_stone_color(const std::string& colorString);
+    static bool is_valid_game_status(const std::string& statusString);
+    static bool is_valid_game_mode(const std::string& modeString);
+    static bool is_valid_position(int x, int y);
     static IPlayer* getCurrentPlayer(
         const GameStateModel& gameState,
         IPlayer* player1,

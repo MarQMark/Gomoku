@@ -20,7 +20,7 @@ public:
     void setGameStatus(GameStatus gameStatus);
     void setCurrentPlayer(const std::string &playerName);
 
-    void setLastPlayerColor(ViewColor view_color);
+    void setLastPlayerColor(ViewColor viewColor);
 
 private:
     Label* _text_lbl{};

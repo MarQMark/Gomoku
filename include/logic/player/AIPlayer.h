@@ -22,18 +22,18 @@ public:
     AIDifficulty getDifficulty() const;
 
 private:
-    GridPosition findImmediateBlock(const Board& board) const;
-    static GridPosition findWinningMoveFor(StoneColor color, const Board& board);
+    GridPosition find_immediate_block(const Board& board) const;
+    static GridPosition find_winning_move_for(StoneColor color, const Board& board);
 
-    static bool doesMoveWin(const Board& board, const GridPosition& pos, StoneColor color);
+    static bool does_move_win(const Board& board, const GridPosition& pos, StoneColor color);
 
-    static GridPosition playRandomly(const std::vector<GridPosition>& emptyPositions);
-    static GridPosition playBasic(const Board& board, const std::vector<GridPosition>& emptyPositions);
-    GridPosition playGood(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
-    GridPosition playExpert(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+    static GridPosition play_randomly(const std::vector<GridPosition>& emptyPositions);
+    static GridPosition play_basic(const Board& board, const std::vector<GridPosition>& emptyPositions);
+    GridPosition play_good(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
+    GridPosition play_expert(const Board& board, const std::vector<GridPosition>& emptyPositions) const;
 
-    static GridPosition findNearCenterMove(const std::vector<GridPosition>& emptyPositions);
-    static int scorePositionFor(const Board& board, const GridPosition& pos, StoneColor color);
+    static GridPosition find_near_center_move(const std::vector<GridPosition>& emptyPositions);
+    static int score_position_for(const Board& board, const GridPosition& pos, StoneColor color);
 };
 
 

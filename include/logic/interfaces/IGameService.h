@@ -20,8 +20,8 @@ public:
 
     virtual void startGame(const GameSetupCommandDTO& setupCommand) = 0;
     virtual GameStatus changeGameStatus() = 0;
-    virtual StoneViewDTO processMouseHover(const MouseCommandDTO& hover_command_dto) const = 0;
-    virtual MoveViewDTO processMouseClick(const MouseCommandDTO& click_command_dto) = 0;
+    virtual StoneViewDTO processMouseHover(const MouseCommandDTO& hoverCommandDTO) const = 0;
+    virtual MoveViewDTO processMouseClick(const MouseCommandDTO& clickCommandDTO) = 0;
     virtual BoardViewDTO getBoardState() const = 0;
     virtual int getBoardSize() const = 0;
     virtual void pauseGame() = 0;

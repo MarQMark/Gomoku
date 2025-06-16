@@ -9,7 +9,7 @@
 
 struct GridViewPosition {
     int x, y;
-    explicit GridViewPosition(const int x_ = -1, const int y_ = -1) : x(x_), y(y_) {}
+    explicit GridViewPosition(const int x = -1, const int y = -1) : x(x), y(y) {}
 
     bool operator<(const GridViewPosition& other) const {
         if (y != other.y) return y < other.y;
@@ -21,8 +21,8 @@ struct GridViewPosition {
         return os;
     }
 
-    GridViewPosition operator-(const GridViewPosition & grid_position) const {
-        return GridViewPosition(x - grid_position.x, y - grid_position.y);
+    GridViewPosition operator-(const GridViewPosition & gridPosition) const {
+        return GridViewPosition(x - gridPosition.x, y - gridPosition.y);
     }
 };
 
@@ -71,8 +71,8 @@ struct MoveViewDTO {
     std::string currentPlayerName;
 
     MoveViewDTO() = default;
-    MoveViewDTO(const bool cond, std::string  string, BoardViewDTO  board_view_dto, const StoneViewDTO stone_view_dto)
-        : success(cond), errorMessage(std::move(string)), boardView(std::move(board_view_dto)), stone(stone_view_dto){}
+    MoveViewDTO(const bool cond, std::string  string, BoardViewDTO  boardViewDTO, const StoneViewDTO stoneViewDTO)
+        : success(cond), errorMessage(std::move(string)), boardView(std::move(boardViewDTO)), stone(stoneViewDTO){}
 };
 
 #endif

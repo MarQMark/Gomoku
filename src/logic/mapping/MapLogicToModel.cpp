@@ -32,7 +32,7 @@ PlayerModel MapLogicToModel::mapPlayer(const IPlayer* player) {
     model.isAI = player->isAIPlayer();
 
     if (model.isAI) {
-        model.difficulty = mapAIDifficultyToInt(extractAIDifficulty(player));
+        model.difficulty = mapAIDifficultyToInt(extract_ai_difficulty(player));
     } else {
         model.difficulty = -1;
     }
@@ -78,7 +78,7 @@ GameStateModel MapLogicToModel::mapGameState(
     return stateModel;
 }
 
-AIDifficulty MapLogicToModel::extractAIDifficulty(const IPlayer* player) {
+AIDifficulty MapLogicToModel::extract_ai_difficulty(const IPlayer* player) {
     const auto aiPlayer = dynamic_cast<const AIPlayer*>(player);
     if (aiPlayer != nullptr) {
         return aiPlayer->getDifficulty();
@@ -87,7 +87,7 @@ AIDifficulty MapLogicToModel::extractAIDifficulty(const IPlayer* player) {
     return AIDifficulty::RANDOM;
 }
 
-bool MapLogicToModel::isPlayerAI(const IPlayer& player) {
+bool MapLogicToModel::is_player_ai(const IPlayer& player) {
     return player.isAIPlayer();
 }
 
