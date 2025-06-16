@@ -8,12 +8,12 @@
 #include "presentation/renderer/font/KikanFont.h"
 #include "presentation/renderer/font/GomokuFont.h"
 
-#if defined(__MSC_VER)
+#if defined(_MSC_VER)
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
 
 #define BATCH_FUNC __declspec(noinline)
-#define GET_RED_ADDR __ReturnAddress()
+#define GET_RED_ADDR (uint64_t)_ReturnAddress()
 
 #elif defined(__GNUC__) || defined(__clang__)
 #define BATCH_FUNC __attribute__((noinline))
@@ -22,7 +22,7 @@
 
 #define BATCH_FORCE_STACK [[maybe_unused]] volatile int force_stack = 1;
 
-#if !defined(__clang__) && !defined(__GNUC__) && !defined(__MSC_VER)
+#if !defined(__clang__) && !defined(__GNUC__) && !defined(_MSC_VER)
 #error "Incompatible Compiler"
 #endif
 

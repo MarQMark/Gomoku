@@ -21,7 +21,7 @@ void FileManager::get_file_path() {
 #ifdef _WIN32
     char path[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, path))) {
-        basePath = std::string(path) + "\\Gomoku\\";
+        _file_path = std::string(path) + "\\Gomoku\\";
     } else {
         std::cout << "[WARNING] Failed to get %LOCALAPPDATA%\n";
         return;

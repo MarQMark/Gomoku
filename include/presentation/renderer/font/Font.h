@@ -27,13 +27,21 @@ public:
     Texture2D* getTexture();
 
 private:
+#if defined(_MSC_VER)
+    #pragma pack(push, 1)
+    typedef struct {
+#elif defined(__GNUC__) || defined(__clang__)
     typedef struct __attribute__((packed)) {
+#endif
         uint32_t width;     // texture2D width
         uint32_t height;    // texture2D height
         uint32_t gCount;    // glyph count
         uint32_t gWidth;    // glyph max width
         uint32_t gHeight;   // glyph max height
     } Header;
+#if defined(_MSC_VER)
+#pragma pack(pop)
+#endif
 
     std::map<char, Glyph*> _glyphs;
     Texture2D* _txt;
