@@ -27,7 +27,7 @@ void ShaderSprite::render(Renderer *renderer, const glm::vec2 parentPos, const g
         options.shaderName = _animator->getShader();
         options.animator = _animator;
         options.animationID = (uint64_t)this;
-        options.layer = _animator->getLayer();
+        options.layer += _animator->getLayer();
     }
     renderer->drawQuadID((uint64_t)this, _abs_pos, _abs_dim, glm::vec4(1), options);
 }

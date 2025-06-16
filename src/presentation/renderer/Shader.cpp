@@ -96,7 +96,7 @@ int Shader::uniform_location(const std::string &name) {
     GLint loc = glGetUniformLocation(_id, name.c_str());
     _uniforms[name] = loc;
     if (loc == -1)
-        std::cout << "[ERROR] Uniform " << name << " not found" << std::endl;
+        std::cout << "[WARNING] Uniform " << name << " not found" << std::endl;
 
     return loc;
 }

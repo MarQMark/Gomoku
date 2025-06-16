@@ -10,6 +10,11 @@
 #include "presentation/ui/ModeMenuView.h"
 #include "presentation/ui/DifficultyMenuView.h"
 
+#ifdef DEBUG
+#include <sstream>
+#include <iomanip>
+#endif
+
 Game::Game() {
     _renderer = new Renderer();
     _ui = new UI(_renderer);
@@ -41,6 +46,14 @@ Game::Game() {
 
     auto* boardView = new BoardView("game_board", _game_service);
     _ui->addViewable(boardView);
+
+#ifdef DEBUG
+    _fps_lbl = new Label("fpsCounter", "");
+    _fps_lbl->setAlignV(IViewable::LEFT);
+    _fps_lbl->setAlignH(IViewable::TOP);
+    _fps_lbl->setDim(glm::vec2(0, .04));
+    _ui->addViewable(_fps_lbl);
+#endif
 }
 
 Game::~Game() {
@@ -51,6 +64,9 @@ Game::~Game() {
     _ui->deleteViewable<ModeMenuView>("modeMenuView");
     _ui->deleteViewable<MainMenuView>("mainMenuView");
     _ui->deleteViewable<BackgroundView>("backgroundView");
+#ifdef DEBUG
+    _ui->deleteViewable<Label>("fpsCounter");
+#endif
 
     RunManager::destroy();
 
@@ -67,6 +83,12 @@ bool Game::shouldRun() {
 
 void Game::update() {
     Time::get()->update();
+
+#ifdef DEBUG
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(1) << 1 / Time::get()->getDeltaTime();
+    _fps_lbl->setText(ss.str());
+#endif
 
     _menu_controller->update();
     _ui->update();

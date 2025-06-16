@@ -8,6 +8,10 @@
 #include "persistence/FileManager.h"
 #include "logic/GameService.h"
 
+#ifdef DEBUG
+#include "presentation/ui/components/Label.h"
+#endif
+
 class Game {
 public:
     Game();
@@ -22,6 +26,9 @@ private:
     MenuController* _menu_controller{};
     FileManager* _file_manager{};
     GameService* _game_service{};
+#ifdef DEBUG
+    Label* _fps_lbl{};
+#endif
 };
 
 

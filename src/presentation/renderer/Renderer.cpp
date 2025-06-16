@@ -40,8 +40,7 @@ Renderer::Renderer() {
     addShader(new Shader("stone2.vert",  "default.frag"), "stone2");
     addShader(new Shader("board.vert",   "default.frag"), "board");
     addShader(new Shader("default.vert", "bg.frag"),      "bg");
-    addShader(new Shader("default.vert", "bgWin.frag"),   "bgWin");
-    addShader(new Shader("default.vert", "bgDraw.frag"),  "bgDraw");
+    addShader(new Shader("default.vert", "bgStone.frag"), "bgStone");
 
     _fonts["default"] = new Font((void*)gomokuFont);
     _fonts["kikan"] = new Font((void*)kikanFont);
@@ -51,6 +50,8 @@ Renderer::Renderer() {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //glfwSwapInterval(0);
 
     query_errors("Renderer::Constructor");
 }
