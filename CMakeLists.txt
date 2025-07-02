@@ -9,7 +9,8 @@ if (UNIX)
 endif (UNIX)
 
 if (WIN32)
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lmingw32 /Oy-")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 endif(WIN32)
 
 # DOWNLOAD ALL THE SUBMODULES
