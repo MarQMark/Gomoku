@@ -75,3 +75,6 @@ cd src
 Open the repository in Visual Studio or CLion and build it from there 
 
 # Screenshots
+![img1](https://github.com/user-attachments/assets/0359fdbc-15a0-4eab-bf1c-84dc1b8d3659)
+![img2](https://github.com/user-attachments/assets/ae2f39fb-9543-4b0a-9688-f4af690a7d7b)
+![img3](https://github.com/user-attachments/assets/323eb2a7-40e1-45d1-9406-af1c32b548d3)
